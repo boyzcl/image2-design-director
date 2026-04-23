@@ -195,6 +195,28 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 - 结果“好看但没法用”
 - 失败后没有明确下一轮该改什么
 
+## 默认输出合同
+
+如果当前宿主没有更强的原生输出协议，默认把结果收束为下面 5 块，避免只吐出一段大 prompt：
+
+1. `Asset Contract Summary`
+   - 当前采用的 `deliverable_type / asset_completion_mode / content_language / allowed_text_scope / layout_owner / acceptance_bar`
+2. `Chosen Route`
+   - 当前选择 `direct / brief-first / repair / contract_realign` 的哪一条，以及一句话理由
+3. `Image2-Ready Prompt Package`
+   - 给模型的最终提示词，必要时附上补充约束或后处理说明
+4. `Acceptance Check`
+   - 交付前要检查的 3 到 5 条关键过线项
+5. `Next Action`
+   - 如果已经过线，说明可直接交付或进入 delivery refinement
+   - 如果未过线，明确下一轮是 `micro_repair` 还是 `contract_realign`
+
+如果信息不足：
+
+- 先输出最小 `Asset Contract Summary + Chosen Route`
+- 只补问 1 到 3 个会显著改变交付物合同的问题
+- 不要在合同仍然含混时过早输出看似完整的终稿 prompt
+
 ## 需要按需读取的资源
 
 ### Public Core

@@ -8,12 +8,16 @@
 
 1. [README.md](../README.md)
 2. [SKILL.md](../SKILL.md)
-3. [target-skill-architecture.md](./target-skill-architecture.md)
-4. `references/` 下的核心协议文档
+3. [readme-image-story-homepage-plan-2026-04-23.md](./readme-image-story-homepage-plan-2026-04-23.md)
+4. [readme-homepage-image-suite-v1.md](./readme-image-story-prompts/readme-homepage-image-suite-v1.md)
+5. [target-skill-architecture.md](./target-skill-architecture.md)
+6. `references/` 下的核心协议文档
 
 这些内容定义的是：
 
 - skill 是什么
+- 首页应该如何被展示
+- 首页图片如何生成
 - 如何工作
 - 哪些规则是 repo 主规则层
 - 当前边界和能力形态

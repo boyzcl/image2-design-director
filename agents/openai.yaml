@@ -1,6 +1,6 @@
 interface:
   display_name: "Image2 Design Director"
-  short_description: "把 Image2 生图拉向产品与设计可用水位"
+  short_description: "把 Image2 生图拉向更稳定的产品与设计可用水位"
   default_prompt: "Use $image2-design-director to create an Image2-ready design asset with stronger product, social, or UI quality control."
 
 policy:
