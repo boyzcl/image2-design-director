@@ -43,6 +43,41 @@ def main() -> int:
         help="Who owns the final layout in this run",
     )
     parser.add_argument("--acceptance-bar", default=None, help="User-facing definition of done for this asset")
+    parser.add_argument(
+        "--factual-sensitivity",
+        default=None,
+        choices=["low", "medium", "high"],
+        help="How sensitive the task is to factual accuracy.",
+    )
+    parser.add_argument("--claim-type", default=None, help="Claim type such as visual_analogy, factual, price, or mixed.")
+    parser.add_argument(
+        "--evidence-requirement",
+        default=None,
+        help="Evidence requirement such as none, reference_provided, verify_before_render, or exact_value_lock.",
+    )
+    parser.add_argument("--metric-definition", default=None, help="Primary metric definition used for this run.")
+    parser.add_argument("--as-of-date", default=None, help="As-of date for time-sensitive claims.")
+    parser.add_argument("--uncertainty-policy", default=None, help="Fallback behavior if claims cannot be fully verified.")
+    parser.add_argument(
+        "--reliability-gate-result",
+        default=None,
+        choices=["verified_fact", "fact_with_disclaimer", "visual_analogy_only", "blocked_needs_brief"],
+        help="Result of the information reliability gate.",
+    )
+    parser.add_argument("--representation-mode", default=None, help="Representation mode selected for this run.")
+    parser.add_argument(
+        "--primary-expression-system",
+        default=None,
+        choices=["image_model", "deterministic_renderer", "hybrid"],
+        help="Primary system used to express the asset.",
+    )
+    parser.add_argument(
+        "--deterministic-render-needed",
+        action="store_true",
+        help="Mark this run as requiring deterministic rendering for core information.",
+    )
+    parser.add_argument("--text-generation-tolerance", default=None, help="Allowed level of model-generated readable text.")
+    parser.add_argument("--numeric-render-strategy", default=None, help="How numeric claims are rendered.")
     parser.add_argument("--route", required=True, help="Route used: direct, brief-first, or repair")
     parser.add_argument("--initial-brief", required=True, help="Original user brief")
     parser.add_argument("--final-prompt", required=True, help="Structured final prompt used for the run")
@@ -78,6 +113,23 @@ def main() -> int:
         choices=["micro_repair", "contract_realign"],
         help="Repair category if this run is part of an iteration",
     )
+    parser.add_argument(
+        "--delivery-viability-result",
+        default=None,
+        choices=["overlay_allowed", "overlay_allowed_with_limits", "overlay_not_allowed_regenerate"],
+        help="Result of the delivery viability gate if relevant.",
+    )
+    parser.add_argument("--collision-risk", default=None, choices=["low", "medium", "high"], help="Overlay collision risk.")
+    parser.add_argument(
+        "--continue-overlay-or-regenerate",
+        default=None,
+        choices=["continue_overlay", "continue_with_limits", "regenerate"],
+        help="Recommended next step from the delivery viability gate.",
+    )
+    parser.add_argument("--information-reliability-score", type=float, default=None, help="0-100 reliability score.")
+    parser.add_argument("--delivery-integrity-score", type=float, default=None, help="0-100 delivery integrity score.")
+    parser.add_argument("--misleading-risk", default=None, choices=["low", "medium", "high"], help="Misleading risk level.")
+    parser.add_argument("--hard-fail-reason", default=None, help="Hard fail reason if the run should not be considered passable.")
     args = parser.parse_args()
 
     record = {
@@ -93,6 +145,18 @@ def main() -> int:
         "allowed_text_scope": args.allowed_text_scope,
         "layout_owner": args.layout_owner,
         "acceptance_bar": args.acceptance_bar,
+        "factual_sensitivity": args.factual_sensitivity,
+        "claim_type": args.claim_type,
+        "evidence_requirement": args.evidence_requirement,
+        "metric_definition": args.metric_definition,
+        "as_of_date": args.as_of_date,
+        "uncertainty_policy": args.uncertainty_policy,
+        "reliability_gate_result": args.reliability_gate_result,
+        "representation_mode": args.representation_mode,
+        "primary_expression_system": args.primary_expression_system,
+        "deterministic_render_needed": args.deterministic_render_needed,
+        "text_generation_tolerance": args.text_generation_tolerance,
+        "numeric_render_strategy": args.numeric_render_strategy,
         "route": args.route,
         "initial_brief": args.initial_brief,
         "final_prompt": args.final_prompt,
@@ -114,6 +178,13 @@ def main() -> int:
         "contract_alignment_result": args.contract_alignment_result,
         "completion_readiness_result": args.completion_readiness_result,
         "repair_class": args.repair_class,
+        "delivery_viability_result": args.delivery_viability_result,
+        "collision_risk": args.collision_risk,
+        "continue_overlay_or_regenerate": args.continue_overlay_or_regenerate,
+        "information_reliability_score": args.information_reliability_score,
+        "delivery_integrity_score": args.delivery_integrity_score,
+        "misleading_risk": args.misleading_risk,
+        "hard_fail_reason": args.hard_fail_reason,
     }
     record = {key: value for key, value in record.items() if value not in (None, "", [], {})}
 

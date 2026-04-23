@@ -2,211 +2,144 @@
 
 ## Purpose
 
-这份文档定义 `image2-design-director` 在交付阶段如何处理标题、副标题、CTA、价格、日期等文本叠加问题。
+这份文档定义交付阶段如何处理标题、副标题、CTA、价格、日期、badge 与说明文本。
 
-它回答的是：
+一句话版本：
 
-- 哪些文字必须后置
-- 底图需要预留什么样的文本安全区
-- 什么情况下只交付无字版，什么情况下需要直接做上字版
-- 文字叠加后，什么样才算没有破坏主视觉
+> overlay 不是“看哪里空就放哪里”，而是 delivery viability gate 通过后的受控注入；如果图像结构不再具备承载能力，正确动作是回退或重生成，不是继续硬塞。
 
-## Core Principle
+## Core Principles
 
 ### 1. Text Accuracy Comes Before Visual Convenience
 
-只要文字承担真实信息传达，就默认优先后置。
+承担真实信息传达的文字，优先用可校验的方式输出。
 
-### 2. Overlay Should Respect The Image, Not Fight It
+### 2. Overlay Must Respect Protected Regions
 
-叠字不是把空白塞满，而是让文字与主视觉形成稳定层级。
+每次 overlay 前，都应明确：
 
-### 3. Text-Safe Is A Real Delivery State
+- `protected_regions`
+- `allowed_overlay_classes`
+- 当前 overlay mode
 
-能承载文字的底图不是“差半步”，而是正式交付中间态。
+### 3. Dense Information Is Often A Representation Problem
 
-## Text Classes
+如果要塞入：
 
-### Class A. Must Overlay
-
-默认必须后置的文本：
-
-- 中文标题
-- 中文副标题
+- 标题
+- 副标题
 - CTA
 - 价格
 - 日期
-- 报名信息
-- 活动名
-- 精确卖点文案
+- 图表或对比数据
 
-### Class B. Usually Overlay
+先问“是不是应该换 representation mode”，而不是只继续压字距和字号。
 
-通常更适合后置的文本：
+## Overlay Classes
 
-- 英文品牌文案
-- section heading
-- feature label
-- onboarding headline
+### Class A. Deterministic Or Exact Overlay
 
-### Class C. May Stay Decorative
+默认不交给模型生成文本本体：
 
-可以允许留在图里的文字：
+- 价格
+- 日期
+- 排行
+- 指标数值
+- QR
+- 法务 / 免责声明
 
-- 不承担真实含义的短装饰英文
-- 作为纹理的微型字样
-- 不需要校验正确性的背景符号
+### Class B. Limited Delivery Overlay
 
-前提是：
+可在 viability gate 通过后进入：
 
-- 不会被误读为真实主文案
-- 不会降低资产可信度
+- headline
+- subtitle
+- CTA
+- badge
+- 短 supporting copy
+
+### Class C. Decorative Text
+
+只有在不承担真实信息时才允许：
+
+- 背景微型纹理字
+- 无结论性的短英文装饰
 
 ## Overlay Modes
 
-### 1. `text_safe_only`
+### `text_safe_only`
 
 适用于：
 
-- 本轮先交底图
-- 文案还没确定
-- 需要后续由别的流程接手排版
+- 文案未锁定
+- 后续还要扩多个尺寸
+- 当前只交可承载文本的底图
 
-输出：
-
-- 干净底图
-- 明确文本承载区说明
-
-### 2. `title_plus_supporting_text`
+### `title_plus_supporting_text`
 
 适用于：
 
-- 有明确主标题和少量辅助信息
-- 海报、hero、feature card 等常见资产
+- 标题明确
+- 支持文本少
+- 没有高密度数值信息
 
-### 3. `dense_info_layout`
+### `dense_info_layout`
 
 适用于：
 
-- 同时有标题、副标题、CTA、价格、日期等多层信息
+- 已确定这张图真的要承载高密度信息
 
-默认提醒：
+默认前提：
 
-- 如果信息密度过高，先检查这张底图是否还适合承载
-- 不要因为硬塞信息破坏主视觉
+- representation mode 允许
+- viability gate 通过
 
-## Safe Area Rules
+如果这两个条件不成立，就不是 typography 问题，而是 route 或 representation 问题。
 
-### 1. Safe Area Must Be Planned, Not Hoped For
+## Viability Rules
 
-如果任务预期要叠字，底图阶段就必须明确：
+### 1. Safe Area Must Be Planned
 
-- 左侧标题区
-- 顶部标题条
-- 右上 badge 区
-- 底部说明区
+预计要 overlay 时，底图阶段至少明确：
 
-至少要有其中一种明确结构，而不是等交付时才发现“哪里都能放一点”。
+- 标题承载区
+- footer band
+- badge / logo / QR 区
+- 受保护主体区
 
-### 2. Text Should Not Sit On Visually Noisy Surfaces
+### 2. Hard Protected Regions Must Not Be Invaded
 
-默认避免把主文案压在：
+典型硬保护区：
 
-- 高细节纹理
-- 强高光区域
-- 人脸或产品主体上
-- 复杂 UI 区块上
+- 人脸
+- 产品主体
+- 关键 UI 主区域
+- 核心图表面板
 
-### 3. Safe Area Must Survive Target Crops
+### 3. Soft Protected Regions Need A Risk Budget
 
-如果后面要裁不同尺寸，文本安全区在主要目标比例下都必须可用。
+典型软保护区：
 
-## Overlay Hierarchy Rules
+- 高光区
+- 高纹理区
+- 次级构图焦点
 
-### 1. Start With One Primary Message
+允许轻微擦边，但必须控制碰撞比例。
 
-每张图先确定：
+### 4. Overlay Footprint Must Match Image Capacity
 
-- 哪一句是一级信息
+如果 overlay 后：
 
-其他文字都只能服务它。
-
-### 2. Do Not Let Text Weight Exceed Image Capacity
-
-如果叠字后：
-
-- 主体被压弱
+- 主体被削弱
 - 焦点被打散
 - 留白被吃光
+- 事实层与视觉层互相抢
 
-那不是文字还不够精细，而是底图不适合当前信息量。
-
-### 3. Shorter Beats Denser
-
-在交付层，宁可：
-
-- 短标题
-- 少量辅助文案
-
-也不要把一张主视觉逼成文字海报。
-
-## By Asset Type
-
-### `project hero`
-
-默认优先：
-
-- 大标题
-- 一行支持说明
-- 可选轻 CTA
-
-### `social-creative`
-
-默认优先：
-
-- 强主标题
-- 一条活动或传播信息
-- 如有二维码或 CTA，注意与标题分区
-
-### `ui-mockup`
-
-默认优先：
-
-- 让图片承担界面解释
-- 文字只补外部说明
-
-不要让主标题和 UI 内文本互相抢。
-
-### `app-asset`
-
-默认优先：
-
-- 短标题
-- 短卖点
-- 保持渠道截图或卡片感
-
-## Red Flags
-
-出现以下任一项时，当前文字叠加应视为不过线：
-
-- 中文断句像机器拼接
-- 文字区过满
-- 文案压到主体焦点
-- 不同信息层级权重混乱
-- 明明需要无字版，却只保留了上字版
-- 文字一换尺寸就失衡
-
-## Hard Boundary
-
-下面这些情况不能算交付完成：
-
-- 标题虽然“看起来对”，但逐字未校验
-- 关键日期、价格、CTA 仍留在模型生成文本里
-- 本该保留无字版复用，但只留下单一上字版
+则应判定为 `overlay_not_allowed_regenerate` 或至少 `overlay_allowed_with_limits`。
 
 ## Delivery Contract
 
-当任务涉及文字叠加时，建议在交付计划里补齐：
+当任务涉及 overlay 时，建议交付计划至少补齐：
 
 ```yaml
 text_overlay_plan:
@@ -214,50 +147,34 @@ text_overlay_plan:
   primary_message: ""
   supporting_text:
     - ""
-  safe_area_definition:
-    - ""
+  allowed_overlay_classes:
+    - "headline"
+    - "subtitle"
+  protected_regions:
+    - name: "subject_core"
+      type: "hard"
+      x: 0
+      y: 0
+      width: 0
+      height: 0
   no_text_version_required: true
   target_sizes:
     - ""
 ```
 
-## Example Judgments
+## Red Flags
 
-### Example 1. Hero With Pending Copy
+出现以下任一项时，当前 overlay 应视为不过线：
 
-判断：
-
-- 只交 `text_safe_only`
-
-原因：
-
-- 文案还未定，先保底图复用价值
-
-### Example 2. Recruitment Poster
-
-判断：
-
-- `title_plus_supporting_text`
-
-原因：
-
-- 需要清晰标题和少量报名信息，但不应把二维码区挤占掉
-
-### Example 3. Feature Card With Too Much Copy
-
-判断：
-
-- 当前底图不适合直接交付
-
-动作：
-
-- 减文案
-- 或回到 repair / 重新生成更适合承载文字的底图
+- 标题或 support 文案侵入硬保护区
+- 关键信息落在高噪音表面上
+- QR、logo、badge 与主标题互相争抢
+- 文字密度已经超出图像可承载范围
+- 改尺寸后布局立刻失衡
 
 ## Completion Checklist
 
-- 这轮文字是否都属于应后置的文本类别
-- 底图是否存在稳定可用的 safe area
-- 叠字后是否仍保住主体焦点
-- 是否需要同时保留无字版
-- 主要目标尺寸下文字层级是否仍成立
+- 这轮 overlay 是否通过 delivery viability gate
+- 关键文本是否属于允许的 overlay 类别
+- 硬保护区是否零侵入
+- 是否保留了需要的无字版或底图版

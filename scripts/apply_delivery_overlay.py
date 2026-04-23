@@ -23,6 +23,7 @@ from delivery_image_ops_lib import (
     rounded_panel,
     serialize_box,
 )
+from delivery_viability_lib import evaluate_delivery_viability, load_protected_regions
 
 
 def zone_box(name: str, width: int, height: int) -> tuple[int, int, int, int]:
@@ -58,8 +59,10 @@ def render_overlay(
     badge_box = zone_box("top_right_badge", width, height)
 
     rounded_panel(base, title_box, (247, 244, 238, 205), radius=max(18, width // 50))
-    rounded_panel(base, footer_box, (246, 241, 233, 210), radius=max(18, width // 55))
-    rounded_panel(base, qr_box, (255, 255, 255, 230), radius=max(16, width // 60))
+    if cta_text or date_text:
+        rounded_panel(base, footer_box, (246, 241, 233, 210), radius=max(18, width // 55))
+    if qr_image:
+        rounded_panel(base, qr_box, (255, 255, 255, 230), radius=max(16, width // 60))
     if logo_image:
         rounded_panel(base, logo_box, (248, 245, 239, 218), radius=max(16, width // 70))
     if badge_text:
@@ -184,12 +187,36 @@ def render_overlay(
     overlay_summary = {
         "title_box": serialize_box(title_box),
         "footer_box": serialize_box(footer_box),
-        "qr_box": qr_payload or serialize_box(qr_box),
+        "qr_box": qr_payload,
         "logo_box": logo_payload,
         "badge_box": badge_payload,
         "text_line_count": len(title_lines) + len(support_lines),
     }
     return base, overlay_summary
+
+
+def build_candidate_boxes(
+    width: int,
+    height: int,
+    title: str,
+    cta_text: str | None,
+    date_text: str | None,
+    badge_text: str | None,
+    qr_image: Path | None,
+    logo_image: Path | None,
+) -> list[dict[str, object]]:
+    candidates: list[dict[str, object]] = []
+    if title:
+        candidates.append({"name": "title_panel", "box": zone_box("top_title", width, height)})
+    if cta_text or date_text:
+        candidates.append({"name": "footer_band", "box": zone_box("bottom_cta_band", width, height)})
+    if qr_image:
+        candidates.append({"name": "qr_zone", "box": zone_box("bottom_right_qr", width, height)})
+    if logo_image:
+        candidates.append({"name": "logo_zone", "box": zone_box("top_left_logo", width, height)})
+    if badge_text:
+        candidates.append({"name": "badge_zone", "box": zone_box("top_right_badge", width, height)})
+    return candidates
 
 
 def main() -> int:
@@ -204,6 +231,30 @@ def main() -> int:
     parser.add_argument("--qr-image", default=None, help="Path to the QR image asset.")
     parser.add_argument("--logo-image", default=None, help="Path to the logo image asset.")
     parser.add_argument("--font-path", default=None, help="Optional explicit font path.")
+    parser.add_argument(
+        "--protected-region",
+        action="append",
+        default=[],
+        help="Protected region spec: name:x:y:width:height[:hard|soft]. Values may be absolute pixels or 0-1 ratios.",
+    )
+    parser.add_argument("--protected-region-file", default=None, help="JSON file containing protected regions.")
+    parser.add_argument(
+        "--max-overlay-coverage",
+        type=float,
+        default=0.38,
+        help="Maximum overlay coverage ratio before viability fails.",
+    )
+    parser.add_argument(
+        "--max-soft-overlap-ratio",
+        type=float,
+        default=0.12,
+        help="Maximum allowed overlap ratio against soft protected regions before limits are required.",
+    )
+    parser.add_argument(
+        "--allow-unsafe-overlay",
+        action="store_true",
+        help="Continue even when the viability gate recommends regenerate.",
+    )
     parser.add_argument(
         "--overlay-mode",
         default="title_plus_supporting_text",
@@ -226,7 +277,48 @@ def main() -> int:
         raise SystemExit("no text_safe_visual source found")
 
     source_path = resolve_version_asset_path(bundle_root, source_record)
-    timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
+    base_image = Image.open(source_path).convert("RGBA")
+    width, height = base_image.size
+    base_image.close()
+    protected_regions = load_protected_regions(
+        canvas_width=width,
+        canvas_height=height,
+        region_specs=args.protected_region,
+        region_file=args.protected_region_file,
+        embedded_regions=source_record.get("extra_metadata", {}).get("protected_regions", []),
+    )
+    candidate_boxes = build_candidate_boxes(
+        width=width,
+        height=height,
+        title=args.title,
+        cta_text=args.cta_text,
+        date_text=args.date_text,
+        badge_text=args.badge_text,
+        qr_image=Path(args.qr_image).expanduser().resolve() if args.qr_image else None,
+        logo_image=Path(args.logo_image).expanduser().resolve() if args.logo_image else None,
+    )
+    viability_report = evaluate_delivery_viability(
+        canvas_width=width,
+        canvas_height=height,
+        candidate_boxes=candidate_boxes,
+        protected_regions=protected_regions,
+        max_overlay_coverage=args.max_overlay_coverage,
+        max_soft_overlap_ratio=args.max_soft_overlap_ratio,
+    )
+    if viability_report["delivery_viability"] == "overlay_not_allowed_regenerate" and not args.allow_unsafe_overlay:
+        print(
+            json.dumps(
+                {
+                    "error": "delivery_viability_no_go",
+                    "source_version_id": source_record["version_id"],
+                    "viability_report": viability_report,
+                },
+                ensure_ascii=False,
+            )
+        )
+        return 2
+
+    timestamp = datetime.now().strftime("%Y%m%dT%H%M%S%f")
     overlay_dir = bundle_root / "overlay" / "applied" / source_record["version_id"]
     ensure_parent(overlay_dir / "placeholder")
     overlay_image_path = overlay_dir / f"overlay-{timestamp}.png"
@@ -259,6 +351,7 @@ def main() -> int:
         "qr_image": args.qr_image,
         "logo_image": args.logo_image,
         "summary": overlay_summary,
+        "viability_report": viability_report,
     }
     overlay_record_path.write_text(json.dumps(overlay_record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -286,6 +379,9 @@ def main() -> int:
             "overlay_output_path": str(overlay_image_path),
             "overlay_record_path": str(overlay_record_path),
             "overlay_summary": overlay_summary,
+            "delivery_viability_result": viability_report["delivery_viability"],
+            "collision_risk": viability_report["collision_risk"],
+            "viability_report": viability_report,
         },
     )
 
@@ -295,6 +391,8 @@ def main() -> int:
         "delivery_ready_asset_path": version["asset_path"],
         "overlay_output_path": str(overlay_image_path),
         "overlay_record_path": str(overlay_record_path),
+        "delivery_viability_result": viability_report["delivery_viability"],
+        "collision_risk": viability_report["collision_risk"],
     }
     print(json.dumps(result, ensure_ascii=False))
     return 0

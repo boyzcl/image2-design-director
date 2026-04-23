@@ -4,16 +4,9 @@
 
 这份文档定义 `task packet -> final image prompt` 的默认装配方法。
 
-它解决的问题不是“字段有哪些”，而是：
-
-- 先锁什么交付物合同，再写什么视觉内容
-- 什么时候该用 structured / section-based
-- 什么时候该用自然语言连续写法
-- 怎么把任务、结构、文本层、风格层按稳定顺序拼起来
-
 一句话版本：
 
-> packet 是执行输入，schema 是骨架选择，assembly 才是把它变成可发给 Image2 的最终 prompt。
+> packet 是执行输入，schema 是骨架选择，assembly 才是把它变成真正可执行的图像 prompt 或图像段指令；如果任务是 hybrid 或 deterministic，assembly 还要明确哪些内容不交给模型承担。
 
 ## Inputs
 
@@ -21,8 +14,9 @@
 
 - [references/task-packet.md](references/task-packet.md)
 - [references/prompt-schema.md](references/prompt-schema.md)
+- [references/information-reliability-gate.md](references/information-reliability-gate.md)
+- [references/representation-modes.md](references/representation-modes.md)
 - [references/prompt-writing-spec.md](references/prompt-writing-spec.md)
-- [references/sample-prompts.md](references/sample-prompts.md)
 
 如果 task packet 还不是 `ready`，不要进入 assembly。
 
@@ -30,7 +24,7 @@
 
 ### 1. Lock The Asset Contract
 
-先锁定这 6 个合同字段：
+先锁定：
 
 - `deliverable_type`
 - `asset_completion_mode`
@@ -39,15 +33,35 @@
 - `layout_owner`
 - `acceptance_bar`
 
-如果这层还模糊，不要急着写视觉段落。
+### 2. Lock The Information Contract
 
-默认规则：
+再锁定：
 
-- 用户没说要底图时，优先按 `complete_asset`
-- 当前会话语言 = 默认文案语言
-- `asset type` 优先于 `style direction`
+- `factual_sensitivity`
+- `claim_type`
+- `metric_definition`
+- `as_of_date`
+- `uncertainty_policy`
+- `reliability_gate_result`
 
-### 2. Lock The Task Statement
+如果结果是 `blocked_needs_brief`，不要继续 assembly。
+
+### 3. Lock The Representation Strategy
+
+明确：
+
+- `representation_mode`
+- `primary_expression_system`
+- `deterministic_render_needed`
+- `text_generation_tolerance`
+- `numeric_render_strategy`
+
+如果当前路径是 `hybrid` 或 `deterministic`，本阶段应同时产出：
+
+- 图像 prompt
+- overlay / render spec 占位说明
+
+### 4. Lock The Task Statement
 
 再写一句明确的任务定义：
 
@@ -55,9 +69,7 @@
 - 它服务什么目标
 - 使用场景是什么
 
-如果这一步还模糊，后面的结构和风格都会漂。
-
-### 3. Choose Prompt Family
+### 5. Choose Prompt Family
 
 按版式复杂度选默认写法：
 
@@ -66,9 +78,7 @@
 - 单图叙事、动作、中心隐喻：`Directed Natural Language`
 - 已有图像迭代：在原写法上加 `Repair Overlay`
 
-不要为了“统一格式”把所有任务都写成字段表。
-
-## 4. Build The Prompt In Layers
+## Build The Prompt In Layers
 
 ### Layer A. Asset Contract Layer
 
@@ -80,13 +90,25 @@
 - 文案语言是什么
 - 允许出现哪些文字
 
-如果任务是品牌图、项目发布图、招募图、宣传海报，这层通常应该直接写成：
+### Layer B. Information Contract Layer
 
-- `complete_asset`
-- `layout owner: model`
-- `language follows the current conversation`
+如果任务有事实敏感信息，prompt 或 render spec 必须明确：
 
-### Layer B. Task Layer
+- 只允许表达哪些 claim
+- 哪些 claim 被降级成视觉隐喻
+- 哪些数字或日期不会由模型直接生成
+
+### Layer C. Representation Layer
+
+明确当前是：
+
+- 纯模型直出
+- 有限文字直出
+- text-safe base
+- hybrid visual plus deterministic overlay
+- deterministic render
+
+### Layer D. Task Layer
 
 先落：
 
@@ -94,101 +116,53 @@
 - `goal`
 - `audience/context`
 
-这是默认第一屏信息。
-
-### Layer C. Subject Layer
+### Layer E. Subject Layer
 
 明确：
 
 - 主体是谁或是什么
 - 主体处在什么场景
-- 当前这张图的中心隐喻或中心对象是什么
+- 这张图的中心对象或视觉比喻是什么
 
-### Layer D. Structure Layer
+### Layer F. Structure Layer
 
 高结构任务必须明确：
 
 - 区块
 - 区域角色
 - 主次层级
-- 数量
 - 留白或安全区
 
-单图叙事任务则把这些信息转成：
-
-- 视角
-- 构图
-- 前中后景
-- 视觉焦点
-
-### Layer E. Text Layer
+### Layer G. Text Layer
 
 文本层默认要单独写，不要埋在 constraints 里。
 
 至少说明：
 
-- `mode`: `verbatim` / `partial` / `emphasis-only` / `safe-area-only` / `none`
-- `hierarchy`: 有几层信息
-- `placement`: 放在哪
-- `density`: 文本密度高还是低
+- `mode`
+- `hierarchy`
+- `placement`
+- `density`
 
-如果合同已经锁定为 `complete_asset`，文本层还要额外写明：
-
-- 哪些文案必须直出
-- 哪些文案是唯一允许出现的可读文字
-- 是否禁止额外小字、伪 UI 字、背景文字纹理
-
-长中文文本处理规则：
-
-- 它是高风险信号，不是自动排除 `direct_output` 的理由
-- 如果有可直出的参考图，或任务明确在测试直出，必须保留直出候选
-- 如果走后处理路径，也要明确让模型产出 `text-safe visual`，而不是模糊地希望它顺带把所有小字排对
-
-### Layer F. Style Layer
+### Layer H. Style Layer
 
 风格层最后补。
 
-推荐只写真正影响结果的几类信息：
-
-- 媒介感
-- 材质感
-- 灯光
-- 色板
-- 商业气质
-
-不要让风格词压过任务层和结构层。
-
-### Layer G. Constraints And Avoid
+### Layer I. Constraints And Avoid
 
 最后才补：
 
 - 非谈判约束
 - 明确不要什么
 
-尤其要避免模型自行发明：
+## Resolve The Draft
 
-- logo
-- badge wall
-- 假文案
-- 伪 UI
-- 装饰性噪音
+发送前做两步：
 
-## 5. Resolve The Parameterized Draft
+1. 把模板位替换成具体值
+2. 删除和当前 representation mode 冲突的内容
 
-如果先写了模板，发送前要做两步：
-
-1. 把 `{{placeholder}}` 替换成具体值
-2. 删掉重复表达和无效修饰词
-
-目标是让最终 prompt 保持：
-
-- 信息完整
-- 结构清楚
-- 语言紧凑
-
-而不是长成一份冗余说明书。
-
-## 6. Apply Repair Overlay If Needed
+## Apply Repair Overlay If Needed
 
 如果是 `micro_repair`，最后再叠加：
 
@@ -197,134 +171,12 @@ Change only: <只改什么>
 Keep unchanged: <必须保持什么>
 ```
 
-默认只改最关键变量，不要重启整张图。
-
-如果是 `contract_realign`，不要直接套 repair overlay。先重写：
+如果是 `contract_realign`，先重写：
 
 - `deliverable_type`
 - `asset_completion_mode`
 - `content_language`
 - `allowed_text_scope`
+- `metric_definition`
+- `representation_mode`
 - `acceptance_bar`
-
-然后再重新 assembly。
-
-## Family-Specific Guidance
-
-### Structured / Section-Based
-
-适合：
-
-- 海报
-- UI mockup
-- 落地页
-- 设计系统页
-- 信息图
-
-默认要求：
-
-- section 名称可读
-- 区块职责明确
-- 数量和位置尽量具体
-- 文本层单独存在
-
-### Hybrid Structured Hero
-
-适合：
-
-- 产品 hero
-- 设备主视觉
-- 社媒视觉底图
-- 有单一主体的 campaign creative
-
-默认要求：
-
-- 先写结果目标
-- 再写主体与场景
-- 再写构图与留白
-- 再写文本策略
-- 风格层尽量短
-- 如果是 repo hero、项目系统 hero、workflow hero，先把开放式系统语义翻成协议型视觉锚点，再写风格
-- 默认写入 3 到 5 个可画出来的 motif，例如 `packet card`、`route node`、`scorecard chip`、`delivery-state frame`
-- 如果 prompt 里出现 `delivery-state frame` 或 `review frame`，默认补一句 destination asset identity，明确它应保持中性项目资产，而不是模型自行发明的风景或建筑样张
-- 这句 destination asset identity 默认不要停在抽象名词
-- 应同时写：
-  - `allowed examples`
-    - 例如 `README hero plate`、`onboarding visual card`、`benchmark board preview`
-  - `hard exclusions`
-    - 例如 `landscape photograph`、`architecture render`、`room scene`、`framed scenic sample`
-- 同时加一组语义排除，避免模型把系统 hero 误解成消费品、电商或 shopping workflow
-
-### Directed Natural Language
-
-适合：
-
-- 单图叙事
-- 动作场景
-- 中心隐喻视觉
-- onboarding 插图
-
-默认要求：
-
-- 句子顺序稳定
-- 主体与动作尽量靠前
-- 构图和光影明确
-- 不要为了“结构化”把语言写碎
-
-### Structured Poster For Launch Creative
-
-如果当前任务是发布海报或品牌宣传海报，默认在 `Structure layer` 与 `Text layer` 之间补一句 transformation statement：
-
-- 从什么转成什么
-- 这个转化由哪些项目机制构成
-
-推荐写成：
-
-- `rough brief packet -> route trace -> scorecard -> delivery-ready asset`
-- 并额外说明 destination asset 应该是什么类型的中性项目资产
-- 最好直接写成：
-  - `destination state: neutral project collateral such as a README hero plate, onboarding visual card, or benchmark board preview`
-- 再补一句：
-  - `not a scenic photograph, architecture sample, framed poster print, or travel-style image card`
-
-不要只写：
-
-- abstract transformation
-- bold geometric energy
-- futuristic campaign feel
-
-否则很容易得到泛设计海报，而不是项目自己的 launch asset。
-
-## Assembly Do / Don't
-
-### Do
-
-- 先任务，后结构，再风格
-- 先合同，后任务
-- 把文本层写成正式设计层
-- 对复杂任务明确 section、数量和层级
-- 对单图叙事保持连续语言张力
-- 对可复用模板做参数化
-- 对成品任务显式锁定允许文字范围和语言
-
-### Don't
-
-- 只堆 mood words
-- 先写风格，再猜资产类型
-- 用风格词代替结构描述
-- 在高结构任务里省略文本层
-- 在单图叙事任务里硬塞太多 section
-- 因为长中文文本就自动否决 `direct_output`
-
-## Preflight Checklist
-
-发送给 Image2 前，至少过一遍：
-
-- 开头是否已经定义了资产类型和目标
-- 画面组织方式是否明确
-- 文本层是否单独处理
-- 风格层是否服务任务，而不是喧宾夺主
-- 如果是 repo hero，是否已经把 workflow 语义翻成协议型 motif，并排除了错误垂类语义
-- 如果是 launch poster，是否已经把 transformation metaphor 写成项目机制，而不只是抽象几何语言
-- 有没有清楚的 `Avoid`
-- 如果这是测试任务，是否保留了可复盘的最终 prompt

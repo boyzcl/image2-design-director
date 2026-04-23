@@ -6,15 +6,15 @@
 
 - prompt 应该先选哪一种写法
 - 进入最终 image prompt 前，哪些层必须保留
-- 交付物合同如何进入最终 prompt
+- asset contract、information contract 和 representation mode 如何进入最终 prompt
 
 一句话版本：
 
-> 先交付物合同，后任务结构，再风格细节；文本层不是附属备注，而是成品任务的正式设计层。
+> 先资产合同，再信息合同，再表达机制，最后才是视觉语言；文本层不是附属备注，确定性内容也不该被伪装成 prompt 里的装饰说明。
 
 ## Core Rules
 
-### 1. Asset Contract Before Prompt Family
+### 1. Asset Contract And Information Contract Before Prompt Family
 
 先明确：
 
@@ -24,10 +24,26 @@
 - `allowed_text_scope`
 - `layout_owner`
 - `acceptance_bar`
+- `factual_sensitivity`
+- `claim_type`
+- `metric_definition`
+- `uncertainty_policy`
 
 再决定 prompt family。
 
-### 2. Task Before Style
+### 2. Representation Mode Before Prompt Family
+
+先决定：
+
+- `representation_mode`
+- `primary_expression_system`
+- `deterministic_render_needed`
+- `text_generation_tolerance`
+- `numeric_render_strategy`
+
+如果这轮不是纯模型直出，就不要把最终交付物全部塞进同一种 prompt。
+
+### 3. Task Before Style
 
 先写清：
 
@@ -35,7 +51,7 @@
 - 它要解决什么问题
 - 用户最终想拿去做什么
 
-### 3. Text Layer Is A Formal Design Layer
+### 4. Text Layer Is A Formal Design Layer
 
 只要任务涉及文字，prompt 里就要明确：
 
@@ -45,18 +61,16 @@
 - 文字有几层层级
 - 文字由模型直出还是只保留安全区
 
-### 4. Completion Mode Must Be Explicit
+### 5. Completion Mode Must Be Explicit
 
-最终 prompt 应明确告诉模型：
+最终 prompt 必须明确告诉模型：
 
 - 这是完整成品
 - 或这是底图
 
-不要让模型自己猜。
+### 6. Final Prompt Should Read Like Production Direction
 
-### 5. Final Prompt Should Read Like Production Direction
-
-最终 prompt 应该像一份给模型的设计指令，而不是数据库字段 dump。
+最终 prompt 应像设计指令，而不是字段 dump。
 
 ## Shared Preparation Fields
 
@@ -66,11 +80,15 @@ Matched profile: <...>
 Support tier: <...>
 Deliverable type: <brand promo poster / README hero / onboarding visual / ...>
 Asset completion mode: <complete_asset / base_visual / delivery_refinement>
-Primary request: <用户要什么>
-Objective: <这张图要帮助完成什么>
-Audience/context: <目标受众或使用场景>
+Factual sensitivity: <low / medium / high>
+Claim type: <visual_analogy / factual / comparative / ...>
+Metric definition: <...>
+As-of date: <...>
+Uncertainty policy: <...>
+Representation mode: <...>
+Primary expression system: <image_model / deterministic_renderer / hybrid>
 Content language: <zh-CN / en / ...>
-Allowed text scope: <only headline + slogan + subtitle / no readable text / ...>
+Allowed text scope: <what readable text is allowed>
 Layout owner: <model / post_process / hybrid>
 Acceptance bar: <怎样才算可验收>
 Subject: <主体>
@@ -90,19 +108,23 @@ Avoid: <负向约束>
 - 单图叙事、动作或氛围主视觉：`Directed Natural Language`
 - 迭代修正已有图：在原 family 上加 `Repair Overlay`
 
+如果 `representation_mode` 是 `hybrid` 或 `deterministic`，family 只负责图像段，不负责精确数值段。
+
 ## Universal Assembly Order
 
 默认按这个顺序装配：
 
 1. `Asset contract layer`
-2. `Task layer`
-3. `Subject layer`
-4. `Structure layer`
-5. `Text layer`
-6. `Style layer`
-7. `Hard constraints`
-8. `Avoid`
-9. `Repair overlay`
+2. `Information contract layer`
+3. `Representation layer`
+4. `Task layer`
+5. `Subject layer`
+6. `Structure layer`
+7. `Text layer`
+8. `Style layer`
+9. `Hard constraints`
+10. `Avoid`
+11. `Repair overlay`
 
 ## Text Layer Requirements
 
@@ -122,11 +144,21 @@ Avoid: <负向约束>
 - 这轮不负责最终文字
 - 只保留标题区、安全区或可承载文案的干净背景
 
+### For High-Fact-Sensitivity Tasks
+
+必须明确：
+
+- 哪些数字、价格、日期不会由模型直接生成
+- 哪些结论已被锁定
+- 哪些内容只是视觉隐喻
+
 ## Default Skeleton
 
 ```text
 Deliverable: <what this final asset is>
 Completion mode: <complete_asset / base_visual>
+Information contract: <what may be stated as fact, what may only be implied>
+Representation mode: <model / hybrid / deterministic>
 Objective: <what it must help accomplish>
 Audience/context: <who and where it will be used>
 Content language: <default language>
@@ -143,14 +175,11 @@ Avoid: <what to exclude>
 
 ## Repair Overlay
 
-repair 默认分两类：
-
-- `micro_repair`
-- `contract_realign`
-
 如果是 `contract_realign`，prompt delta 之前必须先重写：
 
 - deliverable
 - completion mode
 - content language
 - allowed text scope
+- metric definition
+- representation mode

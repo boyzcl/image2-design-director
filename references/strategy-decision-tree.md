@@ -2,25 +2,17 @@
 
 ## Purpose
 
-这份文档定义 `image2-design-director` 在 `Stage 2. Strategy Selection` 的显式决策树。
-
-它回答的问题不是 prompt 怎么写，而是：
-
-- 这次任务到底该怎么跑
-- 是完整成品还是底图任务
-- 默认文案语言是什么
-- 先对齐交付物合同，还是先进入生成
-- 失败后该做微修，还是重建合同
+这份文档定义 `image2-design-director` 的主决策树。
 
 一句话版本：
 
-> strategy 的职责不只是选 route，而是先确认“做的是不是对的资产”，再决定怎么生成。
+> strategy 现在不只回答“怎么生成”，而要先回答“信息是否可信、该由什么表达机制承载、结果还能不能安全交付，以及最后失败该由谁负责”。
 
 ## Core Decision Layers
 
-策略判断分成 6 层，必须按顺序做。
+策略判断分成 9 层，必须按顺序做。
 
-### Layer 0. Confirm Scene Profiling
+### Layer 0. Scene Profiling
 
 先确认：
 
@@ -28,7 +20,7 @@
 - `matched_profile`
 - `support_tier`
 
-### Layer 1. Confirm Asset Contract
+### Layer 1. Asset Contract Lock
 
 再确认：
 
@@ -39,25 +31,40 @@
 - `layout_owner`
 - `acceptance_bar`
 
-### Layer 2. Identify Task Mode
+### Layer 2. Information Reliability Gate
 
-判断这轮属于：
+判断：
+
+- 这轮是不是事实敏感任务
+- 哪些 claim 需要证据
+- 主线 metric 的定义和日期截点是什么
+- 证据不够时该怎样降级表达
+
+### Layer 3. Representation Strategy Selection
+
+判断：
+
+- 应该走模型直出、模型有限文字、底图加后置、混合渲染，还是确定性渲染
+
+### Layer 4. Task Mode Decision
+
+判断：
 
 - `fresh_generation`
 - `repair_iteration`
 - `delivery_refinement`
 - `benchmark_or_ab`
 
-### Layer 3. Choose Route
+### Layer 5. Route Decision
 
-在 `fresh_generation` 或 `repair_iteration` 下，再判断 route：
+在前面 4 层都明确后，再判断：
 
 - `direct`
 - `brief-first`
 - `repair`
 - `contract_realign`
 
-### Layer 4. Choose Execution Mode
+### Layer 6. Execution Mode Decision
 
 继续判断：
 
@@ -65,13 +72,34 @@
 - `multi-candidate`
 - `direct_output`
 - `visual_base_plus_post`
+- `hybrid_render`
+- `deterministic_render`
 
-### Layer 5. Choose Delivery Involvement
+### Layer 7. First Output Evaluation
 
-最后判断：
+按 `quality-bar` 和 `scorecard` 先判断：
 
-- `image-only`
-- `image-plus-delivery-ops`
+- 资产类型是否正确
+- 信息是否可信
+- 表达机制是否匹配
+- 结果是否仍可用
+
+### Layer 8. Delivery Viability Gate
+
+如果要继续 overlay、放 fixed elements、加图表或导出版式，再判断：
+
+- `overlay_allowed`
+- `overlay_allowed_with_limits`
+- `overlay_not_allowed_regenerate`
+
+### Layer 9. Deliver / Repair / Regenerate
+
+最后才决定：
+
+- 直接交付
+- `micro_repair`
+- `contract_realign`
+- 直接重生成
 
 ## Decision Order
 
@@ -80,253 +108,187 @@
 1. 当前场景画像是什么
 2. 最终交付物是什么
 3. 这是成品还是底图
-4. 默认文案语言是什么
-5. 这轮是 fresh / repair / delivery / benchmark 哪一类
-6. 是否需要重对齐合同
-7. route 是什么
-8. 是单图还是多候选
-9. 是直出还是底图 + 后处理
-10. 是否要把 delivery ops 一起纳入本轮
+4. 哪些信息会被当成事实
+5. 主线 metric 和日期截点是什么
+6. 哪种表达机制最适合承载
+7. 这轮是 fresh / repair / delivery / benchmark 哪一类
+8. route 是什么
+9. 是单图、多候选、混合渲染还是确定性渲染
+10. 第一版结果是否通过 accountability 基线
+11. 如果还要继续交付，当前版式还有没有 overlay capacity
 
-不要跳过前面的判断，直接根据直觉决定候选数、后处理或 repair 方式。
+## Layer 2. Information Reliability Gate
 
-## Layer 0. Scene Profiling
+满足下面任一项时，进入这一 gate：
 
-这层沿用当前三件事：
+- 图中会出现价格、日期、排行、对比结论、性能结论
+- 用户使用“最新”“最强”“增长”“领先”“对比”这类会被当成 factual claim 的描述
+- 图像将被用作信息图、数据图、带结论的宣传图
 
-- `domain_direction`
-- `matched_profile`
-- `support_tier`
+### Gate Questions
 
-当前加速档案仍是：
+必须回答：
 
-- `product-mockup`
-- `social-creative`
-- `ui-mockup`
-- `app-asset`
+1. `factual_sensitivity` 是多少
+2. `claim_type` 是什么
+3. `metric_definition` 是否明确
+4. `as_of_date` 是否需要锁定
+5. `evidence_requirement` 是否已满足
+6. 证据不足时执行哪种 `uncertainty_policy`
 
-但它们只是加速器，不是交付物合同。
+### Gate Outputs
 
-## Layer 1. Asset Contract Decision
+只使用下面 4 个结果：
 
-这层必须同时回答 6 个问题：
+- `verified_fact`
+- `fact_with_disclaimer`
+- `visual_analogy_only`
+- `blocked_needs_brief`
 
-1. 这轮最终交付物类型是什么
-2. 这是完整成品、底图，还是交付细化
-3. 默认文案语言是什么
-4. 允许出现哪些可读文字
-5. 谁负责最终排版
-6. 怎样才算用户可验收
+### Hard Rules
 
-### A. Completion-Sensitive Asset Types
+- 不要用关键词代替逻辑判断
+- 高事实敏感任务在 evidence 不足时，不能直接进入常规 prompt assembly
+- 如果结果只能做视觉隐喻，就必须从 prompt 和文案中移除精确 claim
 
-以下任务默认按 `complete_asset` 处理，除非用户明确说先做底图：
+## Layer 3. Representation Strategy Selection
 
-- `brand promo poster`
-- `brand poster`
-- `launch poster`
-- `project launch poster`
-- `recruitment poster`
-- `project intro poster`
+这一层回答的不是“要不要后置”，而是“什么系统最适合承载信息”。
 
-### B. Base-Visual-Sensitive Asset Types
+### Preferred Modes
 
-以下任务更容易默认走 `base_visual`：
+| Mode | Use When |
+|---|---|
+| `model_direct_visual` | 纯视觉、品牌型、低事实负载、结果要像完整设计资产 |
+| `model_visual_with_limited_text` | 可由模型承担有限标题或短文案，但不承担精确数据 |
+| `visual_base_plus_post` | 主视觉靠模型，关键文本 / logo / QR / 导出靠后置 |
+| `hybrid_visual_plus_deterministic_overlay` | 视觉氛围靠模型，精确数据或图表靠确定性叠加 |
+| `deterministic_render` | 图表、价格板、对比板本身是主资产 |
 
-- `README hero base`
-- `text-safe background visual`
-- `device scene for later layout`
-- `visual plate`
+### Default Heuristics
 
-### C. Content Language Rule
+- 精确数字、图表、时间口径重的任务，优先 `hybrid` 或 `deterministic`
+- 完整品牌海报、社媒宣传图且事实负载低时，优先 `model_direct_visual`
+- 需要 QR、logo、多尺寸复用时，优先把这些元素放入 post 或 hybrid 路径
 
-默认规则：
-
-- 当前会话语言 = 默认文案语言
-
-项目名、产品名、repo 名可保留原文，但 slogan / subtitle / CTA / supporting copy 默认跟随当前会话语言。
-
-### D. Allowed Text Scope Rule
-
-当任务涉及文字时，必须明确：
-
-- 允许出现的可读文字只有哪些
-- 是否允许额外小字
-- 是否允许伪 UI 文案
-
-如果没有锁定，就优先 `brief-first`。
-
-## Layer 2. Task Mode Decision
+## Layer 4. Task Mode Decision
 
 ### `repair_iteration`
 
-满足以下任一项时，优先判为 `repair_iteration`：
+满足以下任一项时优先判为：
 
-- 用户明确说“上一版不对”
-- 用户给出已有生成结果并要求调整
+- 用户明确说上一版不对
+- 已有生成结果待纠偏
 - `existing_generation_context` 非空
 
 ### `delivery_refinement`
 
-满足以下大部分时，可判为 `delivery_refinement`：
+满足以下大部分时可判为：
 
-- 主视觉方向已经过线
-- 当前需求主要是叠字、二维码、logo、尺寸适配、版本导出
+- 主视觉方向已过线
+- 当前主要工作是叠字、放 fixed elements、出多个尺寸
 
 ### `benchmark_or_ab`
 
-满足以下任一项时，可判为 `benchmark_or_ab`：
+满足以下任一项时可判为：
 
 - 当前目标是比较两种以上策略
-- 用户明确想看多个候选再选
+- 用户明确要看方向选择
 
 ### `fresh_generation`
 
-不属于上面三类时，默认视为 `fresh_generation`。
+不属于上面三类时默认是它。
 
-## Layer 3. Route Decision
+## Layer 5. Route Decision
 
-### Route 1. `direct`
+### `direct`
 
-当下面大部分都成立时，选择 `direct`：
+当下面大部分都成立时选择：
 
-- 交付物类型明确
-- 成品度明确
-- 文案语言明确
-- 允许文字范围明确
-- 使用场景明确
-- 成功标准明确
+- 资产合同清楚
+- reliability gate 已给出可执行结果
+- representation mode 已明确
+- 使用场景和成功标准明确
 
-### Route 2. `brief-first`
+### `brief-first`
 
-当缺少少量关键字段，且这些字段会显著改变交付物合同或结果时，选择 `brief-first`。
+当缺少 1 到 3 个高杠杆字段，且这些字段会显著改变：
 
-高频触发条件：
+- 资产合同
+- 信息可靠性判断
+- 表达机制
+- 交付 viability
 
-- 这是成品还是底图不清楚
-- 文案语言不清楚
-- 允许文字范围不清楚
-- 使用位置不清楚
-- 用户的通过标准不清楚
+### `repair`
 
-### Route 3. `repair`
+当合同和主线判断大体没错，只需纠正：
 
-当资产类型和合同大体没错，只是细节、工艺、结构、文字纪律没过线时，选择 `repair`。
+- 工艺
+- 层级
+- 轻量文字纪律
+- 局部 overlay 策略
 
-这类 repair 默认属于：
+默认归为：
 
 - `micro_repair`
 
-### Route 4. `contract_realign`
+### `contract_realign`
 
-当下面任一项成立时，优先选择 `contract_realign`：
+当下面任一项成立时优先选择：
 
-- 用户明确指出“这不是我要的资产类型”
-- 用户明确指出“这不是成品”
-- 输出语言与当前任务语言不一致
-- 品牌宣传图被误做成底图
-- README hero 被误做成品牌海报
-- 结果整体语义漂移到错误 domain
+- 资产类型理解错
+- 成品度理解错
+- 语言理解错
+- 信息口径理解错
+- 本应 hybrid / deterministic 的任务被误交给模型直出
 
-这类 route 的第一步不是改 prompt，而是重建：
+这类 route 的第一步不是补 prompt，而是重建：
 
 - `deliverable_type`
 - `asset_completion_mode`
 - `content_language`
 - `allowed_text_scope`
+- `metric_definition`
+- `representation_mode`
 - `acceptance_bar`
 
-## Layer 4. Execution Mode Decision
+## Layer 6. Execution Mode Decision
 
-### `single-output`
+### Candidate Mode
 
-默认用于：
+- `single-output`
+  - 默认用于已锁合同的交付任务
+- `multi-candidate`
+  - 默认用于 benchmark、A/B 或方向性探索
 
-- 品牌宣传图
-- 项目海报
-- 已有清晰合同的交付任务
+### Output Mode
 
-### `multi-candidate`
+- `direct_output`
+  - 结果就是主要交付物
+- `visual_base_plus_post`
+  - 需要显式预留交付区
+- `hybrid_render`
+  - 图像与确定性层一起构成成品
+- `deterministic_render`
+  - 程序化结果本身是主要交付物
 
-默认用于：
+## Layer 8. Delivery Viability Gate
 
-- benchmark
-- A/B 测试
-- 用户明确要求看方向选择
+只在准备继续 overlay、放 fixed elements 或导出多尺寸时进入。
 
-### `direct_output`
+### Gate Questions
 
-适用于：
+1. 当前结果是否还有结构能力承载新增信息
+2. `protected_regions` 是否会被侵入
+3. `collision_risk` 是否可接受
+4. 这次 overlay 会不会破坏信息层级或误导读者
 
-- 用户要完整成品
-- 文本量可控
-- 没有必须后置的固定元素
-- 模型本轮承担最终排版
+### Output Values
 
-### `visual_base_plus_post`
+- `overlay_allowed`
+- `overlay_allowed_with_limits`
+- `overlay_not_allowed_regenerate`
 
-适用于：
+### Hard Rule
 
-- 用户明确要底图
-- 有二维码、logo、价格、CTA 等高精度元素
-- 需要后续适配多尺寸
-- 或当前明确由 `post_process / hybrid` 承担最后排版
-
-### Important Override
-
-不要因为任务“有文字”就自动滑向 `visual_base_plus_post`。
-
-如果合同已经明确是：
-
-- `complete_asset`
-- `layout_owner = model`
-- 文本范围有限且清晰
-
-那应保留 `direct_output` 作为首选。
-
-## Layer 5. Delivery Involvement
-
-### `image-only`
-
-适用于：
-
-- 这轮结果就是最终图像
-- 或虽可能后续再用，但本轮不处理精确落版
-
-### `image-plus-delivery-ops`
-
-适用于：
-
-- 当前已经进入交付层
-- 需要处理固定元素、导出版本、尺寸适配
-
-## Default Heuristics
-
-### Brand / Promo / Launch Assets
-
-默认：
-
-- `task_mode = fresh_generation`
-- `route = direct`
-- `candidate_mode = single-output`
-- `output_mode = direct_output`
-
-除非用户明确要求底图或高精度后处理链。
-
-### User Says “This Is Not What I Asked For”
-
-默认：
-
-- 不进入普通 `repair`
-- 先进入 `contract_realign`
-
-## Strategy Output Checklist
-
-一份合格的 strategy 输出至少应显式回答：
-
-1. 交付物类型是什么
-2. 成品还是底图
-3. 文案语言是什么
-4. 允许哪些文字
-5. route 是什么
-6. repair 如果发生，会是 `micro_repair` 还是 `contract_realign`
+如果 gate 给出 `overlay_not_allowed_regenerate`，默认动作是回到生成或 representation 选择，而不是继续往图上塞字。

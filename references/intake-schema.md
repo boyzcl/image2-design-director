@@ -2,32 +2,25 @@
 
 ## Purpose
 
-这份文档定义 `image2-design-director` 在执行闭环第一阶段的稳定 intake 结构。
+这份文档定义 `image2-design-director` 的 intake 入口，不再只收资产合同，也要同步收：
 
-目标不是立刻写 prompt，而是先把下面几件事收清楚：
-
-- 用户到底想要什么交付物
-- 这次任务要不要直接交成品
-- 文案语言和允许出现的文字范围是什么
-- 这张图最终在哪里使用
-- 这次任务的上下文边界是什么
-- 有没有固定文本、二维码、logo、尺寸或交付约束
+- 信息合同
+- 表达机制假设
+- 交付约束
 
 一句话版本：
 
-> intake 先收“交付物合同”，再收视觉上下文；没有合同，就不应该过早进入生成策略选择。
+> intake 的职责是把“要交什么资产、图里哪些信息可信、准备用什么表达机制、后续还能不能安全交付”收成一份可判断的入口，而不是提前写 prompt。
 
 ## Position In The Loop
 
-这个 schema 属于：
+这个 schema 对应：
 
-- `Stage 1. Requirement Intake`
+1. `Requirement Intake`
+2. `Asset Contract Lock`
+3. `Information Reliability Gate` 的前置输入准备
 
-它输出的内容应交给下一阶段：
-
-- `Stage 2. Strategy Selection`
-
-所以 intake 的职责不是替代 strategy，而是保证 strategy 拿到的是一份已经把“成品还是底图、语言是什么、完成标准是什么”说清楚的任务入口。
+它不负责最后决定 route，但必须为后续阶段提供足够明确的判断材料。
 
 ## Core Principles
 
@@ -36,295 +29,196 @@
 必须同时保留：
 
 - 用户原始请求
-- 我们结构化理解后的结果
+- 我们的结构化理解
 
-不要直接覆盖用户原话，否则后面无法定位误解源头。
+否则后续无法区分“用户真这么说”还是“系统误解后补出来的意思”。
 
 ### 2. Asset Contract Before Style
 
-在讨论风格、构图和材质之前，必须先收清：
+先收清：
 
-- 最终交付物是什么
-- 是完整成品还是中间底图
-- 谁来完成最后排版
-- 文案语言是什么
-- 什么才算用户可验收
+- 最终交付物类型
+- 成品度
+- 文案语言
+- 允许文字范围
+- 最终版式归属
+- 验收标准
 
-### 3. Finished Asset By Default
+没有这层合同，就不应进入风格或 prompt family 讨论。
 
-如果用户没有明确说：
+### 3. Information Contract Before Factual Expression
 
-- “先给底图”
-- “我后面自己排字”
-- “预留标题区”
+只要任务里存在任何可能被读者当成事实的信息，就要先收清：
 
-那默认应把任务视为：
+- 这是哪类 claim
+- 证据强度要求是什么
+- 主线 metric 的定义是什么
+- 截止日期是什么
+- 如果证据不够，允许怎么降级表达
 
-- `complete_asset`
+### 4. Representation Strategy Is Part Of Intake Handoff
 
-而不是默认滑向：
+intake 不必最终拍板，但必须初步判断：
 
-- `base_visual`
-
-### 4. Conversation Language Is The Default Content Language
-
-在用户未单独指定时：
-
-- 当前会话语言 = 默认文案语言
-
-项目名、产品名、repo 名可以保留原文，但 slogan、subtitle、CTA、supporting copy 默认跟随当前会话语言。
+- 更像模型直出
+- 更像模型图像加轻量文字
+- 更像程序化 / 确定性表达
+- 还是明显要走混合路径
 
 ### 5. Ask Only High-Leverage Questions
 
-如果需要补问，只问那些会显著改变交付物合同的问题。
+如果需要补问，只问会显著改变下面 4 类结果的字段：
 
-优先问：
-
-1. 这是成品还是底图
-2. 文字要不要直出
-3. 文案语言是什么
-4. 最终放在哪里
-5. 什么样算过线
+1. 资产合同
+2. 信息可靠性
+3. 表达机制
+4. 交付可行性
 
 ## Intake Outputs
 
-一次合格的 intake 至少应产出下面五个对象：
+一次合格的 intake 至少应产出下面 6 个对象：
 
-### 1. Raw Request
-
-保留用户原话或原始素材入口。
-
-### 2. Requirement Summary
-
-把“这次要交付什么”收成简洁、可执行的摘要。
-
-### 3. Asset Contract Snapshot
-
-把“成品还是底图、语言是什么、允许哪些文字、由谁完成最终排版”单独收出来。
-
-### 4. Context Summary
-
-把背景、产品语境、素材来源、风险边界收成上下文摘要。
-
-### 5. Delivery Constraints Snapshot
-
-把固定文本、二维码、尺寸、直出 / 后处理限制单独列出。
+1. `raw_request`
+   - 用户原话与素材入口
+2. `requirement_summary`
+   - 这轮最终要交什么
+3. `asset_contract_snapshot`
+   - 成品度、语言、允许文字、版式归属、验收标准
+4. `information_contract_snapshot`
+   - 事实敏感度、claim 类型、证据要求、metric 口径、日期截点、不确定性策略
+5. `delivery_constraints_snapshot`
+   - 固定元素、尺寸、protected regions、overlay 预期
+6. `readiness_snapshot`
+   - 缺失字段、开放问题、建议 route
 
 ## Minimum Intake Contract
-
-下面这些字段构成最小 intake 合同。
 
 ### Required Core Fields
 
 | Field | Required | Meaning |
 |---|---|---|
-| `user_raw_request` | yes | 用户原始请求，不做改写 |
+| `user_raw_request` | yes | 用户原始请求 |
 | `user_goal` | yes | 用户最终想完成什么 |
-| `asset_type` | yes | 资产类型，如 brand promo poster、project hero、feed creative |
-| `usage_context` | yes | 最终使用位置或渠道 |
-| `requirement_summary` | yes | 我们对交付目标的结构化摘要 |
-| `context_summary` | yes | 与本轮输出直接相关的背景摘要 |
+| `deliverable_type` | yes | 最终交付物类型 |
+| `usage_context` | yes | 最终使用场景 |
+| `requirement_summary` | yes | 结构化任务摘要 |
+| `context_summary` | yes | 直接相关背景摘要 |
 | `success_criteria` | yes | 用户视角的通过标准 |
-| `direct_output_vs_post_process` | yes | intake 层对直出 / 后处理的初步判断 |
 
 ### Asset Contract Fields
 
-下面这些字段现在应被视为 intake 的正式主字段。
+| Field | Required | Meaning |
+|---|---|---|
+| `asset_completion_mode` | yes | `complete_asset / base_visual / delivery_refinement / undecided` |
+| `content_language` | yes | 默认文案语言 |
+| `allowed_text_scope` | yes | 允许出现的可读文字范围 |
+| `layout_owner` | yes | `model / post_process / hybrid` |
+| `acceptance_bar` | yes | 怎样才算通过 |
+
+### Information Reliability Fields
 
 | Field | Required | Meaning |
 |---|---|---|
-| `deliverable_type` | yes | 最终交付物类型，如 brand promo poster、README hero、launch poster |
-| `asset_completion_mode` | yes | `complete_asset / base_visual / delivery_refinement / undecided` |
-| `content_language` | yes | 当前默认文案语言 |
-| `allowed_text_scope` | yes | 允许出现的可读文字范围 |
-| `final_layout_owner` | yes | `model / post_process / hybrid` |
-| `acceptance_bar` | yes | 用户可验收的完成定义 |
+| `factual_sensitivity` | yes | `low / medium / high` |
+| `claim_type` | yes | `visual_analogy / factual / comparative / temporal / price / performance / mixed` |
+| `evidence_requirement` | yes | `none / reference_provided / verify_before_render / exact_value_lock` |
+| `metric_definition` | yes | 主线 metric 的定义；纯隐喻任务写 `not_applicable` |
+| `as_of_date` | conditional | 时间、价格、对比、排行等任务的日期截点 |
+| `uncertainty_policy` | yes | `visual_analogy_only / fact_with_disclaimer / stop_and_brief` 等 |
+| `evidence_sources` | conditional | 来源、链接、附件、数据表或用户提供的证据入口 |
 
-### Conditional Fields
+### Representation Handoff Fields
+
+| Field | Required | Meaning |
+|---|---|---|
+| `representation_mode` | yes | `model_direct_visual / model_visual_with_limited_text / visual_base_plus_post / hybrid_visual_plus_deterministic_overlay / deterministic_render / undecided` |
+| `primary_expression_system` | yes | `image_model / deterministic_renderer / hybrid` |
+| `deterministic_render_needed` | yes | 是否需要确定性渲染承载关键内容 |
+| `text_generation_tolerance` | yes | `none / decorative_only / headline_only / limited_structured_text / exact_text_not_allowed` |
+| `numeric_render_strategy` | yes | `omit_numeric_claims / model_render_ok / overlay_exact_values / deterministic_chart` |
+
+### Delivery Constraint Fields
 
 | Field | Required When | Meaning |
 |---|---|---|
-| `background_context` | 任务绑定具体项目、产品、品牌、活动时 | 任务的业务或产品背景 |
-| `brand_or_product_sources` | 用户给了仓库、截图、页面、品牌资料时 | 上下文来源列表 |
-| `target_audience` | 受众会改变表达方式时 | 目标受众 |
-| `fixed_text` | 有必须准确出现的文案时 | 必须保留的文字 |
-| `fixed_elements` | 有二维码、logo、badge、价格条等时 | 必须出现的固定元素 |
-| `size_and_delivery_constraints` | 有尺寸、比例、导出格式要求时 | 交付约束 |
-| `reference_assets` | 有参考图、旧版本、已有素材时 | 已有可参考资产 |
-| `source_materials` | 用户给了 PDF、截图、页面、附件、现有图片、设计稿时 | 任务直接依赖的输入素材 |
-| `existing_generation_context` | 用户已有上一版、已有失败图、或当前任务本质是修图时 | 对已有结果的说明 |
+| `fixed_text` | 有必须逐字正确文本时 | 必须保留的文字 |
+| `fixed_elements` | 有二维码、logo、badge、价格牌等时 | 必须出现的固定元素 |
+| `size_and_delivery_constraints` | 有尺寸、比例、导出要求时 | 交付约束 |
+| `protected_regions` | 预计需要叠字或固定元素时 | 不可侵入区域 |
+| `overlay_classes_expected` | 预计会做 overlay 时 | 允许进入的 overlay 类别 |
+| `reference_assets` | 有参考图、旧版本、已有素材时 | 参考资产 |
+| `source_materials` | 有截图、页面、PDF、附件时 | 输入素材 |
+| `existing_generation_context` | 已有上一版或失败图时 | 当前 iteration 上下文 |
 | `must_avoid` | 有明确禁区时 | 必须避免的方向 |
 
-### Execution-Handoff Fields
+### Execution Handoff Fields
 
 | Field | Required | Meaning |
 |---|---|---|
-| `open_questions` | yes | 当前仍未确定、但可能影响结果的问题 |
-| `missing_critical_fields` | yes | 当前缺失的关键字段 |
+| `open_questions` | yes | 仍可能影响结果的问题 |
+| `missing_critical_fields` | yes | 仍缺的关键信息 |
 | `intake_confidence` | yes | `low / medium / high` |
-| `recommended_route_hint` | yes | 只给建议方向：`direct / brief-first / repair / contract_realign` |
+| `recommended_route_hint` | yes | `direct / brief-first / repair / contract_realign` |
 
 ## Field Guidance
 
 ### `deliverable_type`
 
-要写最终资产，不要写视觉气氛。
+写最终资产，不要写气氛词。
 
 更推荐：
 
 - `brand promo poster`
-- `project launch poster`
 - `README hero`
-- `feed creative`
+- `social launch creative`
 - `onboarding visual`
+- `data-backed comparison visual`
 
-不要只写：
+### `factual_sensitivity`
 
-- “宣传图”
-- “高级海报”
+判断的是：
 
-### `asset_completion_mode`
+- 观众会不会把这张图当成事实表达
+- 错一项会不会造成误导
 
-只允许：
+默认启发：
 
-- `complete_asset`
-- `base_visual`
-- `delivery_refinement`
-- `undecided`
+- 纯品牌氛围图通常是 `low`
+- 带价格、日期、排行、性能结论时至少 `medium`
+- 带精确数值、对比结论、时效口径时通常是 `high`
 
-默认规则：
+### `metric_definition`
 
-- 用户没说要中间稿时，优先 `complete_asset`
+不要只写“增长”“最强”“领先”。
 
-### `content_language`
+更推荐：
 
-默认写当前会话语言，例如：
+- `7-day revenue growth rate`
+- `BTC price in USD spot market`
+- `monthly active users, global consumer app`
 
-- `zh-CN`
-- `en`
+### `uncertainty_policy`
 
-如果用户明确要双语，再单独说明；不要把“双语可能有帮助”当成默认。
+推荐只用能直接驱动行为的值：
 
-### `allowed_text_scope`
+- `visual_analogy_only`
+- `fact_with_disclaimer`
+- `stop_and_brief`
 
-回答的是：
+### `representation_mode`
 
-- 图里允许出现哪些可读文字
-- 哪些文字是唯一允许的
-- 是否允许额外说明字、伪 UI 文案、小字背景纹理
+这是表达机制，不是风格偏好。
 
-推荐写法：
+示例：
 
-- `only project name + one Chinese slogan + one Chinese subtitle`
-- `project name only`
-- `no readable text`
+- 品牌海报直出成品：`model_direct_visual`
+- 需要 QR、logo 和精确 CTA：`visual_base_plus_post`
+- 高事实敏感比较图：`hybrid_visual_plus_deterministic_overlay`
+- 纯图表或精确数据板：`deterministic_render`
 
-### `final_layout_owner`
+## Readiness Rules
 
-只允许：
-
-- `model`
-- `post_process`
-- `hybrid`
-
-解释：
-
-- `model`: 本轮要求模型直接交成品
-- `post_process`: 模型只负责底图，最终版式不在本轮
-- `hybrid`: 主视觉由模型完成，精确元素后置
-
-### `acceptance_bar`
-
-这里回答的是：
-
-- 用户眼里什么叫“现在就能用”
-
-推荐写法：
-
-- `must be a directly usable brand promo poster`
-- `must preserve Chinese headline hierarchy and require no additional copy pass`
-- `may remain a clean text-safe base for later layout`
-
-## Intake Question Policy
-
-### When To Ask Follow-Up Questions
-
-当下面任一项缺失且会显著改变结果时，应该补问：
-
-- 最终交付物类型不清楚
-- 这是成品还是底图不清楚
-- 文案语言不清楚
-- 允许出现哪些文字不清楚
-- 谁负责最后排版不清楚
-- 使用位置不清楚
-- 用户的通过标准不清楚
-
-### Question Budget
-
-默认最多问 `1-3` 个问题。
-
-优先级顺序：
-
-1. 这是完整成品还是底图
-2. 文案语言和允许文字范围
-3. 最终放在哪里 / 谁来做最后排版
-
-### When Not To Ask
-
-如果下面这些已经明确，优先直接进入下一阶段：
-
-- 交付物类型明确
-- 成品度明确
-- 文案语言明确
-- 使用场景明确
-- 成功标准明确
-
-## Output Template
-
-推荐把一次 intake 先收成下面这个结构。
-
-```yaml
-user_raw_request: ""
-user_goal: ""
-asset_type: ""
-deliverable_type: ""
-usage_context: ""
-requirement_summary: ""
-context_summary: ""
-background_context: ""
-brand_or_product_sources: []
-target_audience: ""
-success_criteria: []
-
-asset_contract:
-  asset_completion_mode: "complete_asset"
-  content_language: "zh-CN"
-  allowed_text_scope: ""
-  final_layout_owner: "model"
-  acceptance_bar: ""
-
-fixed_text: []
-fixed_elements: []
-size_and_delivery_constraints: []
-reference_assets: []
-source_materials: []
-existing_generation_context: ""
-must_avoid: []
-direct_output_vs_post_process: "direct_output"
-
-open_questions: []
-missing_critical_fields: []
-intake_confidence: "medium"
-recommended_route_hint: "direct"
-```
-
-## Intake Completion Checklist
-
-在把 intake 交给下一阶段前，至少确认下面这些问题已经被回答：
-
-1. 这轮到底要交付什么资产
-2. 这是完整成品还是中间底图
-3. 文案语言是否已锁定
-4. 允许出现的文字范围是否已锁定
-5. 谁负责最终排版是否已明确
-6. 用户可验收的完成定义是否已明确
+- 如果 `asset contract` 不清，优先 `brief-first`
+- 如果 `factual_sensitivity` 高但 `evidence_requirement` 未满足，不能进入普通 prompt assembly
+- 如果预期 overlay 但 `protected_regions` 完全未知，默认不能把当前任务标成 delivery-ready
+- 如果 `representation_mode = undecided` 且它会改变结果可用性，也应先补齐再继续

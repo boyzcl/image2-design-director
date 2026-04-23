@@ -1,123 +1,147 @@
 # Repair Playbook
 
-## 目标
+## Goal
 
-repair 模式下，不靠“再来一版”碰运气，而是先判断失败属于：
-
-- `micro_repair`
-- `contract_realign`
+repair 模式下，不靠“再来一版”碰运气，而是先判断失败发生在哪一层，再决定是微修、重对齐，还是直接重生成。
 
 一句话版本：
 
-> 如果错的是细节，就做微修；如果错的是任务理解，就先重建交付物合同。
+> repair 现在先分 failure axis，再选 repair class；错的是细节才微修，错的是合同、信息口径或表达机制就先回上游。
 
-## 总规则
+## Failure Axis Before Repair Class
 
-1. 先给失败归类
+先判断失败属于哪一层：
+
+1. `contract_failure`
+2. `reliability_failure`
+3. `representation_failure`
+4. `delivery_viability_failure`
+5. `craft_failure`
+
+## General Rules
+
+1. 先给失败归层
 2. 一轮只改 1 到 2 个关键变量
 3. 明确 `Change only` 和 `Keep unchanged`
-4. 如果错的是合同，不要直接补 prompt，先重对齐任务
+4. 如果错在上游，不要只补 prompt
+5. 如果 viability gate 已经 no-go，默认优先重生成
 
 ## Repair Class 1. `micro_repair`
 
 适用于：
 
-- 资产类型对了
-- 成品度对了
-- 语言对了
-- 但细节、结构、工艺、文字纪律没过线
+- 资产合同基本正确
+- information reliability 已过线
+- representation mode 基本正确
+- 只是局部工艺、层级、有限 overlay 或文字纪律没过线
 
 常见场景：
 
-- 中文标题控制不稳
-- 版式层级还不够稳
-- 主体对了，但工艺不够精
+- 标题区层级还不够稳
+- badge 或 CTA 太重
+- 局部 overlay 擦到软保护区
+- 语言细节跑偏但不影响整体 representation
 
 输出模板：
 
 ```text
 Repair class: micro_repair
-Failure class: <哪一类失败>
+Failure axis: <craft / delivery_viability / minor language>
 Why it failed: <一句话根因>
 Change only: <本轮只改什么>
 Keep unchanged: <必须保持什么>
-Prompt delta: <本轮新增或替换的关键约束>
+Prompt or delivery delta: <新增或替换的关键约束>
 ```
 
 ## Repair Class 2. `contract_realign`
 
 适用于：
 
-- 用户指出“这不是我要的资产类型”
-- 用户指出“这不是成品”
-- 用户指出“语言不对”
-- 品牌语义漂移到错误 domain
+- 资产类型理解错
+- 成品度理解错
+- 语言策略理解错
+- metric 或 claim 口径理解错
+- 本该 hybrid / deterministic 的任务被误跑成模型直出
 
-这类 repair 的第一步必须是重建下面这些字段：
+这类 repair 的第一步必须重建：
 
 - `deliverable_type`
 - `asset_completion_mode`
 - `content_language`
 - `allowed_text_scope`
+- `metric_definition`
+- `representation_mode`
 - `acceptance_bar`
 
 输出模板：
 
 ```text
 Repair class: contract_realign
-What was misread: <资产类型 / 成品度 / 语言 / 品牌语义>
+Failure axis: <contract / reliability / representation>
+What was misread: <一句话>
 Reset contract:
 - Deliverable:
 - Completion mode:
 - Content language:
 - Allowed text scope:
+- Metric definition:
+- Representation mode:
 - Acceptance bar:
-Next move: <重新生成还是进入新一轮 direct>
+Next move: <new direct / hybrid render / deterministic render>
 ```
+
+## When To Regenerate Instead Of Repair
+
+下面情况默认优先重生成，而不是继续往当前图上补：
+
+- `delivery_viability_failure` 且结果为 `overlay_not_allowed_regenerate`
+- 主体区已经被占满
+- dense info 需求与当前 representation 完全不匹配
+- 继续补只会把图变得更不可信或更不可用
 
 ## Failure Types To Watch
 
-### 1. Brand / Promo Asset Drifted Into Base Visual
+### Brand / Promo Asset Drifted Into Base Visual
 
 默认：
 
+- `contract_failure`
 - `contract_realign`
 
-### 2. Language Drift
+### Language Drift
+
+默认：
+
+- 若只影响细节，可 `micro_repair`
+- 若牵动版式、成品度或事实表达，优先 `contract_realign`
+
+### Wrong Metric Or Timeframe
 
 例如：
 
-- 中文任务里自动切英文 slogan
+- 用错比较口径
+- 用错日期截点
 
 默认：
 
-- 若整体资产类型没错，可 `micro_repair`
-- 若语言其实牵动整体版式和成品度，优先 `contract_realign`
+- `reliability_failure`
+- `contract_realign`
 
-### 3. Wrong Asset Type
+### Wrong Representation
 
 例如：
 
-- 品牌海报做成 README hero
-- README hero 做成社媒海报
+- 应该 deterministic 的数据图被做成带 AI 文本的海报
 
 默认：
 
+- `representation_failure`
 - `contract_realign`
 
-### 4. Brand Semantics Drift
-
-例如：
-
-- 项目海报被补成建筑 / 地产 / 室内 / 材料板
-
-默认：
-
-- `contract_realign`
-
-### 5. Good-Looking But Not Usable
+### Good-Looking But Not Usable
 
 默认：
 
 - 若核心原因是成品度错位，`contract_realign`
-- 若只是局部排版还差一点，`micro_repair`
+- 若核心原因是 overlay capacity 已耗尽，直接 `regenerate`
+- 若只是局部工艺还差一点，`micro_repair`

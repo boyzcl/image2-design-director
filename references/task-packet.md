@@ -2,52 +2,53 @@
 
 ## Purpose
 
-这份文档定义 `image2-design-director` 在进入 prompt assembly 之前的统一任务包格式。
-
-它的作用不是重复 intake，也不是重复 strategy，而是把两者压成一份可以稳定执行、稳定评估、稳定留痕的统一输入。
+这份文档定义 `image2-design-director` 在进入 prompt assembly 或确定性渲染之前的统一任务包格式。
 
 一句话版本：
 
-> intake 负责把需求和交付物合同收清楚，strategy 负责决定怎么跑，task packet 负责把它们压成一份可执行资产说明书。
+> task packet 不是“需求摘要”，而是一份可执行的任务说明书，必须同时携带资产合同、信息合同、表达机制决定、交付 gate 要求，以及后续可追责的判断依据。
 
 ## Position In The Loop
 
-这个 task packet 位于：
+task packet 位于：
 
-- `Stage 1. Requirement Intake`
-- `Stage 2. Strategy Selection`
+1. `Requirement Intake`
+2. `Asset Contract Lock`
+3. `Information Reliability Gate`
+4. `Representation Strategy Selection`
 
-之后，服务于：
+之后服务于：
 
-- `Stage 3. Prompt Assembly And Image Generation`
-- `Stage 4. Evaluation And Scoring`
+- `Prompt / Render Assembly`
+- `Evaluation And Scoring`
+- `Delivery Viability Gate`
 - runtime capture
 
 ## Packet Structure
 
-一个完整 task packet 由 7 个区块组成。
+一个完整 packet 由 8 个区块组成。
 
 ### 1. Request Block
 
-保留用户原始输入。
+保留原始输入，不做解释性改写。
 
-必须包含：
+必含：
 
 - `user_raw_request`
 
-可选补充：
+按需补充：
 
 - `source_materials`
 - `reference_assets`
+- `existing_generation_context`
 
 ### 2. Requirement Block
 
 回答“这轮最终要交付什么”。
 
-必须包含：
+必含：
 
 - `user_goal`
-- `asset_type`
 - `deliverable_type`
 - `usage_context`
 - `requirement_summary`
@@ -55,9 +56,9 @@
 
 ### 3. Asset Contract Block
 
-回答“这轮要交成什么状态的资产，以及交付边界是什么”。
+回答“这轮要交成什么状态的资产”。
 
-必须包含：
+必含：
 
 - `asset_completion_mode`
 - `content_language`
@@ -71,52 +72,82 @@
 - `language_override_reason`
 - `completion_override_reason`
 
-### 4. Context Block
+### 4. Information Reliability Block
 
-回答“这轮图像任务服务于什么语境”。
+回答“图里承载的信息是否可信，以及在什么边界内表达”。
 
-必须包含：
+必含：
 
-- `context_summary`
+- `factual_sensitivity`
+- `claim_type`
+- `evidence_requirement`
+- `metric_definition`
+- `uncertainty_policy`
+- `reliability_gate_result`
 
 按需补充：
 
-- `background_context`
-- `brand_or_product_sources`
-- `target_audience`
-- `must_avoid`
+- `as_of_date`
+- `secondary_metrics`
+- `evidence_sources`
+- `information_risks`
 
-### 5. Constraint Block
+### 5. Representation Block
 
-回答“这轮有哪些必须遵守的边界”。
+回答“这轮信息应该由哪种表达机制承载”。
 
-按需包含：
+必含：
+
+- `representation_mode`
+- `primary_expression_system`
+- `deterministic_render_needed`
+- `text_generation_tolerance`
+- `numeric_render_strategy`
+- `representation_reasoning`
+
+按需补充：
+
+- `prompt_family`
+- `deterministic_render_spec`
+- `representation_fallback`
+
+### 6. Delivery Block
+
+回答“这轮交付怎么落，以及之后需不需要 viability gate”。
+
+必含：
+
+- `output_mode`
+- `delivery_involvement`
+- `viability_check_required`
+- `allowed_overlay_classes`
+
+按需补充：
 
 - `fixed_text`
 - `fixed_elements`
 - `size_and_delivery_constraints`
-- `direct_output_vs_post_process`
+- `protected_regions`
+- `reserved_zones`
+- `delivery_plan_notes`
 
-### 6. Strategy Block
+### 7. Strategy Block
 
 回答“这轮决定怎么跑”。
 
-必须包含：
+必含：
 
 - `domain_direction`
 - `support_tier`
 - `task_mode`
 - `route`
 - `candidate_mode`
-- `output_mode`
-- `delivery_involvement`
 - `strategy_reasoning`
 
 按需补充：
 
 - `matched_profile`
 - `profile_confidence`
-- `generalization_strategy`
 - `legacy_use_case`
 - `question_budget`
 - `repair_class`
@@ -125,17 +156,18 @@
 - `route_override_reason`
 - `strategy_conflicts`
 
-### 7. Readiness Block
+### 8. Readiness And Accountability Block
 
-回答“这份任务包是否已经可以交给下一阶段”。
+回答“是否可以进入下一阶段，以及后续按什么维度追责”。
 
-必须包含：
+必含：
 
 - `packet_lineage`
 - `open_questions`
 - `missing_critical_fields`
 - `intake_confidence`
 - `packet_readiness`
+- `evaluation_focus`
 
 推荐值：
 
@@ -150,38 +182,36 @@
 必须同时保留：
 
 - 原始请求
-- 结构化理解
+- 结构化判断
 
-### 2. Asset Contract Must Stay Explicit
+### 2. Information Contract Must Stay Explicit
 
-task packet 不能只留下“要做什么图”，还必须留下：
+packet 不能只说“要做什么图”，还必须说清：
 
-- 这是不是成品
-- 文字语言是什么
-- 允许哪些文字
-- 由谁完成最终排版
-- 怎样才算用户可验收
+- 关键信息是不是事实表达
+- 证据强度够不够
+- 允许的日期和 metric 口径是什么
+- 如果不能验证，应如何降级
 
-否则 prompt、evaluation、repair 会持续各自重新猜一次。
+### 3. Representation Strategy Must Stay Explicit
 
-### 3. Keep Strategy Explicit
+packet 必须明确：
 
-task packet 不能只留下内容字段，还必须把策略字段带进去。
+- 这轮主要靠模型直出、后置、确定性渲染还是混合路径
 
-### 4. Let Packet Readiness Control The Next Step
+否则 prompt、overlay、scorecard 会继续各猜一次。
 
-- `ready`: 进入 prompt assembly
-- `needs_brief`: 先补 1 到 3 个高杠杆问题
-- `blocked`: 当前不能继续
+### 4. Delivery Viability Is A Formal Handoff Requirement
+
+如果后续要叠字、放 QR、放 logo、放价格或图表，packet 必须显式说明：
+
+- `viability_check_required`
+- `allowed_overlay_classes`
+- `protected_regions`
 
 ### 5. Keep Prompt Out Of The Packet
 
-task packet 服务于 prompt，但 task packet 本身不是最终 prompt。
-
-它不应包含：
-
-- `final_prompt`
-- `image_prompt`
+task packet 服务于 prompt 或 render spec，但自身不是最终 prompt。
 
 ## Minimum Packet Contract
 
@@ -189,7 +219,6 @@ task packet 服务于 prompt，但 task packet 本身不是最终 prompt。
 |---|---|---|
 | request | `user_raw_request` | yes |
 | requirement | `user_goal` | yes |
-| requirement | `asset_type` | yes |
 | requirement | `deliverable_type` | yes |
 | requirement | `usage_context` | yes |
 | requirement | `requirement_summary` | yes |
@@ -199,51 +228,53 @@ task packet 服务于 prompt，但 task packet 本身不是最终 prompt。
 | asset_contract | `allowed_text_scope` | yes |
 | asset_contract | `layout_owner` | yes |
 | asset_contract | `acceptance_bar` | yes |
-| context | `context_summary` | yes |
-| constraint | `direct_output_vs_post_process` | yes |
+| information | `factual_sensitivity` | yes |
+| information | `claim_type` | yes |
+| information | `evidence_requirement` | yes |
+| information | `metric_definition` | yes |
+| information | `uncertainty_policy` | yes |
+| information | `reliability_gate_result` | yes |
+| representation | `representation_mode` | yes |
+| representation | `primary_expression_system` | yes |
+| representation | `deterministic_render_needed` | yes |
+| representation | `text_generation_tolerance` | yes |
+| representation | `numeric_render_strategy` | yes |
+| delivery | `output_mode` | yes |
+| delivery | `delivery_involvement` | yes |
+| delivery | `viability_check_required` | yes |
+| delivery | `allowed_overlay_classes` | yes |
 | strategy | `domain_direction` | yes |
 | strategy | `support_tier` | yes |
 | strategy | `task_mode` | yes |
 | strategy | `route` | yes |
 | strategy | `candidate_mode` | yes |
-| strategy | `output_mode` | yes |
-| strategy | `delivery_involvement` | yes |
 | strategy | `strategy_reasoning` | yes |
 | readiness | `packet_lineage` | yes |
 | readiness | `open_questions` | yes |
 | readiness | `missing_critical_fields` | yes |
 | readiness | `intake_confidence` | yes |
 | readiness | `packet_readiness` | yes |
+| readiness | `evaluation_focus` | yes |
 
-## Packet Assembly Rules
+## Packet Readiness Rules
+
+- `ready`
+  - 资产合同已锁定，reliability gate 已给出可执行结果，representation mode 已明确
+- `needs_brief`
+  - 仍缺 1 到 3 个高杠杆字段
+- `blocked`
+  - 事实敏感任务无证据、核心 metric 未定义、或 delivery 约束缺失到无法继续
+
+## Assembly Notes
 
 ### From Intake
 
 原则上直接继承：
 
-- `user_raw_request`
-- `source_materials`
-- `reference_assets`
-- `user_goal`
-- `asset_type`
-- `deliverable_type`
-- `usage_context`
-- `requirement_summary`
-- `success_criteria`
-- `context_summary`
-- `background_context`
-- `brand_or_product_sources`
-- `target_audience`
-- `must_avoid`
-- `fixed_text`
-- `fixed_elements`
-- `size_and_delivery_constraints`
-- `direct_output_vs_post_process`
-- `asset_completion_mode`
-- `content_language`
-- `allowed_text_scope`
-- `final_layout_owner`
-- `acceptance_bar`
+- 原始请求和素材
+- 资产合同字段
+- 信息合同字段
+- delivery 约束字段
 - `open_questions`
 - `missing_critical_fields`
 - `intake_confidence`
@@ -252,85 +283,19 @@ task packet 服务于 prompt，但 task packet 本身不是最终 prompt。
 
 原则上直接继承：
 
-- `domain_direction`
-- `matched_profile`
-- `support_tier`
-- `profile_confidence`
-- `generalization_strategy`
-- `legacy_use_case`
-- `task_mode`
+- `reliability_gate_result`
+- `representation_mode`
+- `output_mode`
+- `viability_check_required`
 - `route`
 - `candidate_mode`
-- `output_mode`
-- `delivery_involvement`
 - `strategy_reasoning`
-- `question_budget`
-- `repair_class`
-- `repair_scope`
-- `keep_unchanged`
-- `route_override_reason`
-- `strategy_conflicts`
 
-## Example Packet
+## Accountability Reminder
 
-```yaml
-request:
-  user_raw_request: "给这个 skill 做一张完整可用的品牌宣传图。"
+任何准备进入执行的 packet，都应能回答下面 4 个问题：
 
-requirement:
-  user_goal: "产出一张可直接用于仓库宣传和公开发布的品牌海报。"
-  asset_type: "brand poster"
-  deliverable_type: "brand promo poster"
-  usage_context: "GitHub repo / social launch / project intro"
-  requirement_summary: "需要完整可用的品牌宣传海报，而不是待补字底图。"
-  success_criteria:
-    - "必须是可直接使用的成品海报"
-    - "文字语言必须跟随当前中文会话"
-    - "不能漂移成建筑、地产或材料板语义"
-
-asset_contract:
-  asset_completion_mode: "complete_asset"
-  content_language: "zh-CN"
-  allowed_text_scope: "only project name + one Chinese slogan + one Chinese subtitle"
-  layout_owner: "model"
-  acceptance_bar: "图像应作为完整品牌成品海报直接可用。"
-  contract_risks:
-    - "系统可能错误滑向 text-safe base"
-    - "系统可能错误切到英文文案"
-
-context:
-  context_summary: "这是一个 AI design-director layer，用于把模糊图像需求推进到可交付资产。"
-  must_avoid:
-    - "architecture board"
-    - "real-estate semantics"
-    - "extra English microtext"
-
-constraints:
-  fixed_text:
-    - "image2-design-director"
-    - "让 Prompt 真正能交付"
-    - "把模糊需求变成可用的设计资产"
-  direct_output_vs_post_process: "direct_output"
-
-strategy:
-  domain_direction: "brand promo poster for an AI design-director skill"
-  matched_profile: "social-creative"
-  support_tier: "accelerated"
-  task_mode: "fresh_generation"
-  route: "direct"
-  candidate_mode: "single-output"
-  output_mode: "direct_output"
-  delivery_involvement: "image-only"
-  strategy_reasoning:
-    - "用户要的是完整可用成品，不是底图。"
-    - "文案语言已明确，且允许文本范围已锁定。"
-
-readiness:
-  packet_lineage:
-    intake_version: "v-next"
-    strategy_version: "v-next"
-  open_questions: []
-  missing_critical_fields: []
-  intake_confidence: "high"
-  packet_readiness: "ready"
-```
+1. 这轮信息为什么可信，或为什么只允许做视觉隐喻
+2. 为什么选择这种表达机制
+3. 如果后续要 overlay，靠什么判断还能不能继续交付
+4. 最终不过线时，失败会落在哪一层
