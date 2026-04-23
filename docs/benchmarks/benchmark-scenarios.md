@@ -25,6 +25,7 @@
 
 - 修改 prompt 框架
 - 修改 route 判断
+- 修改 trigger 边界或 frontmatter `description`
 - 修改 post-processing 或 delivery 规则
 - 修改多候选策略
 - 修改 promotion governance
@@ -40,6 +41,7 @@
 每次 benchmark 应至少配合：
 
 - `docs/benchmarks/benchmark-run-template.md`
+- `docs/benchmarks/trigger-regression-suite.md`
 
 如果是在比较两种策略，额外配合：
 
