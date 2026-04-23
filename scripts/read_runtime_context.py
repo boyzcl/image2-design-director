@@ -17,6 +17,14 @@ def main() -> int:
     parser.add_argument("--domain-direction", default=None, help="Domain direction substring to match")
     parser.add_argument("--matched-profile", default=None, help="Matched profile to match")
     parser.add_argument("--support-tier", default=None, help="Support tier to match")
+    parser.add_argument("--deliverable-type", default=None, help="Deliverable type substring to match")
+    parser.add_argument("--asset-completion-mode", default=None, help="Asset completion mode to match")
+    parser.add_argument("--content-language", default=None, help="Content language to match")
+    parser.add_argument("--layout-owner", default=None, help="Layout owner to match")
+    parser.add_argument("--allowed-text-scope", default=None, help="Allowed text scope substring to match")
+    parser.add_argument("--contract-alignment-result", default=None, help="Contract alignment result to match")
+    parser.add_argument("--completion-readiness-result", default=None, help="Completion readiness result to match")
+    parser.add_argument("--repair-class", default=None, help="Repair class to match")
     parser.add_argument("--limit", type=int, default=5, help="Maximum number of matches")
     parser.add_argument(
         "--raw-only",
@@ -33,6 +41,14 @@ def main() -> int:
         domain_direction=args.domain_direction,
         matched_profile=args.matched_profile,
         support_tier=args.support_tier,
+        deliverable_type=args.deliverable_type,
+        asset_completion_mode=args.asset_completion_mode,
+        content_language=args.content_language,
+        layout_owner=args.layout_owner,
+        allowed_text_scope=args.allowed_text_scope,
+        contract_alignment_result=args.contract_alignment_result,
+        completion_readiness_result=args.completion_readiness_result,
+        repair_class=args.repair_class,
         limit=args.limit,
         include_local_skill=not args.raw_only,
     )

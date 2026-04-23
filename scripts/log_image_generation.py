@@ -27,6 +27,22 @@ def main() -> int:
         default=None,
         help="Compatibility field for older use-case classification",
     )
+    parser.add_argument("--deliverable-type", default=None, help="Final asset type, for example: brand promo poster")
+    parser.add_argument(
+        "--asset-completion-mode",
+        default=None,
+        choices=["complete_asset", "base_visual", "delivery_refinement"],
+        help="Whether this run targets a finished asset, base visual, or delivery refinement",
+    )
+    parser.add_argument("--content-language", default=None, help="Content language, for example: zh-CN")
+    parser.add_argument("--allowed-text-scope", default=None, help="Allowed readable text scope for the asset")
+    parser.add_argument(
+        "--layout-owner",
+        default=None,
+        choices=["model", "post_process", "hybrid"],
+        help="Who owns the final layout in this run",
+    )
+    parser.add_argument("--acceptance-bar", default=None, help="User-facing definition of done for this asset")
     parser.add_argument("--route", required=True, help="Route used: direct, brief-first, or repair")
     parser.add_argument("--initial-brief", required=True, help="Original user brief")
     parser.add_argument("--final-prompt", required=True, help="Structured final prompt used for the run")
@@ -44,6 +60,24 @@ def main() -> int:
     parser.add_argument("--promotion-hint", default="review", help="Promotion hint for the review queue")
     parser.add_argument("--prompt-version", default=None, help="Optional prompt version label")
     parser.add_argument("--score", type=float, default=None, help="Optional numeric score")
+    parser.add_argument(
+        "--contract-alignment-result",
+        default=None,
+        choices=["aligned", "partially_aligned", "misaligned"],
+        help="Evaluation result for contract alignment",
+    )
+    parser.add_argument(
+        "--completion-readiness-result",
+        default=None,
+        choices=["ready", "workable_draft", "base_only", "not_ready"],
+        help="Evaluation result for completion readiness",
+    )
+    parser.add_argument(
+        "--repair-class",
+        default=None,
+        choices=["micro_repair", "contract_realign"],
+        help="Repair category if this run is part of an iteration",
+    )
     args = parser.parse_args()
 
     record = {
@@ -53,6 +87,12 @@ def main() -> int:
         "matched_profile": args.matched_profile,
         "support_tier": args.support_tier,
         "legacy_use_case": args.legacy_use_case,
+        "deliverable_type": args.deliverable_type,
+        "asset_completion_mode": args.asset_completion_mode,
+        "content_language": args.content_language,
+        "allowed_text_scope": args.allowed_text_scope,
+        "layout_owner": args.layout_owner,
+        "acceptance_bar": args.acceptance_bar,
         "route": args.route,
         "initial_brief": args.initial_brief,
         "final_prompt": args.final_prompt,
@@ -71,6 +111,9 @@ def main() -> int:
         "promotion_hint": args.promotion_hint,
         "prompt_version": args.prompt_version,
         "score": args.score,
+        "contract_alignment_result": args.contract_alignment_result,
+        "completion_readiness_result": args.completion_readiness_result,
+        "repair_class": args.repair_class,
     }
     record = {key: value for key, value in record.items() if value not in (None, "", [], {})}
 

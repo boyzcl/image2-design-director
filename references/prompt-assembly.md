@@ -6,6 +6,7 @@
 
 它解决的问题不是“字段有哪些”，而是：
 
+- 先锁什么交付物合同，再写什么视觉内容
 - 什么时候该用 structured / section-based
 - 什么时候该用自然语言连续写法
 - 怎么把任务、结构、文本层、风格层按稳定顺序拼起来
@@ -27,9 +28,28 @@
 
 ## Default Assembly Sequence
 
-### 1. Lock The Task Statement
+### 1. Lock The Asset Contract
 
-先写一句明确的任务定义：
+先锁定这 6 个合同字段：
+
+- `deliverable_type`
+- `asset_completion_mode`
+- `content_language`
+- `allowed_text_scope`
+- `layout_owner`
+- `acceptance_bar`
+
+如果这层还模糊，不要急着写视觉段落。
+
+默认规则：
+
+- 用户没说要底图时，优先按 `complete_asset`
+- 当前会话语言 = 默认文案语言
+- `asset type` 优先于 `style direction`
+
+### 2. Lock The Task Statement
+
+再写一句明确的任务定义：
 
 - 这是什么资产
 - 它服务什么目标
@@ -37,7 +57,7 @@
 
 如果这一步还模糊，后面的结构和风格都会漂。
 
-### 2. Choose Prompt Family
+### 3. Choose Prompt Family
 
 按版式复杂度选默认写法：
 
@@ -48,9 +68,25 @@
 
 不要为了“统一格式”把所有任务都写成字段表。
 
-## 3. Build The Prompt In Layers
+## 4. Build The Prompt In Layers
 
-### Layer A. Task Layer
+### Layer A. Asset Contract Layer
+
+在第一屏就明确：
+
+- final deliverable 是什么
+- 这次交的是成品还是底图
+- 谁负责最终排版
+- 文案语言是什么
+- 允许出现哪些文字
+
+如果任务是品牌图、项目发布图、招募图、宣传海报，这层通常应该直接写成：
+
+- `complete_asset`
+- `layout owner: model`
+- `language follows the current conversation`
+
+### Layer B. Task Layer
 
 先落：
 
@@ -60,7 +96,7 @@
 
 这是默认第一屏信息。
 
-### Layer B. Subject Layer
+### Layer C. Subject Layer
 
 明确：
 
@@ -68,7 +104,7 @@
 - 主体处在什么场景
 - 当前这张图的中心隐喻或中心对象是什么
 
-### Layer C. Structure Layer
+### Layer D. Structure Layer
 
 高结构任务必须明确：
 
@@ -85,7 +121,7 @@
 - 前中后景
 - 视觉焦点
 
-### Layer D. Text Layer
+### Layer E. Text Layer
 
 文本层默认要单独写，不要埋在 constraints 里。
 
@@ -96,13 +132,19 @@
 - `placement`: 放在哪
 - `density`: 文本密度高还是低
 
+如果合同已经锁定为 `complete_asset`，文本层还要额外写明：
+
+- 哪些文案必须直出
+- 哪些文案是唯一允许出现的可读文字
+- 是否禁止额外小字、伪 UI 字、背景文字纹理
+
 长中文文本处理规则：
 
 - 它是高风险信号，不是自动排除 `direct_output` 的理由
 - 如果有可直出的参考图，或任务明确在测试直出，必须保留直出候选
 - 如果走后处理路径，也要明确让模型产出 `text-safe visual`，而不是模糊地希望它顺带把所有小字排对
 
-### Layer E. Style Layer
+### Layer F. Style Layer
 
 风格层最后补。
 
@@ -116,7 +158,7 @@
 
 不要让风格词压过任务层和结构层。
 
-### Layer F. Constraints And Avoid
+### Layer G. Constraints And Avoid
 
 最后才补：
 
@@ -131,7 +173,7 @@
 - 伪 UI
 - 装饰性噪音
 
-## 4. Resolve The Parameterized Draft
+## 5. Resolve The Parameterized Draft
 
 如果先写了模板，发送前要做两步：
 
@@ -146,9 +188,9 @@
 
 而不是长成一份冗余说明书。
 
-## 5. Apply Repair Overlay If Needed
+## 6. Apply Repair Overlay If Needed
 
-如果是 repair，最后再叠加：
+如果是 `micro_repair`，最后再叠加：
 
 ```text
 Change only: <只改什么>
@@ -156,6 +198,16 @@ Keep unchanged: <必须保持什么>
 ```
 
 默认只改最关键变量，不要重启整张图。
+
+如果是 `contract_realign`，不要直接套 repair overlay。先重写：
+
+- `deliverable_type`
+- `asset_completion_mode`
+- `content_language`
+- `allowed_text_scope`
+- `acceptance_bar`
+
+然后再重新 assembly。
 
 ## Family-Specific Guidance
 
@@ -248,14 +300,17 @@ Keep unchanged: <必须保持什么>
 ### Do
 
 - 先任务，后结构，再风格
+- 先合同，后任务
 - 把文本层写成正式设计层
 - 对复杂任务明确 section、数量和层级
 - 对单图叙事保持连续语言张力
 - 对可复用模板做参数化
+- 对成品任务显式锁定允许文字范围和语言
 
 ### Don't
 
 - 只堆 mood words
+- 先写风格，再猜资产类型
 - 用风格词代替结构描述
 - 在高结构任务里省略文本层
 - 在单图叙事任务里硬塞太多 section

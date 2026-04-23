@@ -24,6 +24,7 @@
 
 - `docs/benchmarks/`
 - `docs/experiments/`
+- [asset-contract-and-ux-alignment-plan-2026-04-23.md](./asset-contract-and-ux-alignment-plan-2026-04-23.md)
 - [release-readiness-review-2026-04-23.md](./release-readiness-review-2026-04-23.md)
 - [status-summary-2026-04-22.md](./status-summary-2026-04-22.md)
 - [stage-progress-review-2026-04-22.md](./stage-progress-review-2026-04-22.md)

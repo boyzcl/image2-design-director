@@ -2,124 +2,122 @@
 
 ## 目标
 
-repair 模式下，不靠“再来一版”碰运气，而是按失败类型做最小纠偏。
+repair 模式下，不靠“再来一版”碰运气，而是先判断失败属于：
+
+- `micro_repair`
+- `contract_realign`
+
+一句话版本：
+
+> 如果错的是细节，就做微修；如果错的是任务理解，就先重建交付物合同。
 
 ## 总规则
 
 1. 先给失败归类
 2. 一轮只改 1 到 2 个关键变量
 3. 明确 `Change only` 和 `Keep unchanged`
-4. 不要同时大改构图、风格、场景、文案和主体
+4. 如果错的是合同，不要直接补 prompt，先重对齐任务
 
-## 失败类型到修复动作
+## Repair Class 1. `micro_repair`
 
-### 1. 产品图不够商品化
+适用于：
 
-优先改：
+- 资产类型对了
+- 成品度对了
+- 语言对了
+- 但细节、结构、工艺、文字纪律没过线
 
-- `Asset type`
-- `Objective`
-- `Style/medium`
-- `Composition/framing`
+常见场景：
 
-推荐动作：
+- 中文标题控制不稳
+- 版式层级还不够稳
+- 主体对了，但工艺不够精
 
-- 把用途钉死为 `landing page hero`、`ecommerce hero` 或 `catalog image`
-- 把风格钉死为 `commercial product photography`
-- 增加 `usable negative space`
-
-### 2. 社媒图不像传播素材
-
-优先改：
-
-- `Asset type`
-- `Audience/context`
-- `Composition/framing`
-
-推荐动作：
-
-- 指定平台语境，例如 `LinkedIn feed creative`
-- 明确保留文字区或安全留白
-- 限制“像海报”的装饰性
-
-### 3. UI mockup 不可信
-
-优先改：
-
-- 页面类型
-- fidelity
-- 信息层级
-
-推荐动作：
-
-- 指定为 `dashboard`、`settings page`、`mobile onboarding screen` 之一
-- 减少组件数量
-- 强化单一任务导向
-
-### 4. App 素材图太像独立海报
-
-优先改：
-
-- `Objective`
-- `Visual priorities`
-- `Constraints`
-
-推荐动作：
-
-- 强调 “support the product interface”
-- 压低装饰复杂度
-- 加入 “system-friendly” 或 “product-compatible”
-
-### 5. AI 味太重
-
-优先改：
-
-- 夸张风格词
-- 不必要装饰物
-- 过度戏剧化灯光
-
-推荐动作：
-
-- 去掉空泛高级词
-- 换成更具体的资产用途和材质/版式约束
-- 强调可信、克制、真实使用场景
-
-### 6. 社媒图出现额外文案
-
-优先改：
-
-- `Text (verbatim)`
-- `Constraints`
-- `Change only`
-
-推荐动作：
-
-- 明确 `only show the exact headline text`
-- 删除 badge、副标题和自动生成标签
-- 保留平台语境，但不靠额外 copy 制造“营销感”
-
-### 7. UI mockup 伪造品牌身份
-
-优先改：
-
-- `Constraints`
-- `Change only`
-- `Keep unchanged`
-
-推荐动作：
-
-- 补 `no brand name, no logo mark, no fake company identity`
-- 把 header 改成 generic
-- 保留布局和组件结构，不要因为一个 logo 问题整页重做
-
-## 输出模板
-
-repair 时可优先按这个格式组织：
+输出模板：
 
 ```text
+Repair class: micro_repair
 Failure class: <哪一类失败>
 Why it failed: <一句话根因>
 Change only: <本轮只改什么>
 Keep unchanged: <必须保持什么>
 Prompt delta: <本轮新增或替换的关键约束>
 ```
+
+## Repair Class 2. `contract_realign`
+
+适用于：
+
+- 用户指出“这不是我要的资产类型”
+- 用户指出“这不是成品”
+- 用户指出“语言不对”
+- 品牌语义漂移到错误 domain
+
+这类 repair 的第一步必须是重建下面这些字段：
+
+- `deliverable_type`
+- `asset_completion_mode`
+- `content_language`
+- `allowed_text_scope`
+- `acceptance_bar`
+
+输出模板：
+
+```text
+Repair class: contract_realign
+What was misread: <资产类型 / 成品度 / 语言 / 品牌语义>
+Reset contract:
+- Deliverable:
+- Completion mode:
+- Content language:
+- Allowed text scope:
+- Acceptance bar:
+Next move: <重新生成还是进入新一轮 direct>
+```
+
+## Failure Types To Watch
+
+### 1. Brand / Promo Asset Drifted Into Base Visual
+
+默认：
+
+- `contract_realign`
+
+### 2. Language Drift
+
+例如：
+
+- 中文任务里自动切英文 slogan
+
+默认：
+
+- 若整体资产类型没错，可 `micro_repair`
+- 若语言其实牵动整体版式和成品度，优先 `contract_realign`
+
+### 3. Wrong Asset Type
+
+例如：
+
+- 品牌海报做成 README hero
+- README hero 做成社媒海报
+
+默认：
+
+- `contract_realign`
+
+### 4. Brand Semantics Drift
+
+例如：
+
+- 项目海报被补成建筑 / 地产 / 室内 / 材料板
+
+默认：
+
+- `contract_realign`
+
+### 5. Good-Looking But Not Usable
+
+默认：
+
+- 若核心原因是成品度错位，`contract_realign`
+- 若只是局部排版还差一点，`micro_repair`

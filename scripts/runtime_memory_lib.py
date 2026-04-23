@@ -118,6 +118,15 @@ class PendingItem:
     domain_direction: str
     matched_profile: str
     support_tier: str
+    deliverable_type: str
+    asset_completion_mode: str
+    content_language: str
+    allowed_text_scope: str
+    layout_owner: str
+    acceptance_bar: str
+    contract_alignment_result: str | None
+    completion_readiness_result: str | None
+    repair_class: str | None
     legacy_use_case: str | None
 
 
@@ -133,6 +142,12 @@ class NoteDoc:
     domain_direction: str
     matched_profile: str
     support_tier: str
+    deliverable_type: str
+    asset_completion_mode: str
+    content_language: str
+    allowed_text_scope: str
+    layout_owner: str
+    acceptance_bar: str
 
 
 def now_iso() -> str:
@@ -289,6 +304,13 @@ def ensure_runtime_root(runtime_root: Path, resolution: RuntimeResolution) -> di
     write_json_if_missing(runtime_root / "index" / "by-domain-direction.json", {})
     write_json_if_missing(runtime_root / "index" / "by-matched-profile.json", {})
     write_json_if_missing(runtime_root / "index" / "by-support-tier.json", {})
+    write_json_if_missing(runtime_root / "index" / "by-deliverable-type.json", {})
+    write_json_if_missing(runtime_root / "index" / "by-asset-completion-mode.json", {})
+    write_json_if_missing(runtime_root / "index" / "by-content-language.json", {})
+    write_json_if_missing(runtime_root / "index" / "by-layout-owner.json", {})
+    write_json_if_missing(runtime_root / "index" / "by-contract-alignment-result.json", {})
+    write_json_if_missing(runtime_root / "index" / "by-completion-readiness-result.json", {})
+    write_json_if_missing(runtime_root / "index" / "by-repair-class.json", {})
     write_json_if_missing(runtime_root / "state" / "promotion-policy.json", DEFAULT_POLICY)
     write_json_if_missing(
         runtime_root / "state" / "promotion-ledger.json",
@@ -320,6 +342,8 @@ def enrich_capture_record(record: dict[str, Any], resolution: RuntimeResolution)
     enriched.setdefault("schema_version", CAPTURE_SCHEMA_VERSION)
     if "legacy_use_case" not in enriched and enriched.get("use_case"):
         enriched["legacy_use_case"] = enriched["use_case"]
+    if "layout_owner" not in enriched and enriched.get("final_layout_owner"):
+        enriched["layout_owner"] = enriched["final_layout_owner"]
 
     legacy_use_case = enriched.get("legacy_use_case")
     if "matched_profile" not in enriched:
@@ -332,6 +356,12 @@ def enrich_capture_record(record: dict[str, Any], resolution: RuntimeResolution)
         enriched["support_tier"] = "standard" if legacy_use_case in KNOWN_PROFILES else "exploratory"
 
     enriched.setdefault("domain_direction", enriched.get("scene", "unspecified"))
+    enriched.setdefault("deliverable_type", enriched.get("scene", enriched.get("domain_direction", "unspecified")))
+    enriched.setdefault("asset_completion_mode", "complete_asset")
+    enriched.setdefault("content_language", "unspecified")
+    enriched.setdefault("allowed_text_scope", "unspecified")
+    enriched.setdefault("layout_owner", "model")
+    enriched.setdefault("acceptance_bar", "usable asset aligned with the user request")
     enriched.setdefault("timestamp", now_iso())
     enriched.setdefault("host_id", resolution.host_id)
     enriched.setdefault("skill_name", SKILL_NAME)
@@ -372,6 +402,13 @@ def update_indices(runtime_root: Path, record: dict[str, Any], capture_path: Pat
     domain_index_path = runtime_root / "index" / "by-domain-direction.json"
     profile_index_path = runtime_root / "index" / "by-matched-profile.json"
     tier_index_path = runtime_root / "index" / "by-support-tier.json"
+    deliverable_index_path = runtime_root / "index" / "by-deliverable-type.json"
+    completion_index_path = runtime_root / "index" / "by-asset-completion-mode.json"
+    language_index_path = runtime_root / "index" / "by-content-language.json"
+    layout_owner_index_path = runtime_root / "index" / "by-layout-owner.json"
+    contract_result_index_path = runtime_root / "index" / "by-contract-alignment-result.json"
+    readiness_result_index_path = runtime_root / "index" / "by-completion-readiness-result.json"
+    repair_class_index_path = runtime_root / "index" / "by-repair-class.json"
 
     scene_index = read_json(scene_index_path, {})
     failure_index = read_json(failure_index_path, {})
@@ -379,6 +416,13 @@ def update_indices(runtime_root: Path, record: dict[str, Any], capture_path: Pat
     domain_index = read_json(domain_index_path, {})
     profile_index = read_json(profile_index_path, {})
     tier_index = read_json(tier_index_path, {})
+    deliverable_index = read_json(deliverable_index_path, {})
+    completion_index = read_json(completion_index_path, {})
+    language_index = read_json(language_index_path, {})
+    layout_owner_index = read_json(layout_owner_index_path, {})
+    contract_result_index = read_json(contract_result_index_path, {})
+    readiness_result_index = read_json(readiness_result_index_path, {})
+    repair_class_index = read_json(repair_class_index_path, {})
 
     scene = record.get("scene", "unknown")
     failure_mode = record.get("failure_class", "unspecified")
@@ -386,6 +430,13 @@ def update_indices(runtime_root: Path, record: dict[str, Any], capture_path: Pat
     domain_direction = record.get("domain_direction", "unspecified")
     matched_profile = record.get("matched_profile", "none")
     support_tier = record.get("support_tier", "unspecified")
+    deliverable_type = record.get("deliverable_type", "unspecified")
+    asset_completion_mode = record.get("asset_completion_mode", "unspecified")
+    content_language = record.get("content_language", "unspecified")
+    layout_owner = record.get("layout_owner", "unspecified")
+    contract_alignment_result = record.get("contract_alignment_result", "unspecified")
+    completion_readiness_result = record.get("completion_readiness_result", "unspecified")
+    repair_class = record.get("repair_class", "unspecified")
     item = {
         "session_id": record.get("session_id"),
         "timestamp": record.get("timestamp"),
@@ -393,6 +444,13 @@ def update_indices(runtime_root: Path, record: dict[str, Any], capture_path: Pat
         "domain_direction": domain_direction,
         "matched_profile": matched_profile,
         "support_tier": support_tier,
+        "deliverable_type": deliverable_type,
+        "asset_completion_mode": asset_completion_mode,
+        "content_language": content_language,
+        "layout_owner": layout_owner,
+        "contract_alignment_result": contract_alignment_result,
+        "completion_readiness_result": completion_readiness_result,
+        "repair_class": repair_class,
     }
 
     scene_index.setdefault(scene, []).append(item)
@@ -402,6 +460,13 @@ def update_indices(runtime_root: Path, record: dict[str, Any], capture_path: Pat
     domain_index.setdefault(domain_direction, []).append(item)
     profile_index.setdefault(matched_profile, []).append(item)
     tier_index.setdefault(support_tier, []).append(item)
+    deliverable_index.setdefault(deliverable_type, []).append(item)
+    completion_index.setdefault(asset_completion_mode, []).append(item)
+    language_index.setdefault(content_language, []).append(item)
+    layout_owner_index.setdefault(layout_owner, []).append(item)
+    contract_result_index.setdefault(contract_alignment_result, []).append(item)
+    readiness_result_index.setdefault(completion_readiness_result, []).append(item)
+    repair_class_index.setdefault(repair_class, []).append(item)
 
     write_json(scene_index_path, scene_index)
     write_json(failure_index_path, failure_index)
@@ -409,6 +474,13 @@ def update_indices(runtime_root: Path, record: dict[str, Any], capture_path: Pat
     write_json(domain_index_path, domain_index)
     write_json(profile_index_path, profile_index)
     write_json(tier_index_path, tier_index)
+    write_json(deliverable_index_path, deliverable_index)
+    write_json(completion_index_path, completion_index)
+    write_json(language_index_path, language_index)
+    write_json(layout_owner_index_path, layout_owner_index)
+    write_json(contract_result_index_path, contract_result_index)
+    write_json(readiness_result_index_path, readiness_result_index)
+    write_json(repair_class_index_path, repair_class_index)
 
 
 def queue_review(runtime_root: Path, record: dict[str, Any], capture_path: Path) -> None:
@@ -427,6 +499,15 @@ def queue_review(runtime_root: Path, record: dict[str, Any], capture_path: Path)
             "domain_direction": record.get("domain_direction", "unspecified"),
             "matched_profile": record.get("matched_profile", "none"),
             "support_tier": record.get("support_tier", "unspecified"),
+            "deliverable_type": record.get("deliverable_type", "unspecified"),
+            "asset_completion_mode": record.get("asset_completion_mode", "unspecified"),
+            "content_language": record.get("content_language", "unspecified"),
+            "allowed_text_scope": record.get("allowed_text_scope", "unspecified"),
+            "layout_owner": record.get("layout_owner", "unspecified"),
+            "acceptance_bar": record.get("acceptance_bar", "unspecified"),
+            "contract_alignment_result": record.get("contract_alignment_result"),
+            "completion_readiness_result": record.get("completion_readiness_result"),
+            "repair_class": record.get("repair_class"),
             "legacy_use_case": record.get("legacy_use_case", record.get("use_case")),
             "promotion_hint": hint,
             "timestamp": record.get("timestamp"),
@@ -529,7 +610,16 @@ def combined_record_text(record: dict[str, Any]) -> str:
             stringify_runtime_value(record.get("domain_direction", "")),
             stringify_runtime_value(record.get("matched_profile", "")),
             stringify_runtime_value(record.get("support_tier", "")),
+            stringify_runtime_value(record.get("deliverable_type", "")),
+            stringify_runtime_value(record.get("asset_completion_mode", "")),
+            stringify_runtime_value(record.get("content_language", "")),
+            stringify_runtime_value(record.get("allowed_text_scope", "")),
+            stringify_runtime_value(record.get("layout_owner", "")),
+            stringify_runtime_value(record.get("acceptance_bar", "")),
             stringify_runtime_value(record.get("evaluation_summary", "")),
+            stringify_runtime_value(record.get("contract_alignment_result", "")),
+            stringify_runtime_value(record.get("completion_readiness_result", "")),
+            stringify_runtime_value(record.get("repair_class", "")),
             stringify_runtime_value(record.get("what_worked", "")),
             stringify_runtime_value(record.get("what_failed", "")),
             stringify_runtime_value(record.get("correction_rule", "")),
@@ -552,6 +642,15 @@ def parse_pending(queue: dict[str, Any]) -> list[PendingItem]:
                 domain_direction=raw.get("domain_direction", "unspecified"),
                 matched_profile=raw.get("matched_profile", "none"),
                 support_tier=raw.get("support_tier", "unspecified"),
+                deliverable_type=raw.get("deliverable_type", "unspecified"),
+                asset_completion_mode=raw.get("asset_completion_mode", "unspecified"),
+                content_language=raw.get("content_language", "unspecified"),
+                allowed_text_scope=raw.get("allowed_text_scope", "unspecified"),
+                layout_owner=raw.get("layout_owner", "unspecified"),
+                acceptance_bar=raw.get("acceptance_bar", "unspecified"),
+                contract_alignment_result=raw.get("contract_alignment_result"),
+                completion_readiness_result=raw.get("completion_readiness_result"),
+                repair_class=raw.get("repair_class"),
                 legacy_use_case=raw.get("legacy_use_case"),
             )
         )
@@ -592,6 +691,12 @@ def load_field_notes(runtime_root: Path, ledger: dict[str, Any]) -> list[NoteDoc
                 domain_direction=entry.get("domain_direction", "unspecified"),
                 matched_profile=entry.get("matched_profile", "none"),
                 support_tier=entry.get("support_tier", "unspecified"),
+                deliverable_type=entry.get("deliverable_type", "unspecified"),
+                asset_completion_mode=entry.get("asset_completion_mode", "unspecified"),
+                content_language=entry.get("content_language", "unspecified"),
+                allowed_text_scope=entry.get("allowed_text_scope", "unspecified"),
+                layout_owner=entry.get("layout_owner", "unspecified"),
+                acceptance_bar=entry.get("acceptance_bar", "unspecified"),
             )
         )
     return notes
@@ -600,16 +705,31 @@ def load_field_notes(runtime_root: Path, ledger: dict[str, Any]) -> list[NoteDoc
 def metadata_alignment_score(record: dict[str, Any], note: NoteDoc) -> float:
     score = 0.0
     if record.get("domain_direction", "").lower() == note.domain_direction.lower():
-        score += 0.35
+        score += 0.2
     elif record.get("domain_direction") and note.domain_direction != "unspecified":
-        score += 0.15 * token_overlap(
+        score += 0.1 * token_overlap(
             normalize_tokens(record.get("domain_direction", "")),
             normalize_tokens(note.domain_direction),
         )
     if record.get("matched_profile", "none").lower() == note.matched_profile.lower():
-        score += 0.2
+        score += 0.12
     if record.get("support_tier", "unspecified").lower() == note.support_tier.lower():
+        score += 0.08
+    if record.get("deliverable_type", "").lower() == note.deliverable_type.lower():
+        score += 0.2
+    elif record.get("deliverable_type") and note.deliverable_type != "unspecified":
+        score += 0.08 * token_overlap(
+            normalize_tokens(record.get("deliverable_type", "")),
+            normalize_tokens(note.deliverable_type),
+        )
+    if record.get("asset_completion_mode", "unspecified").lower() == note.asset_completion_mode.lower():
         score += 0.1
+    if record.get("content_language", "unspecified").lower() == note.content_language.lower():
+        score += 0.1
+    if record.get("layout_owner", "unspecified").lower() == note.layout_owner.lower():
+        score += 0.05
+    if record.get("contract_alignment_result") and record.get("contract_alignment_result", "").lower() in note.text.lower():
+        score += 0.05
     if record.get("failure_class", "").lower() in note.text.lower() and record.get("failure_class"):
         score += 0.1
     return min(score, 1.0)
@@ -725,12 +845,23 @@ def render_field_note(record: dict[str, Any], score: int, signals: dict[str, boo
         f"- `matched_profile`: {record.get('matched_profile', 'none')}\n"
         f"- `support_tier`: {record.get('support_tier', 'unspecified')}\n"
         f"- `route`: {record.get('route', 'unspecified')}\n\n"
+        "## Asset Contract\n\n"
+        f"- `deliverable_type`: {record.get('deliverable_type', 'unspecified')}\n"
+        f"- `asset_completion_mode`: {record.get('asset_completion_mode', 'unspecified')}\n"
+        f"- `content_language`: {record.get('content_language', 'unspecified')}\n"
+        f"- `allowed_text_scope`: {record.get('allowed_text_scope', 'unspecified')}\n"
+        f"- `layout_owner`: {record.get('layout_owner', 'unspecified')}\n"
+        f"- `acceptance_bar`: {record.get('acceptance_bar', 'unspecified')}\n\n"
         "## Trigger\n\n"
         f"- {record.get('evaluation_summary', 'n/a')}\n\n"
         "## Intervention\n\n"
         f"- {record.get('what_worked', record.get('correction_rule', 'n/a'))}\n\n"
         "## Failure Or Risk\n\n"
         f"- {record.get('what_failed', record.get('failure_class', 'n/a'))}\n\n"
+        "## Evaluation Outcome\n\n"
+        f"- `contract_alignment_result`: {record.get('contract_alignment_result', 'unspecified')}\n"
+        f"- `completion_readiness_result`: {record.get('completion_readiness_result', 'unspecified')}\n"
+        f"- `repair_class`: {record.get('repair_class', 'n/a')}\n\n"
         "## Next Move\n\n"
         f"- {record.get('next_input', 'n/a')}\n\n"
         "## Promotion Signals\n\n"
@@ -760,6 +891,12 @@ def update_note_stats(ledger: dict[str, Any], note: NoteDoc, record: dict[str, A
             "domain_direction": note.domain_direction,
             "matched_profile": note.matched_profile,
             "support_tier": note.support_tier,
+            "deliverable_type": note.deliverable_type,
+            "asset_completion_mode": note.asset_completion_mode,
+            "content_language": note.content_language,
+            "allowed_text_scope": note.allowed_text_scope,
+            "layout_owner": note.layout_owner,
+            "acceptance_bar": note.acceptance_bar,
         },
     )
     entry["note_path"] = str(note.path)
@@ -770,6 +907,12 @@ def update_note_stats(ledger: dict[str, Any], note: NoteDoc, record: dict[str, A
     entry["domain_direction"] = note.domain_direction
     entry["matched_profile"] = note.matched_profile
     entry["support_tier"] = note.support_tier
+    entry["deliverable_type"] = note.deliverable_type
+    entry["asset_completion_mode"] = note.asset_completion_mode
+    entry["content_language"] = note.content_language
+    entry["allowed_text_scope"] = note.allowed_text_scope
+    entry["layout_owner"] = note.layout_owner
+    entry["acceptance_bar"] = note.acceptance_bar
     entry["last_action"] = action
     session_id = record.get("session_id")
     if session_id and session_id not in entry["source_session_ids"]:
@@ -806,6 +949,12 @@ def create_field_note(
         domain_direction=record.get("domain_direction", "unspecified"),
         matched_profile=record.get("matched_profile", "none"),
         support_tier=record.get("support_tier", "unspecified"),
+        deliverable_type=record.get("deliverable_type", "unspecified"),
+        asset_completion_mode=record.get("asset_completion_mode", "unspecified"),
+        content_language=record.get("content_language", "unspecified"),
+        allowed_text_scope=record.get("allowed_text_scope", "unspecified"),
+        layout_owner=record.get("layout_owner", "unspecified"),
+        acceptance_bar=record.get("acceptance_bar", "unspecified"),
     )
     update_note_stats(ledger, note, record, "promote_to_field_note")
     return note
@@ -816,6 +965,12 @@ def merge_field_note(existing: NoteDoc, record: dict[str, Any], ledger: dict[str
         "\n## Merge Update\n\n"
         f"- `session_id`: {record.get('session_id', '')}\n"
         f"- `evaluation`: {record.get('evaluation_summary', 'n/a')}\n"
+        f"- `deliverable_type`: {record.get('deliverable_type', existing.deliverable_type)}\n"
+        f"- `asset_completion_mode`: {record.get('asset_completion_mode', existing.asset_completion_mode)}\n"
+        f"- `content_language`: {record.get('content_language', existing.content_language)}\n"
+        f"- `contract_alignment_result`: {record.get('contract_alignment_result', 'unspecified')}\n"
+        f"- `completion_readiness_result`: {record.get('completion_readiness_result', 'unspecified')}\n"
+        f"- `repair_class`: {record.get('repair_class', 'n/a')}\n"
         f"- `what_worked`: {record.get('what_worked', 'n/a')}\n"
         f"- `correction_rule`: {record.get('correction_rule', 'n/a')}\n"
         f"- `next_input`: {record.get('next_input', 'n/a')}\n"
@@ -833,6 +988,12 @@ def merge_field_note(existing: NoteDoc, record: dict[str, Any], ledger: dict[str
         domain_direction=record.get("domain_direction", existing.domain_direction),
         matched_profile=record.get("matched_profile", existing.matched_profile),
         support_tier=record.get("support_tier", existing.support_tier),
+        deliverable_type=record.get("deliverable_type", existing.deliverable_type),
+        asset_completion_mode=record.get("asset_completion_mode", existing.asset_completion_mode),
+        content_language=record.get("content_language", existing.content_language),
+        allowed_text_scope=record.get("allowed_text_scope", existing.allowed_text_scope),
+        layout_owner=record.get("layout_owner", existing.layout_owner),
+        acceptance_bar=record.get("acceptance_bar", existing.acceptance_bar),
     )
     update_note_stats(ledger, note, record, "merge_into_existing_note")
     return note
@@ -910,12 +1071,23 @@ def render_local_skill_reference(note: NoteDoc, record: dict[str, Any], score: i
         f"- `domain_direction`: {record.get('domain_direction', note.domain_direction)}\n"
         f"- `matched_profile`: {record.get('matched_profile', note.matched_profile)}\n"
         f"- `support_tier`: {record.get('support_tier', note.support_tier)}\n\n"
+        "## Asset Contract\n\n"
+        f"- `deliverable_type`: {record.get('deliverable_type', note.deliverable_type)}\n"
+        f"- `asset_completion_mode`: {record.get('asset_completion_mode', note.asset_completion_mode)}\n"
+        f"- `content_language`: {record.get('content_language', note.content_language)}\n"
+        f"- `allowed_text_scope`: {record.get('allowed_text_scope', note.allowed_text_scope)}\n"
+        f"- `layout_owner`: {record.get('layout_owner', note.layout_owner)}\n"
+        f"- `acceptance_bar`: {record.get('acceptance_bar', note.acceptance_bar)}\n\n"
         "## Trigger\n\n"
         f"- {record.get('evaluation_summary', 'n/a')}\n\n"
         "## Default Carry Forward\n\n"
         f"- {record.get('what_worked', record.get('correction_rule', 'n/a'))}\n\n"
         "## Avoid\n\n"
         f"- {record.get('what_failed', record.get('failure_class', 'n/a'))}\n\n"
+        "## Evaluation Outcome\n\n"
+        f"- `contract_alignment_result`: {record.get('contract_alignment_result', 'unspecified')}\n"
+        f"- `completion_readiness_result`: {record.get('completion_readiness_result', 'unspecified')}\n"
+        f"- `repair_class`: {record.get('repair_class', 'n/a')}\n\n"
         "## Next Move\n\n"
         f"- {record.get('next_input', 'n/a')}\n\n"
         "## Evidence\n\n"
@@ -963,6 +1135,12 @@ def upsert_local_skill_reference(
             "domain_direction": note.domain_direction,
             "matched_profile": note.matched_profile,
             "support_tier": note.support_tier,
+            "deliverable_type": note.deliverable_type,
+            "asset_completion_mode": note.asset_completion_mode,
+            "content_language": note.content_language,
+            "allowed_text_scope": note.allowed_text_scope,
+            "layout_owner": note.layout_owner,
+            "acceptance_bar": note.acceptance_bar,
             "last_action": None,
             "disable_reason": None,
             "archive_reason": None,
@@ -1001,6 +1179,12 @@ def upsert_local_skill_reference(
     entry["domain_direction"] = record.get("domain_direction", note.domain_direction)
     entry["matched_profile"] = record.get("matched_profile", note.matched_profile)
     entry["support_tier"] = record.get("support_tier", note.support_tier)
+    entry["deliverable_type"] = record.get("deliverable_type", note.deliverable_type)
+    entry["asset_completion_mode"] = record.get("asset_completion_mode", note.asset_completion_mode)
+    entry["content_language"] = record.get("content_language", note.content_language)
+    entry["allowed_text_scope"] = record.get("allowed_text_scope", note.allowed_text_scope)
+    entry["layout_owner"] = record.get("layout_owner", note.layout_owner)
+    entry["acceptance_bar"] = record.get("acceptance_bar", note.acceptance_bar)
     entry["last_updated_at"] = now_iso()
     entry["last_action"] = action
     entry["disable_reason"] = None
@@ -1169,6 +1353,15 @@ def review_pending(runtime_root: Path) -> dict[str, Any]:
             "domain_direction": item.domain_direction,
             "matched_profile": item.matched_profile,
             "support_tier": item.support_tier,
+            "deliverable_type": item.deliverable_type,
+            "asset_completion_mode": item.asset_completion_mode,
+            "content_language": item.content_language,
+            "allowed_text_scope": item.allowed_text_scope,
+            "layout_owner": item.layout_owner,
+            "acceptance_bar": item.acceptance_bar,
+            "contract_alignment_result": item.contract_alignment_result,
+            "completion_readiness_result": item.completion_readiness_result,
+            "repair_class": item.repair_class,
             "legacy_use_case": item.legacy_use_case,
             "promotion_hint": item.promotion_hint,
             "timestamp": item.timestamp,
@@ -1202,6 +1395,15 @@ def review_pending(runtime_root: Path) -> dict[str, Any]:
                     "domain_direction": item.domain_direction,
                     "matched_profile": item.matched_profile,
                     "support_tier": item.support_tier,
+                    "deliverable_type": item.deliverable_type,
+                    "asset_completion_mode": item.asset_completion_mode,
+                    "content_language": item.content_language,
+                    "allowed_text_scope": item.allowed_text_scope,
+                    "layout_owner": item.layout_owner,
+                    "acceptance_bar": item.acceptance_bar,
+                    "contract_alignment_result": item.contract_alignment_result,
+                    "completion_readiness_result": item.completion_readiness_result,
+                    "repair_class": item.repair_class,
                     "legacy_use_case": item.legacy_use_case,
                     "promotion_hint": item.promotion_hint,
                     "timestamp": item.timestamp,
@@ -1298,6 +1500,15 @@ def review_pending(runtime_root: Path) -> dict[str, Any]:
             "domain_direction": record.get("domain_direction", "unspecified"),
             "matched_profile": record.get("matched_profile", "none"),
             "support_tier": record.get("support_tier", "unspecified"),
+            "deliverable_type": record.get("deliverable_type", "unspecified"),
+            "asset_completion_mode": record.get("asset_completion_mode", "unspecified"),
+            "content_language": record.get("content_language", "unspecified"),
+            "allowed_text_scope": record.get("allowed_text_scope", "unspecified"),
+            "layout_owner": record.get("layout_owner", "unspecified"),
+            "acceptance_bar": record.get("acceptance_bar", "unspecified"),
+            "contract_alignment_result": record.get("contract_alignment_result"),
+            "completion_readiness_result": record.get("completion_readiness_result"),
+            "repair_class": record.get("repair_class"),
             "legacy_use_case": record.get("legacy_use_case", record.get("use_case")),
             "promotion_hint": record.get("promotion_hint"),
             "score": score,
@@ -1354,12 +1565,28 @@ def metadata_matches(
     domain_value: str,
     profile_value: str,
     tier_value: str,
+    deliverable_value: str,
+    completion_value: str,
+    language_value: str,
+    layout_owner_value: str,
+    text_scope_value: str,
+    contract_result_value: str,
+    readiness_result_value: str,
+    repair_class_value: str,
     *,
     scene: str | None,
     failure_mode: str | None,
     domain_direction: str | None,
     matched_profile: str | None,
     support_tier: str | None,
+    deliverable_type: str | None,
+    asset_completion_mode: str | None,
+    content_language: str | None,
+    layout_owner: str | None,
+    allowed_text_scope: str | None,
+    contract_alignment_result: str | None,
+    completion_readiness_result: str | None,
+    repair_class: str | None,
     text: str = "",
 ) -> bool:
     scene_hit = scene is None or scene.lower() in scene_value.lower() or scene.lower() in text.lower()
@@ -1367,7 +1594,49 @@ def metadata_matches(
     domain_hit = domain_direction is None or domain_direction.lower() in domain_value.lower() or domain_direction.lower() in text.lower()
     profile_hit = matched_profile is None or profile_value.lower() == matched_profile.lower()
     tier_hit = support_tier is None or tier_value.lower() == support_tier.lower()
-    return scene_hit and failure_hit and domain_hit and profile_hit and tier_hit
+    deliverable_hit = (
+        deliverable_type is None
+        or deliverable_type.lower() in deliverable_value.lower()
+        or deliverable_type.lower() in text.lower()
+    )
+    completion_hit = asset_completion_mode is None or completion_value.lower() == asset_completion_mode.lower()
+    language_hit = content_language is None or language_value.lower() == content_language.lower()
+    layout_hit = layout_owner is None or layout_owner_value.lower() == layout_owner.lower()
+    text_scope_hit = (
+        allowed_text_scope is None
+        or allowed_text_scope.lower() in text_scope_value.lower()
+        or allowed_text_scope.lower() in text.lower()
+    )
+    contract_result_hit = (
+        contract_alignment_result is None
+        or contract_result_value.lower() == contract_alignment_result.lower()
+        or contract_alignment_result.lower() in text.lower()
+    )
+    readiness_result_hit = (
+        completion_readiness_result is None
+        or readiness_result_value.lower() == completion_readiness_result.lower()
+        or completion_readiness_result.lower() in text.lower()
+    )
+    repair_class_hit = (
+        repair_class is None
+        or repair_class_value.lower() == repair_class.lower()
+        or repair_class.lower() in text.lower()
+    )
+    return (
+        scene_hit
+        and failure_hit
+        and domain_hit
+        and profile_hit
+        and tier_hit
+        and deliverable_hit
+        and completion_hit
+        and language_hit
+        and layout_hit
+        and text_scope_hit
+        and contract_result_hit
+        and readiness_result_hit
+        and repair_class_hit
+    )
 
 
 def collect_local_skill_references(
@@ -1378,6 +1647,14 @@ def collect_local_skill_references(
     domain_direction: str | None,
     matched_profile: str | None,
     support_tier: str | None,
+    deliverable_type: str | None,
+    asset_completion_mode: str | None,
+    content_language: str | None,
+    layout_owner: str | None,
+    allowed_text_scope: str | None,
+    contract_alignment_result: str | None,
+    completion_readiness_result: str | None,
+    repair_class: str | None,
     limit: int,
 ) -> list[dict[str, Any]]:
     manifest = load_local_skill_manifest(runtime_root)
@@ -1397,11 +1674,27 @@ def collect_local_skill_references(
             entry.get("domain_direction", ""),
             entry.get("matched_profile", "none"),
             entry.get("support_tier", "unspecified"),
+            entry.get("deliverable_type", "unspecified"),
+            entry.get("asset_completion_mode", "unspecified"),
+            entry.get("content_language", "unspecified"),
+            entry.get("layout_owner", "unspecified"),
+            entry.get("allowed_text_scope", "unspecified"),
+            "",
+            "",
+            "",
             scene=scene,
             failure_mode=failure_mode,
             domain_direction=domain_direction,
             matched_profile=matched_profile,
             support_tier=support_tier,
+            deliverable_type=deliverable_type,
+            asset_completion_mode=asset_completion_mode,
+            content_language=content_language,
+            layout_owner=layout_owner,
+            allowed_text_scope=allowed_text_scope,
+            contract_alignment_result=contract_alignment_result,
+            completion_readiness_result=completion_readiness_result,
+            repair_class=repair_class,
             text=text,
         ):
             continue
@@ -1415,6 +1708,12 @@ def collect_local_skill_references(
                 "domain_direction": entry.get("domain_direction"),
                 "matched_profile": entry.get("matched_profile"),
                 "support_tier": entry.get("support_tier"),
+                "deliverable_type": entry.get("deliverable_type"),
+                "asset_completion_mode": entry.get("asset_completion_mode"),
+                "content_language": entry.get("content_language"),
+                "allowed_text_scope": entry.get("allowed_text_scope"),
+                "layout_owner": entry.get("layout_owner"),
+                "acceptance_bar": entry.get("acceptance_bar"),
                 "version": entry.get("version"),
                 "summary": text.splitlines()[:18],
             }
@@ -1433,6 +1732,14 @@ def collect_field_notes(
     domain_direction: str | None,
     matched_profile: str | None,
     support_tier: str | None,
+    deliverable_type: str | None,
+    asset_completion_mode: str | None,
+    content_language: str | None,
+    layout_owner: str | None,
+    allowed_text_scope: str | None,
+    contract_alignment_result: str | None,
+    completion_readiness_result: str | None,
+    repair_class: str | None,
     limit: int,
     excluded_slugs: set[str],
 ) -> list[dict[str, Any]]:
@@ -1446,11 +1753,27 @@ def collect_field_notes(
             note.domain_direction,
             note.matched_profile,
             note.support_tier,
+            note.deliverable_type,
+            note.asset_completion_mode,
+            note.content_language,
+            note.layout_owner,
+            note.allowed_text_scope,
+            "",
+            "",
+            "",
             scene=scene,
             failure_mode=failure_mode,
             domain_direction=domain_direction,
             matched_profile=matched_profile,
             support_tier=support_tier,
+            deliverable_type=deliverable_type,
+            asset_completion_mode=asset_completion_mode,
+            content_language=content_language,
+            layout_owner=layout_owner,
+            allowed_text_scope=allowed_text_scope,
+            contract_alignment_result=contract_alignment_result,
+            completion_readiness_result=completion_readiness_result,
+            repair_class=repair_class,
             text=note.text,
         ):
             continue
@@ -1463,6 +1786,12 @@ def collect_field_notes(
                 "domain_direction": note.domain_direction,
                 "matched_profile": note.matched_profile,
                 "support_tier": note.support_tier,
+                "deliverable_type": note.deliverable_type,
+                "asset_completion_mode": note.asset_completion_mode,
+                "content_language": note.content_language,
+                "allowed_text_scope": note.allowed_text_scope,
+                "layout_owner": note.layout_owner,
+                "acceptance_bar": note.acceptance_bar,
                 "summary": note.text.splitlines()[:18],
             }
         )
@@ -1479,6 +1808,14 @@ def collect_captures(
     domain_direction: str | None,
     matched_profile: str | None,
     support_tier: str | None,
+    deliverable_type: str | None,
+    asset_completion_mode: str | None,
+    content_language: str | None,
+    layout_owner: str | None,
+    allowed_text_scope: str | None,
+    contract_alignment_result: str | None,
+    completion_readiness_result: str | None,
+    repair_class: str | None,
     limit: int,
 ) -> list[dict[str, Any]]:
     items: list[dict[str, Any]] = []
@@ -1489,11 +1826,27 @@ def collect_captures(
             record.get("domain_direction", ""),
             record.get("matched_profile", "none"),
             record.get("support_tier", "unspecified"),
+            record.get("deliverable_type", "unspecified"),
+            record.get("asset_completion_mode", "unspecified"),
+            record.get("content_language", "unspecified"),
+            record.get("layout_owner", "unspecified"),
+            record.get("allowed_text_scope", "unspecified"),
+            record.get("contract_alignment_result", ""),
+            record.get("completion_readiness_result", ""),
+            record.get("repair_class", ""),
             scene=scene,
             failure_mode=failure_mode,
             domain_direction=domain_direction,
             matched_profile=matched_profile,
             support_tier=support_tier,
+            deliverable_type=deliverable_type,
+            asset_completion_mode=asset_completion_mode,
+            content_language=content_language,
+            layout_owner=layout_owner,
+            allowed_text_scope=allowed_text_scope,
+            contract_alignment_result=contract_alignment_result,
+            completion_readiness_result=completion_readiness_result,
+            repair_class=repair_class,
             text=combined_record_text(record),
         ):
             continue
@@ -1512,6 +1865,14 @@ def search_runtime_context(
     domain_direction: str | None = None,
     matched_profile: str | None = None,
     support_tier: str | None = None,
+    deliverable_type: str | None = None,
+    asset_completion_mode: str | None = None,
+    content_language: str | None = None,
+    layout_owner: str | None = None,
+    allowed_text_scope: str | None = None,
+    contract_alignment_result: str | None = None,
+    completion_readiness_result: str | None = None,
+    repair_class: str | None = None,
     limit: int = 5,
     include_local_skill: bool = True,
 ) -> dict[str, Any]:
@@ -1530,6 +1891,14 @@ def search_runtime_context(
             domain_direction=domain_direction,
             matched_profile=matched_profile,
             support_tier=support_tier,
+            deliverable_type=deliverable_type,
+            asset_completion_mode=asset_completion_mode,
+            content_language=content_language,
+            layout_owner=layout_owner,
+            allowed_text_scope=allowed_text_scope,
+            contract_alignment_result=contract_alignment_result,
+            completion_readiness_result=completion_readiness_result,
+            repair_class=repair_class,
             limit=local_skill_limit,
         )
 
@@ -1542,6 +1911,14 @@ def search_runtime_context(
         domain_direction=domain_direction,
         matched_profile=matched_profile,
         support_tier=support_tier,
+        deliverable_type=deliverable_type,
+        asset_completion_mode=asset_completion_mode,
+        content_language=content_language,
+        layout_owner=layout_owner,
+        allowed_text_scope=allowed_text_scope,
+        contract_alignment_result=contract_alignment_result,
+        completion_readiness_result=completion_readiness_result,
+        repair_class=repair_class,
         limit=field_note_limit,
         excluded_slugs=excluded_slugs,
     )
@@ -1552,6 +1929,14 @@ def search_runtime_context(
         domain_direction=domain_direction,
         matched_profile=matched_profile,
         support_tier=support_tier,
+        deliverable_type=deliverable_type,
+        asset_completion_mode=asset_completion_mode,
+        content_language=content_language,
+        layout_owner=layout_owner,
+        allowed_text_scope=allowed_text_scope,
+        contract_alignment_result=contract_alignment_result,
+        completion_readiness_result=completion_readiness_result,
+        repair_class=repair_class,
         limit=capture_limit,
     )
     ordered = (local_skill_items + field_note_items + capture_items)[:limit]

@@ -3,6 +3,7 @@
 ## How To Use This File
 
 - 这些不是固定咒语，而是默认骨架和参数化模板
+- 先锁 `asset contract`，再写视觉层
 - 先选 prompt family，再替换参数，再发送给 Image2
 - 如果用户已经给得很具体，就少改，不要为“看起来完整”而过度扩写
 - 未解析的 `{{placeholder}}` 不应该直接发给模型
@@ -19,6 +20,14 @@
 ### Parameterized Template
 
 ```text
+Asset contract:
+- deliverable type: {{deliverable_type}}
+- completion mode: {{asset_completion_mode}}
+- content language: {{content_language}}
+- allowed text scope: {{allowed_text_scope}}
+- layout owner: {{layout_owner}}
+- acceptance bar: {{acceptance_bar}}
+
 Use case: {{use_case}}
 Asset type: {{asset_type}}
 Primary request: create a {{asset_type}} for {{primary_request}}
@@ -64,6 +73,14 @@ Avoid: poster-like composition, cluttered background, surreal lighting, generic 
 ### Resolved Example: Repo / System Hero Variant
 
 ```text
+Asset contract:
+- deliverable type: README hero
+- completion mode: base_visual
+- content language: zh-CN
+- allowed text scope: no readable text
+- layout owner: post_process
+- acceptance bar: must remain a clean README hero base with a stable copy-safe area
+
 Use case: social-creative
 Asset type: repo README hero
 Primary request: create a repo README hero for image2-design-director
@@ -109,6 +126,14 @@ Keep the reviewed asset in the form of neutral project collateral such as a READ
 ### Parameterized Template
 
 ```text
+Asset contract:
+- deliverable type: {{deliverable_type}}
+- completion mode: {{asset_completion_mode}}
+- content language: {{content_language}}
+- allowed text scope: {{allowed_text_scope}}
+- layout owner: {{layout_owner}}
+- acceptance bar: {{acceptance_bar}}
+
 Task: create a {{asset_type}}
 Goal: {{goal}}
 Audience/context: {{audience_context}}
@@ -209,11 +234,19 @@ Avoid:
 ### Resolved Example: Project-Native Launch Poster Variant
 
 ```text
+Asset contract:
+- deliverable type: project launch poster
+- completion mode: complete_asset
+- content language: zh-CN
+- allowed text scope: only project name + one Chinese slogan + one Chinese subtitle
+- layout owner: model
+- acceptance bar: must be directly usable as a project launch poster without another copy pass
+
 Task: create a square launch poster
 Goal: make it feel like a real project launch asset for image2-design-director rather than a generic design poster
 Audience/context: social feed launch creative for builders and design-minded AI users
 Main subject: one bold transformation from rough prompt intent into a delivery-ready visual system
-Global constraints: render the exact headline "Prompts That Ship" as the only headline, keep the poster campaign-ready, and avoid secondary caption clutter
+Global constraints: render only these readable lines: "image2-design-director", "能交付的提示词", and "把粗糙图像需求收敛成可交付设计资产"; keep the poster campaign-ready and avoid any extra captions or fake microcopy
 
 Structure:
 - overall layout: square poster with one dominant center-axis transformation and a clean top-third title zone
@@ -222,7 +255,7 @@ Structure:
 
 Section 1:
 - role: headline zone
-- content: the exact headline "Prompts That Ship"
+- content: the exact readable text "image2-design-director" and "能交付的提示词"
 - visual treatment: large, bold, readable, integrated cleanly into the top third
 
 Section 2:
@@ -237,9 +270,9 @@ Section 3:
 
 Text layer:
 - mode: verbatim
-- hierarchy: one main headline only
-- placement: top third
-- density: low; no subtitle, no badge wall, no secondary captions
+- hierarchy: project name first, Chinese slogan second, one Chinese subtitle third
+- placement: top third and upper-middle area with clear reading order
+- density: low; no badge wall, no secondary captions, no fake UI text
 
 Transformation metaphor:
 - source state: rough brief packet
@@ -263,7 +296,7 @@ Style layer:
 - lighting/material: crisp contrast and controlled glow, not glossy 3D excess
 
 Avoid:
-- furniture ad, generic logo poster, dashboard board, fake brand lockup, secondary captions
+- furniture ad, architecture board, generic logo poster, dashboard board, fake brand lockup, English secondary captions
 - made-up UI, decoration spam, abstract geometry with no project mechanism
 ```
 
