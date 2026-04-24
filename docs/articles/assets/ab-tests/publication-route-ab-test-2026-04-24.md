@@ -13,9 +13,11 @@
 
 ## Current Execution Status
 
-Route B has been executed end to end.
+Route A and Route B have both been executed.
 
-Route A is prepared but not executed because this local shell has no `OPENAI_API_KEY`. The route A prompts are ready and should be run through a real image generation backend before final visual comparison.
+Important correction:
+
+Route A was generated with Codex built-in Image2, not a shell API path. The first version of this note incorrectly treated missing `OPENAI_API_KEY` as blocking image generation. That was wrong for Codex built-in image generation.
 
 ## Shared Theme
 
@@ -61,9 +63,17 @@ Prepared prompts:
 - [route-a-direct-mechanism-prompt.txt](route-a-direct-mechanism-prompt.txt)
 - [route-a-direct-workflow-prompt.txt](route-a-direct-workflow-prompt.txt)
 
-Actual output status:
+Actual outputs:
 
-- `blocked_missing_image_api_key`
+- [cover-one-shot.png](route-a-direct/cover-one-shot.png)
+- [mechanism-one-shot.png](route-a-direct/mechanism-one-shot.png)
+- [workflow-one-shot.png](route-a-direct/workflow-one-shot.png)
+
+Runtime capture session ids:
+
+- `route-a-direct-cover-ab-20260424`
+- `route-a-direct-mechanism-ab-20260424`
+- `route-a-direct-workflow-ab-20260424`
 
 ## Route B. Production Protocol + Deterministic / Hybrid
 
@@ -99,29 +109,92 @@ When Route A outputs are available, compare both routes on:
 
 | Dimension | Route A One-Shot | Route B Protocol |
 |---|---|---|
-| title fidelity | TBD | strong |
-| Chinese readability | TBD | strong |
-| visual richness | TBD | medium |
-| publication cover energy | TBD | medium-high |
-| mechanism clarity | TBD | strong |
-| evidence object specificity | TBD | strong |
-| family consistency | TBD | strong |
-| unexpected design quality | TBD | medium |
-| repeatability | TBD | strong |
-| final release readiness | TBD | pass |
+| title fidelity | surprisingly good, but not guaranteed | strong |
+| Chinese readability | good on main text, risky on microcopy | strong |
+| visual richness | strong | medium |
+| publication cover energy | strong | medium-high |
+| mechanism clarity | strong | strong |
+| evidence object specificity | strong on workflow | strong |
+| family consistency | medium | strong |
+| unexpected design quality | strong | medium |
+| repeatability | medium-low | strong |
+| final release readiness | review candidate | pass |
 
-## Provisional Judgment
+## Actual Route Judgment
 
-Until Route A is actually generated, Route B remains the only validated publication-ready path.
+### Cover
 
-My expected preference:
+Route A is more compelling as a cover. It has richer editorial polish, stronger depth, and a more persuasive protocol-stack motif.
 
-- For cover: Route A may produce a more visually exciting base, but Route B is safer for final text.
-- For mechanism: Route B is likely better because the task is structure-first and text-sensitive.
-- For workflow evidence: Route A may create richer scenes, but Route B is more reliable at showing required evidence objects.
+Route A problems:
 
-Likely best future path:
+- adds extra explanatory copy beyond the intended text budget
+- introduces many small labels that would need review
+- less repeatable than Route B
 
-> Use Route A to explore visual bases for cover and workflow evidence, then promote the winning base into Route B for deterministic text, review, bundle, and release.
+Route B problems:
 
-Mechanism figures should usually stay Route B-first.
+- cleaner and more controllable, but flatter
+- feels more like a generated report cover than a top-tier editorial cover
+
+Preference:
+
+- visual base: Route A
+- final delivery path: Route A base promoted into Route B-style deterministic overlay / final gate
+
+### Mechanism
+
+Route A is visually stronger than expected and the loop structure works well.
+
+Route A problems:
+
+- adds extra top and bottom explanatory text beyond the strict node-label-only contract
+- may still invent small supporting labels
+
+Route B problems:
+
+- very clean and controllable
+- less visually impressive and less publication-polished
+
+Preference:
+
+- for strict documentation: Route B
+- for article publication if text is acceptable after review: Route A may be better
+- safest production rule: generate Route A mechanism candidate, then rebuild final text/labels deterministically if needed
+
+### Workflow Evidence
+
+Route A is clearly stronger visually. It shows concrete workflow objects and feels like a real publication asset.
+
+Route A problems:
+
+- dense generated microcopy
+- invented small text details
+- hard to guarantee exact audit semantics
+
+Route B problems:
+
+- accurate and controlled
+- too schematic compared with Route A
+
+Preference:
+
+- visual base: Route A
+- final release: Route A base should be cleaned through Route B-style deterministic overlay and review
+
+## Updated Recommendation
+
+The best production strategy is not a binary A or B.
+
+Use route-level A/B like this:
+
+1. Run Route A one-shot first for cover and workflow evidence to discover stronger visual compositions.
+2. Run Route B deterministic / hybrid path for exact title, node labels, metadata, bundle, visual review, and final release.
+3. For mechanism figures, run both:
+   - Route A for visual inspiration and possible final candidate
+   - Route B for guaranteed structural correctness
+4. Promote the winner only after the same final release gate.
+
+In short:
+
+> Route A is better at visual invention. Route B is better at delivery control. The strongest workflow is Route A for exploration, Route B for controlled finalization.
