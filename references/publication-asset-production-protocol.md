@@ -8,6 +8,10 @@
 
 > review 负责拦住坏结果；production protocol 负责让 Agent 一开始就走对路线。
 
+当前路线结论：
+
+> Image2 直出完整资产是默认主路径；后期只负责二维码、Logo、Exact copy、已锁定数值和多尺寸适配等确定性补丁。不要把后期工程升级成默认图片制作路线。
+
 ## Required Production Packet
 
 每个 editorial publication asset 在 prompt assembly、Image2 调用、确定性渲染或 overlay 前，必须先形成 `production_packet`。
@@ -28,6 +32,13 @@ text_budget:
 visual_structure: short structure description
 required_visual_evidence:
   - optional evidence object names
+postprocess_scope:
+  - none by default
+  - qr_code
+  - logo
+  - exact_copy
+  - locked_value_replacement
+  - export_adaptation
 forbidden_drift:
   - benchmark artifact
   - generic README hero
@@ -35,16 +46,41 @@ candidate_policy: single | multi_candidate
 repair_policy: micro_repair | regenerate | contract_realign
 ```
 
+## Direct-First Classification
+
+Default to Image2 complete-asset direct output for:
+
+- `editorial_cover`
+- `base_visual`
+- `mechanism_figure`
+- `workflow_evidence`
+- `advance_figure`
+- `evidence_figure`
+- `data_figure`
+- `price_figure`
+- `ranking_figure`
+
+Route to surgical post-processing only for:
+
+- QR code
+- Logo / brand lockup
+- exact copy that must be identical
+- confirmed value replacement for price, date, ranking, or metric labels
+- export crop / resize / padding adaptation
+
+Full deterministic rendering is an explicit exception, not the default. Use it when the user asks for a programmatic chart/table, when compliance requires exact reproduced values across the whole asset, or when Image2 candidates have already failed visual or information viability.
+
 ## Figure Role Defaults
 
 ### `editorial_cover`
 
 Default production route:
 
-- `representation_mode = hybrid_visual_plus_deterministic_overlay`
-- `layout_owner = hybrid`
-- `text_owner = deterministic_overlay`
+- `representation_mode = model_direct_visual` or `model_visual_with_limited_text`
+- `layout_owner = model`
+- `text_owner = model` for the first candidate set
 - `candidate_policy = multi_candidate`
+- `postprocess_scope = exact_copy` only if the title must be replaced or locked after review
 
 Text budget:
 
@@ -55,22 +91,23 @@ Text budget:
 
 Production rule:
 
-> The image model should create cover-level visual energy and composition. Deterministic overlay should own exact Chinese title and supporting copy.
+> The image model should create the finished cover, including the core title treatment. Deterministic overlay is only for surgical exact-copy replacement after a strong direct candidate exists.
 
 Common no-go routes:
 
 - pure deterministic schematic cover without explicit override
-- model-rendered long Chinese title
+- post-processing that rebuilds the cover layout
+- model-rendered long paragraph copy
 - report-page layout that lacks cover tension
 
 ### `mechanism_figure`
 
 Default production route:
 
-- `representation_mode = deterministic_render` or `hybrid_visual_plus_deterministic_overlay`
-- `layout_owner = deterministic_renderer`
-- `text_owner = deterministic_renderer`
-- `candidate_policy = single` only after the mechanism wireframe is clear
+- `representation_mode = model_direct_visual` or `model_visual_with_limited_text`
+- `layout_owner = model`
+- `text_owner = model` for short labels, `deterministic_overlay` only for exact-label repair
+- `candidate_policy = multi_candidate` unless the user explicitly requests a strict schematic
 
 Text budget:
 
@@ -81,7 +118,7 @@ Text budget:
 
 Production rule:
 
-> The image should explain the mechanism by structure, not by packing paragraphs into small cards.
+> The image should explain the mechanism as a finished publication figure. Use post-processing only to replace exact labels, not to design the whole figure.
 
 Common no-go routes:
 
@@ -89,14 +126,15 @@ Common no-go routes:
 - broken English labels
 - decorative workflow board with unclear mechanism
 - using the model to render dense exact Chinese text
+- deterministic schematic output that is visibly weaker than a direct Image2 candidate
 
 ### `workflow_evidence`
 
 Default production route:
 
-- `representation_mode = hybrid_visual_plus_deterministic_overlay`
-- `layout_owner = hybrid`
-- `text_owner = deterministic_overlay`
+- `representation_mode = model_direct_visual` or `model_visual_with_limited_text`
+- `layout_owner = model`
+- `text_owner = model` for short labels, `deterministic_overlay` only for exact-label repair
 - `candidate_policy = multi_candidate`
 
 Text budget:
@@ -116,7 +154,7 @@ Required evidence objects:
 
 Production rule:
 
-> The visual must show concrete workflow evidence, not generic devices or abstract system decoration.
+> The visual must be a finished Image2 publication asset that shows concrete workflow evidence, not a weak schematic that was made controllable by post-processing.
 
 Common no-go routes:
 
@@ -124,6 +162,27 @@ Common no-go routes:
 - abstract radar target as the main proof
 - device cluster without workflow artifacts
 - publication assets shown as empty frames only
+- post-processing used as the primary source of visual quality
+
+### `data_figure`, `price_figure`, `ranking_figure`
+
+Default production route:
+
+- `representation_mode = model_direct_visual` or `model_visual_with_limited_text`
+- `layout_owner = model`
+- `text_owner = model` for broad labels, `deterministic_overlay` only for confirmed exact values
+- `candidate_policy = multi_candidate`
+
+Production rule:
+
+> First ask Image2 for a finished editorial data, price, or ranking visual after the reliability gate has locked the information contract. Then surgically replace only the values or labels that must be exact.
+
+Common no-go routes:
+
+- skipping the reliability gate
+- letting invented model numbers stand as verified facts
+- defaulting to a plain deterministic table when the user asked for a publication visual
+- rebuilding the whole image in post just because it contains data
 
 ## Production Preflight
 
@@ -144,6 +203,8 @@ It returns:
 - `mechanism_figure` with paragraph budget above zero
 - `mechanism_figure` with model-owned dense text
 - `workflow_evidence` missing required evidence objects
+- post-processing scope includes full layout rebuild without explicit override
+- data, price, or ranking figure skips `information_reliability_gate`
 - missing `forbidden_drift`
 - `multi_candidate` required but not selected
 

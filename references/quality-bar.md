@@ -68,9 +68,9 @@
 
 高分信号：
 
-- 纯视觉任务用模型直出
-- 精确图表和指标走 deterministic 或 hybrid
-- 需要后置的固定元素没有强塞进模型文字
+- 封面、基础图、workflow、advance、evidence、数据、价格、排行优先用 Image2 直出完整资产
+- 数据 / 价格 / 排行图先完成 reliability gate
+- QR、Logo、Exact copy 和锁定数值只做局部后期，不重建整张图
 
 ### 5. Delivery Integrity
 

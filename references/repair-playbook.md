@@ -131,7 +131,9 @@ Next move: <new direct / hybrid render / deterministic render>
 
 例如：
 
-- 应该 deterministic 的数据图被做成带 AI 文本的海报
+- 数据 / 价格 / 排行图跳过 reliability gate
+- 本应只替换 QR、Logo、Exact copy 或锁定数值，却把整张图交给后期工程重建
+- 直出成品图被误降成底图或模板化 schematic
 
 默认：
 

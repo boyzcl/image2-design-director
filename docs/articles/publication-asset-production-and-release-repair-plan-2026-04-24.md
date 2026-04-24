@@ -8,6 +8,10 @@
 
 当前三张文章图已经证明，`publication_review = pass` 可以保证资产身份、场景、残留元素和 metadata 大体正确，但不能保证图面本身已经达到发布级。更严重的是，如果生产前没有明确 figure role、representation route、文字预算和 drift boundary，Agent 仍然会用错误路线生成图片，然后只靠后置 review 拦截。
 
+2026-04-24 A/B 后修正：
+
+> 对封面、基础图、workflow、advance、evidence、数据图、价格图、排行图，默认主路线应是 Image2 完整直出。后期只处理二维码、Logo、Exact copy、已锁定数值和导出适配，不再作为默认图片制作路线。
+
 所以这次修复必须同时覆盖两段：
 
 1. `production protocol`
@@ -24,7 +28,8 @@ asset contract
 -> production packet
 -> production preflight
 -> representation strategy
--> generation / deterministic render / hybrid overlay
+-> Image2 direct generation by default
+-> surgical post-processing only when QR / Logo / exact copy / locked values are required
 -> delivery bundle
 -> delivery viability
 -> publication identity review
@@ -64,6 +69,13 @@ text_budget:
   node_labels: number
   paragraphs: 0
 visual_structure: 该图应该采用的结构
+postprocess_scope:
+  - none by default
+  - qr_code
+  - logo
+  - exact_copy
+  - locked_value_replacement
+  - export_adaptation
 forbidden_drift:
   - benchmark artifact
   - generic README hero
@@ -76,40 +88,42 @@ repair_policy: micro_repair | regenerate | contract_realign
 
 #### Figure A. Editorial Cover
 
-- default route: `hybrid_visual_plus_deterministic_overlay`
-- visual base owner: image model
-- text owner: deterministic overlay
+- default route: Image2 complete-asset direct output
+- layout owner: image model
+- text owner: image model first, exact-copy repair only if needed
 - candidate policy: `multi_candidate`
 - must avoid:
-  - model-rendered long Chinese headline
+  - post-processing rebuilding the cover layout
+  - model-rendered long paragraph copy
   - pure schematic deterministic cover unless explicitly chosen
   - report-page dullness
 
 Production intent:
 
-> 先获得有封面张力的 publication visual base，再用确定性排版叠中文标题。
+> 先让 Image2 直接生成具备封面张力的完整 publication asset；如果标题或固定文案必须逐字一致，再做局部替换。
 
 #### Figure B. Mechanism Figure
 
-- default route: `deterministic_render` or `hybrid_visual_plus_deterministic_overlay`
-- layout owner: deterministic renderer
-- text owner: deterministic renderer
-- candidate policy: `single` allowed only after wireframe
+- default route: Image2 complete-asset direct output
+- layout owner: image model
+- text owner: image model first, exact-label repair only if needed
+- candidate policy: `multi_candidate` unless the user explicitly asks for a strict schematic
 - must avoid:
   - paragraph-heavy cards
   - broken English labels
   - dense explanatory copy inside cards
   - decorative workflow board
+  - deterministic schematic that is visibly weaker than a direct candidate
 
 Production intent:
 
-> 图内只放机制节点和极短标签，解释性文字放文章正文或图注。
+> 机制图也先作为可发布图片直出；如果节点标签必须严格一致，再只替换标签，不重建整张图。
 
 #### Figure C. Workflow Evidence
 
-- default route: `hybrid_visual_plus_deterministic_overlay`
-- visual base owner: image model
-- text owner: deterministic overlay
+- default route: Image2 complete-asset direct output
+- layout owner: image model
+- text owner: image model first, exact-label repair only if needed
 - candidate policy: `multi_candidate`
 - must include concrete evidence objects:
   - capture record
@@ -124,7 +138,23 @@ Production intent:
 
 Production intent:
 
-> 让读者看到“这套 skill 已进入真实工作流”，而不是看到一张抽象流程装饰图。
+> 让读者看到“这套 skill 已进入真实工作流”的完整视觉证据，而不是看到一张被后期工程削弱的抽象流程装饰图。
+
+#### Figure D. Data / Price / Ranking
+
+- default route: reliability-gated Image2 complete-asset direct output
+- layout owner: image model
+- text owner: image model first, locked-value replacement only if needed
+- candidate policy: `multi_candidate`
+- must avoid:
+  - skipping reliability gate
+  - accepting invented numbers as facts
+  - defaulting to a flat deterministic table when the user asked for a publication visual
+  - rebuilding the whole image in post because it contains numbers
+
+Production intent:
+
+> 数据图、价格图、排行图也先追求 Image2 的完整图面质量；事实 gate 管口径，后期只修已锁定的数字或标签。
 
 ### 3. Production Preflight
 
@@ -143,7 +173,8 @@ Production intent:
 - cover 用 `deterministic_render` 且没有明确豁免：`cover_visual_energy_risk`
 - mechanism figure 出现 paragraph cards：`mechanism_text_density_too_high`
 - workflow evidence 没有 evidence objects：`workflow_evidence_objects_missing`
-- 文章图把长中文交给模型直出：`model_text_ownership_risk`
+- 文章图把后期工程当成默认主制作路线：`postprocess_as_primary_route`
+- 数据 / 价格 / 排行图跳过 reliability gate：`information_reliability_missing`
 
 ## Release Layer Repair
 

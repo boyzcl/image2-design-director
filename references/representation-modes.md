@@ -14,14 +14,16 @@
 
 适用于：
 
-- 纯视觉品牌图
-- 社媒氛围图
-- 低事实负载的成品海报
+- 封面
+- 基础图
+- workflow / advance / evidence 图
+- 数据图、价格图、排行图在 reliability gate 通过后的第一轮成品直出
+- 社媒、品牌、文章发表类完整视觉资产
 
 默认特征：
 
 - `primary_expression_system = image_model`
-- `text_generation_tolerance = headline_only` 或更低
+- `text_generation_tolerance = headline_only`、`limited_structured_text` 或更低
 - `deterministic_render_needed = false`
 
 ### `model_visual_with_limited_text`
@@ -35,18 +37,18 @@
 
 适用于：
 
-- 主视觉靠模型
-- 标题、QR、logo、导出适配靠后置
-- 需要复用底图
+- 主视觉已由模型完成
+- 只需要补 QR、Logo、Exact copy、锁定数值或导出适配
+- 用户明确要无字版、底图版或多尺寸交付包
 
 ### `hybrid_visual_plus_deterministic_overlay`
 
 适用于：
 
-- 图像气氛、主体和构图靠模型
-- 精确数字、图表、价格、时间标签靠确定性叠加
+- Image2 候选已经成立
+- 少量精确数字、价格、时间标签或法务文本必须确定性替换
 
-这是当前最小 deterministic asset path 的首选模式。
+这是外科式确定性修补路径，不是默认图片制作路径。
 
 ### `deterministic_render`
 
@@ -54,29 +56,31 @@
 
 - 图表本身就是主要交付物
 - 精确值和结构是第一优先级
+- 用户明确要求程序化图表、表格、规范化披露，或 Image2 直出已经失败
 
 ## Decision Heuristics
 
 ### Prefer `model_direct_visual` When
 
-- `factual_sensitivity = low`
 - 结果主要靠视觉说服力
-- 文字范围有限且已锁定
+- 用户要封面、基础图、workflow、advance、evidence
+- 用户要数据图、价格图、排行图，且 reliability gate 已完成
+- 文字范围有限，或 exact copy 可在后期局部修
 
 ### Prefer `visual_base_plus_post` When
 
-- 需要 QR、logo、badge、跨尺寸复用
-- 文字经常要变
-- 用户明确要底图或交付细化
+- 需要 QR、Logo、Exact copy 或 locked value replacement
+- 用户明确要底图、无字版或交付细化
+- 后期范围能保持为局部补丁
 
 ### Prefer `hybrid` Or `deterministic` When
 
-- `factual_sensitivity = high`
-- 任务核心是精确数据、时间、价格、对比
-- 模型文本失真会直接破坏可用性
+- 局部锁定值必须逐字逐数正确，且 Image2 候选整体已经可用
+- 用户明确要求程序化图表、严格表格或合规披露
+- 模型文本失真会直接破坏可用性，且局部替换不足以修复
 
 ## Hard Rules
 
-- 高事实敏感图表默认不应只靠模型写数字
-- 需要 exact overlay 的任务，不应被伪装成“低风险直出”
+- 高事实敏感任务默认不应跳过 reliability gate
+- 需要 exact overlay 的局部元素，不应被扩大成整张图的后期主制作
 - 当 dense info layout 已经超出底图容量，优先换 mode，不要只继续压排版

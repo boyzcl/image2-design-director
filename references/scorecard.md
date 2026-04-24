@@ -82,7 +82,8 @@
 
 低分示例：
 
-- 应该 deterministic 的图表却交给了模型直出
+- 数据 / 价格 / 排行图跳过 reliability gate
+- 已锁定数值需要逐数一致，却没有做局部替换或复核
 - 应该 complete asset 的文章图被误降成底图
 
 ### `delivery_integrity`

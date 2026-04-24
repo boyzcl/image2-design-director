@@ -139,8 +139,8 @@ Route B problems:
 
 Preference:
 
-- visual base: Route A
-- final delivery path: Route A base promoted into Route B-style deterministic overlay / final gate
+- production path: Route A direct
+- post-processing: only if exact title replacement is required after review
 
 ### Mechanism
 
@@ -158,9 +158,9 @@ Route B problems:
 
 Preference:
 
-- for strict documentation: Route B
-- for article publication if text is acceptable after review: Route A may be better
-- safest production rule: generate Route A mechanism candidate, then rebuild final text/labels deterministically if needed
+- production path: Route A direct
+- post-processing: only exact node-label replacement if the direct candidate is otherwise strong
+- Route B deterministic schematic is a fallback, not the default
 
 ### Workflow Evidence
 
@@ -179,22 +179,44 @@ Route B problems:
 
 Preference:
 
-- visual base: Route A
-- final release: Route A base should be cleaned through Route B-style deterministic overlay and review
+- production path: Route A direct
+- post-processing: only exact labels or locked evidence text if required
+- if the evidence composition is weak, regenerate with Image2 rather than rebuilding in post
 
 ## Updated Recommendation
 
-The best production strategy is not a binary A or B.
+The route preference should be corrected.
 
-Use route-level A/B like this:
+Route A direct generation is the better default production path for this publication asset family. Route B-style deterministic / hybrid work should be demoted from "main production route" to "surgical post-processing route".
 
-1. Run Route A one-shot first for cover and workflow evidence to discover stronger visual compositions.
-2. Run Route B deterministic / hybrid path for exact title, node labels, metadata, bundle, visual review, and final release.
-3. For mechanism figures, run both:
-   - Route A for visual inspiration and possible final candidate
-   - Route B for guaranteed structural correctness
-4. Promote the winner only after the same final release gate.
+Default direct-first classes:
+
+- cover
+- base visual
+- workflow
+- advance / explainer
+- evidence
+- data figure
+- price figure
+- ranking figure
+
+Default post-processing classes:
+
+- QR code
+- Logo / brand lockup
+- Exact copy
+- locked price / date / ranking / metric replacement
+- export crop / padding / resize adaptation
 
 In short:
 
-> Route A is better at visual invention. Route B is better at delivery control. The strongest workflow is Route A for exploration, Route B for controlled finalization.
+> Image2 should own the image. Post-processing should only own fixed, exact, or scannable elements.
+
+The verification gates still matter, but their job changes:
+
+- `information_reliability_gate` locks the facts before direct generation.
+- `visual_quality_review` decides whether the direct image is actually publishable.
+- `delivery_viability_gate` is only entered when a surgical post-process patch is needed.
+- `final_release_gate` checks the finished asset after any exact patch.
+
+Route B remains useful as a repair lane, not as the default lane. If a direct Image2 candidate is visually strong but has a wrong QR, Logo, title character, price, date, ranking, or exact value, patch that element. If the whole image is weak, regenerate with Image2 instead of trying to engineer a weaker design in post.

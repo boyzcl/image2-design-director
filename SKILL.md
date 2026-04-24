@@ -104,6 +104,33 @@ Publication asset 的用户可见输出必须额外满足：
 
 `title-safe`、`text-safe`、`masthead-safe` 只允许作为内部中间态存在，不得默认当成交付完成。
 
+### 1.1 Image2 Direct First
+
+默认制作权属于 Image2，不属于后期工程。
+
+下面这些资产类型默认优先走一次性成品直出，必要时多候选，而不是先做底图再工程化重建：
+
+- 封面
+- 基础图
+- workflow 图
+- advance / explainer 图
+- evidence 图
+- 数据图
+- 价格图
+- 排行图
+
+可靠性 gate 仍然必须保留，但它的职责是锁定信息口径和风险，不是自动把整张图改成 deterministic / hybrid。
+
+后期只默认承担外科式确定性处理：
+
+- 二维码
+- Logo / brand lockup
+- Exact copy / 法务或运营要求逐字一致的文字
+- 已确认要替换的价格、日期、排行、数值
+- 多尺寸导出时的裁切、留白和轻量适配
+
+除非用户明确要求程序化图表、严格表格、监管型披露图，或 Image2 直出候选已经证明无法承载，否则不要把后期工程作为主制作路线。
+
 ### 2. Conversation Language By Default
 
 如果用户没有明确指定别的语言：
@@ -142,7 +169,7 @@ Publication asset 的用户可见输出必须额外满足：
 - 性能结论
 - 数据指标
 
-不要先写漂亮 prompt，先跑 `information reliability gate`。
+不要先写漂亮 prompt，先跑 `information reliability gate`。但 gate 通过后，数据图、价格图、排行图默认仍然先尝试 Image2 成品直出；只有需要逐字逐数锁定、可扫描、可复制或合规一致的部分，才进入后期外科式替换。
 
 ### 6. Overlay Needs A Go / No-Go Gate
 
@@ -150,9 +177,9 @@ Publication asset 的用户可见输出必须额外满足：
 
 - 叠标题
 - 放 QR、logo、badge
-- 补价格框、日期、图表
+- 补 exact copy、已确认价格、日期、排行或图表标注
 
-不要默认继续做，先跑 `delivery viability gate`。
+不要默认继续做，先跑 `delivery viability gate`。后期不是主制作策略，只是对已经成立的图做确定性补丁。
 
 如果是文章图进入 overlay，还必须先声明 `protected_regions`，至少包含：
 
@@ -195,9 +222,10 @@ Publication asset 的用户可见输出必须额外满足：
 
 默认分流：
 
-- `editorial_cover`: hybrid visual base + deterministic title overlay + multi-candidate
-- `mechanism_figure`: deterministic / hybrid schematic + node labels only
-- `workflow_evidence`: hybrid workflow evidence visual + deterministic short labels + multi-candidate
+- `editorial_cover`: Image2 complete-asset direct output + multi-candidate
+- `base_visual / mechanism_figure / advance_figure`: Image2 complete-asset direct output first; only exact labels go to surgical post
+- `workflow_evidence`: Image2 complete-asset direct output + required evidence objects + multi-candidate
+- `data / price / ranking figure`: reliability-gated Image2 direct output first; only locked values, QR, logo, or exact copy go to surgical post
 
 `production_preflight` 没过时，不要进入生成。
 

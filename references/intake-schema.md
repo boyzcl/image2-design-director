@@ -319,9 +319,11 @@ intake 不必最终拍板，但必须初步判断：
 示例：
 
 - 品牌海报直出成品：`model_direct_visual`
-- 需要 QR、logo 和精确 CTA：`visual_base_plus_post`
-- 高事实敏感比较图：`hybrid_visual_plus_deterministic_overlay`
-- 纯图表或精确数据板：`deterministic_render`
+- 封面、基础图、workflow、advance、evidence：优先 `model_direct_visual`
+- 数据图、价格图、排行图：先 reliability gate，再优先 `model_direct_visual`
+- 需要 QR、Logo 或 exact copy：`visual_base_plus_post`
+- 已有强直出图但需要替换锁定数值：`hybrid_visual_plus_deterministic_overlay`
+- 用户明确要求程序化图表、严格表格或合规披露：`deterministic_render`
 
 ### `protected_regions`
 

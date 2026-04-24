@@ -47,6 +47,7 @@
 判断：
 
 - 应该走模型直出、模型有限文字、底图加后置、混合渲染，还是确定性渲染
+- 默认先问 Image2 能否直接承担完整成品，再判断是否需要二维码、Logo、Exact copy 或锁定数值的外科式后期
 
 ### Layer 4. Publication Production Packet
 
@@ -250,28 +251,30 @@
 
 | Mode | Use When |
 |---|---|
-| `model_direct_visual` | 纯视觉、品牌型、低事实负载、结果要像完整设计资产 |
-| `model_visual_with_limited_text` | 可由模型承担有限标题或短文案，但不承担精确数据 |
-| `visual_base_plus_post` | 主视觉靠模型，关键文本 / logo / QR / 导出靠后置 |
-| `hybrid_visual_plus_deterministic_overlay` | 视觉氛围靠模型，精确数据或图表靠确定性叠加 |
-| `deterministic_render` | 图表、价格板、对比板本身是主资产 |
+| `model_direct_visual` | 封面、基础图、workflow、advance、evidence、数据、价格、排行等完整资产优先直出 |
+| `model_visual_with_limited_text` | 可由模型承担标题、短标签和有限 supporting copy，但不承担必须逐字逐数一致的内容 |
+| `visual_base_plus_post` | 只有二维码、Logo、Exact copy、锁定值替换或多尺寸导出需要后期 |
+| `hybrid_visual_plus_deterministic_overlay` | 直出候选已成立，但少量精确数值、图表标签或法务文本必须确定性替换 |
+| `deterministic_render` | 用户明确要程序化图表 / 严格表格 / 合规披露，或 Image2 候选已证明不可用 |
 
 ### Default Heuristics
 
-- 精确数字、图表、时间口径重的任务，优先 `hybrid` 或 `deterministic`
-- 完整品牌海报、社媒宣传图且事实负载低时，优先 `model_direct_visual`
-- 需要 QR、logo、多尺寸复用时，优先把这些元素放入 post 或 hybrid 路径
+- 完整成品图默认优先 `model_direct_visual`
+- 封面、基础图、workflow、advance、evidence 默认优先直出
+- 数据图、价格图、排行图先过 reliability gate，再优先直出；需要逐字逐数一致的局部元素再后期替换
+- 需要 QR、logo、多尺寸复用时，只把这些固定元素放入 post 或 hybrid 路径
 - 文章发表图默认以 `complete_asset` 为目标；中间底图只可作为内部工件
 
 ### Editorial Production Defaults
 
 | Figure Role | Default Representation | Layout Owner | Text Owner | Candidate Policy |
 |---|---|---|---|---|
-| `editorial_cover` | `hybrid_visual_plus_deterministic_overlay` | `hybrid` | `deterministic_overlay` | `multi_candidate` |
-| `mechanism_figure` | `deterministic_render` or `hybrid_visual_plus_deterministic_overlay` | `deterministic_renderer` | `deterministic_renderer` | `single` after wireframe |
-| `workflow_evidence` | `hybrid_visual_plus_deterministic_overlay` | `hybrid` | `deterministic_overlay` | `multi_candidate` |
+| `editorial_cover` | `model_direct_visual` or `model_visual_with_limited_text` | `model` | `model`, exact copy repair only if needed | `multi_candidate` |
+| `base_visual / mechanism_figure / advance_figure` | `model_direct_visual` or `model_visual_with_limited_text` | `model` | `model`, exact labels only if needed | `multi_candidate` |
+| `workflow_evidence / evidence_figure` | `model_direct_visual` or `model_visual_with_limited_text` | `model` | `model`, exact labels only if needed | `multi_candidate` |
+| `data_figure / price_figure / ranking_figure` | reliability-gated `model_direct_visual` first | `model` | `model`, locked values only if needed | `multi_candidate` |
 
-文章图不能默认从 Image2 候选直接退化为纯 deterministic poster，除非 production packet 明确说明这是一个 schematic draft 或 deterministic fallback。
+文章图不能默认从 Image2 候选退化为后期工程图或纯 deterministic poster，除非 production packet 明确说明这是一个程序化图表、合规表格、确定性替换任务，或 Image2 直出已失败。
 
 ## Layer 4. Task Mode Decision
 
@@ -344,7 +347,8 @@
 - 成品度理解错
 - 语言理解错
 - 信息口径理解错
-- 本应 hybrid / deterministic 的任务被误交给模型直出
+- 本应直出的完整资产被误交给后期工程做主制作
+- 本应二维码、Logo、Exact copy 或锁定数值替换的局部任务被扩大成整图重建
 - 内部工件被误当 publication asset
 
 这类 route 的第一步不是补 prompt，而是重建：

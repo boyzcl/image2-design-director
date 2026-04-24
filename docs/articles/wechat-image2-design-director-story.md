@@ -80,7 +80,7 @@
 
 如果你要放二维码、logo、日期、CTA、后面还得多尺寸复用，那就更像 `visual_base_plus_post`。
 
-如果你要做一张高事实敏感的对比图，里面有精确价格、时间口径、对比结论，那就不该继续赌模型写字，而是应该走 `hybrid_visual_plus_deterministic_overlay`，让模型负责主视觉，让确定性叠加去承担 exact values。
+如果你要做一张高事实敏感的对比图，里面有精确价格、时间口径、对比结论，那就先走 `information reliability gate` 锁口径，再优先让 Image2 直出完整成品。只有二维码、Logo、Exact copy 或已锁定数值需要逐字逐数一致时，才进入局部后期替换。
 
 这一层特别重要，因为它真正把一个以前经常被含糊处理的问题讲清楚了。
 
