@@ -1,0 +1,22 @@
+{
+  "dimension_scores": {
+    "text_readability": 4,
+    "typographic_craft": 4,
+    "layout_hierarchy": 4,
+    "semantic_clarity": 4,
+    "publication_argument_support_visual": 3,
+    "series_consistency": 4,
+    "asset_distinctiveness": 3,
+    "polish_and_finish": 3
+  },
+  "blockers": [
+    "weak_evidence_object_specificity",
+    "generic_device_cluster_risk"
+  ],
+  "notes": [
+    "The workflow claim is legible, but the evidence objects are too abstract.",
+    "A regenerated workflow evidence figure should show capture, scorecard, bundle, route trace, and accepted asset states more concretely."
+  ],
+  "production_preflight_result": "conditional_pass",
+  "runtime_capture_present": false
+}

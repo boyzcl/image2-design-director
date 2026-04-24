@@ -1,0 +1,22 @@
+{
+  "figure_role": "mechanism_figure",
+  "asset_goal": "Explain the asset contract to delivery accumulation loop for the article mechanism section.",
+  "representation_mode": "deterministic_render",
+  "layout_owner": "deterministic_renderer",
+  "text_owner": "deterministic_renderer",
+  "text_budget": {
+    "headline": 1,
+    "subtitle": 1,
+    "node_labels": 6,
+    "paragraphs": 0
+  },
+  "visual_structure": "Six compact node labels connected as a closed delivery loop.",
+  "required_visual_evidence": [],
+  "forbidden_drift": [
+    "paragraph-heavy cards",
+    "benchmark artifact",
+    "generic workflow board"
+  ],
+  "candidate_policy": "single",
+  "repair_policy": "micro_repair"
+}

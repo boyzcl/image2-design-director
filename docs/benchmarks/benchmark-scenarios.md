@@ -50,7 +50,7 @@
 
 ## Scenario Set
 
-当前最小 benchmark 集包含 6 个核心场景。
+当前最小 benchmark 集包含 9 个核心场景。
 
 | Scenario ID | Use Case | What It Stresses |
 |---|---|---|
@@ -60,6 +60,9 @@
 | `bm_app_asset_onboarding_scene` | `app-asset` | 单图叙事、产品兼容性、自然语言写法稳定性 |
 | `bm_icon_small_size` | `app-asset` / `icon` | 轮廓、缩小后可读性、工艺干净度 |
 | `bm_fixed_element_delivery` | `social-creative` / `delivery_refinement` | 二维码、logo、标题、安全区、多尺寸交付 |
+| `bm_editorial_cover_publication_asset` | `editorial publication` | 资产身份稳定、complete_asset 默认、publication review |
+| `bm_mechanism_figure_publication_asset` | `editorial publication` / `mechanism figure` | 中间稿拦截、主体保护、文章论点支撑 |
+| `bm_workflow_evidence_publication_asset` | `editorial publication` / `evidence figure` | workflow 论证、跨场景残留清理、publication gating |
 
 ## Generalized Surface Reminder
 
@@ -318,6 +321,120 @@
 - logo 抢主标题
 - 一换尺寸就跑版
 
+## Scenario 7. `bm_editorial_cover_publication_asset`
+
+### Goal
+
+验证文章封面或 editorial cover 不会被 benchmark candidate、overlay demo 或 event poster 误替代，并且默认能落到 `complete_asset`。
+
+### Typical Request Shape
+
+- 公众号文章头图
+- editorial report cover
+- publication cover visual
+
+### What To Hold Constant
+
+- deliverable type: `wechat_article_editorial_visual_set` 或 `editorial_publication_visual`
+- usage context: `wechat article editorial publication`
+- 默认不允许 CTA、二维码、报名语义、活动日期、badge
+
+### What This Scenario Should Stress
+
+- `artifact_role` 是否稳定为 `publication_asset`
+- `publication_readiness_review` 是否能拦住内部工件
+- 成果是否真的是成品图而不是 `text_safe_visual`
+
+### High-Value Dimensions
+
+- `asset_identity_stability`
+- `publication_argument_support`
+- `publication_cleanliness`
+- `completion_readiness`
+
+### Common Failure Watchlist
+
+- 更像活动海报
+- 仍停留在 `title-safe` / `masthead-safe`
+- publication review 没跑或没拦下中间稿
+- 残留不属于文章的 fixed elements
+
+## Scenario 8. `bm_mechanism_figure_publication_asset`
+
+### Goal
+
+验证文章机制图能作为正文发表资产成立，而不是停在“可继续排版”的结构底图。
+
+### Typical Request Shape
+
+- 机制解释图
+- system figure
+- protocol figure
+
+### What To Hold Constant
+
+- 主论点与 figure 职责
+- 核心主体区与焦点信息区
+- 默认需要 editorial `protected_regions`
+
+### What This Scenario Should Stress
+
+- `protected_regions` 是否完整
+- overlay checker 是否真的保护主体
+- 文章主论点是否被视觉结构承接
+
+### High-Value Dimensions
+
+- `delivery_integrity`
+- `publication_argument_support`
+- `asset_identity_stability`
+- `representation_fit`
+
+### Common Failure Watchlist
+
+- 主体保护缺失
+- 只适合继续改，不适合直接进正文
+- 图像氛围成立，但机制表达没成立
+- publication review 漏放了中间态
+
+## Scenario 9. `bm_workflow_evidence_publication_asset`
+
+### Goal
+
+验证 workflow / evidence figure 在文章里既能支撑论证，也不会残留错场景元素。
+
+### Typical Request Shape
+
+- workflow evidence 图
+- before/after 机制证据图
+- editorial collateral panel
+
+### What To Hold Constant
+
+- workflow 证据职责
+- 使用场景为 article body figure
+- 默认禁止 CTA、二维码、报名语义、活动日期、badge
+
+### What This Scenario Should Stress
+
+- 图像是否真正服务文章论证
+- publication review 是否能拦下跨场景残留
+- `complete_asset` 是否真的落实
+
+### High-Value Dimensions
+
+- `publication_argument_support`
+- `publication_cleanliness`
+- `information_reliability`
+- `completion_readiness`
+
+### Common Failure Watchlist
+
+- workflow 证据不清
+- 仍残留 event poster 语言
+- 资产身份漂移到 benchmark board 或 delivery artifact
+- score 过线但 publication review 没过线
+
 ## Benchmark Cadence Guidance
 
 ### Minimal Regression Pack
@@ -334,7 +451,13 @@
 
 ### Full Validation Pack
 
-如果修改了 strategy、delivery、runtime schema 或 promotion 的核心规则，建议跑全套 6 个场景，并额外补 `1` 个 exploratory lane 场景。
+如果修改了 strategy、delivery、runtime schema 或 promotion 的核心规则，建议跑全套 9 个场景，并额外补 `1` 个 exploratory lane 场景。
+
+如果修改了文章发表资产协议、publication review 或 artifact-role gating，默认至少跑：
+
+1. `bm_editorial_cover_publication_asset`
+2. `bm_mechanism_figure_publication_asset`
+3. `bm_workflow_evidence_publication_asset`
 
 ### Prompt-System Regression Pack
 

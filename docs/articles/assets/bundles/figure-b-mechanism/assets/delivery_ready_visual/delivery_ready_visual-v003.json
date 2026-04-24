@@ -1,0 +1,126 @@
+{
+  "version_id": "delivery_ready_visual-v003",
+  "state": "delivery_ready_visual",
+  "state_version": 3,
+  "created_at": "2026-04-23T19:37:09+08:00",
+  "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v003.png",
+  "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v003.json",
+  "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/protocol-visual-mechanism-final.png",
+  "source_file_name": "protocol-visual-mechanism-final.png",
+  "parent_version_id": "delivery_ready_visual-v002",
+  "transition": "regenerate_publication_asset",
+  "delivery_plan": {
+    "overlay_mode": "none",
+    "reserved_zones": [],
+    "fixed_elements": [],
+    "target_sizes": []
+  },
+  "tags": [
+    "article",
+    "mechanism",
+    "publication"
+  ],
+  "notes": [
+    "deterministic editorial regeneration after publication protocol upgrade"
+  ],
+  "extra_metadata": {
+    "usage_context": "wechat article editorial publication",
+    "deliverable_type": "editorial_publication_visual",
+    "asset_completion_mode": "complete_asset",
+    "artifact_role": "publication_asset",
+    "artifact_class": "mechanism_figure_publication_asset",
+    "publication_review_required": true,
+    "publication_review_result": "pass",
+    "publication_argument_support": "pass",
+    "cross_scene_residues": [],
+    "delivery_viability_result": "overlay_allowed",
+    "protected_regions": [
+      {
+        "name": "title_region",
+        "type": "soft",
+        "x": 96,
+        "y": 56,
+        "width": 1404,
+        "height": 210
+      },
+      {
+        "name": "core_subject_region",
+        "type": "hard",
+        "x": 88,
+        "y": 286,
+        "width": 1428,
+        "height": 282
+      },
+      {
+        "name": "focus_information_region",
+        "type": "soft",
+        "x": 120,
+        "y": 620,
+        "width": 1320,
+        "height": 132
+      }
+    ],
+    "publication_review": {
+      "result": "pass",
+      "asset_identity_result": "pass",
+      "argument_support_result": "pass",
+      "cross_scene_residue_result": "pass",
+      "artifact_role_check": "publication_asset",
+      "artifact_class": "mechanism_figure_publication_asset",
+      "required_editorial_regions_present": true,
+      "delivery_viability_result": "overlay_allowed",
+      "cross_scene_residues": [],
+      "publication_blockers": []
+    },
+    "publication_blockers": [],
+    "visual_quality_review": {
+      "result": "fail",
+      "score": 55.0,
+      "dimension_scores": {
+        "text_readability": 2.0,
+        "typographic_craft": 2.0,
+        "layout_hierarchy": 3.0,
+        "semantic_clarity": 3.0,
+        "publication_argument_support_visual": 3.0,
+        "series_consistency": 4.0,
+        "asset_distinctiveness": 3.0,
+        "polish_and_finish": 2.0
+      },
+      "visual_quality_blockers": [
+        "broken_word",
+        "paragraph_overload"
+      ],
+      "hard_visual_quality_blockers": [
+        "broken_word",
+        "paragraph_overload"
+      ],
+      "notes": [
+        "Mechanism identity is correct, but dense card copy and broken English word wrapping make the figure unsuitable for publication.",
+        "The production route should switch to node-label-only schematic structure with explanatory text moved to the article caption."
+      ]
+    },
+    "visual_quality_review_result": "fail",
+    "visual_quality_score": 55.0,
+    "production_preflight_result": "conditional_pass",
+    "runtime_capture_present": false,
+    "final_release_gate": {
+      "result": "fail",
+      "final_release_blockers": [
+        "production_preflight_not_pass",
+        "visual_quality_review_not_pass",
+        "runtime_capture_missing"
+      ],
+      "production_preflight_result": "conditional_pass",
+      "publication_review_result": "pass",
+      "visual_quality_review_result": "fail",
+      "delivery_viability_result": "overlay_allowed",
+      "runtime_capture_present": false
+    },
+    "final_release_result": "fail",
+    "final_release_blockers": [
+      "production_preflight_not_pass",
+      "visual_quality_review_not_pass",
+      "runtime_capture_missing"
+    ]
+  }
+}

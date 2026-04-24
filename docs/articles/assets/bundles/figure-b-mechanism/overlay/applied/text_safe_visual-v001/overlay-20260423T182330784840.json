@@ -1,0 +1,109 @@
+{
+  "created_at": "2026-04-23T18:23:31+08:00",
+  "source_version_id": "text_safe_visual-v001",
+  "source_asset_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-b-mechanism/assets/text_safe_visual/text_safe_visual-v001.png",
+  "overlay_output_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-b-mechanism/overlay/applied/text_safe_visual-v001/overlay-20260423T182330784840.png",
+  "overlay_mode": "title_plus_supporting_text",
+  "title": "不是 prompt 技巧",
+  "supporting_lines": [
+    "而是把资产合同、路由、验收、交付与经验复利接成闭环"
+  ],
+  "cta_text": null,
+  "date_text": null,
+  "badge_text": null,
+  "qr_image": null,
+  "logo_image": null,
+  "summary": {
+    "title_box": {
+      "x": 87,
+      "y": 87,
+      "width": 840,
+      "height": 289
+    },
+    "footer_box": {
+      "x": 87,
+      "y": 978,
+      "width": 790,
+      "height": 175
+    },
+    "qr_box": null,
+    "logo_box": null,
+    "badge_box": null,
+    "text_line_count": 3
+  },
+  "viability_report": {
+    "delivery_viability": "overlay_allowed",
+    "collision_risk": "low",
+    "continue_overlay_or_regenerate": "continue_overlay",
+    "overlay_coverage_ratio": 0.1544,
+    "hard_region_hits": [],
+    "soft_region_hits": [],
+    "candidate_boxes": [
+      {
+        "name": "title_panel",
+        "box": {
+          "x": 87,
+          "y": 87,
+          "width": 840,
+          "height": 289
+        }
+      }
+    ],
+    "protected_regions": [
+      {
+        "name": "title_region",
+        "type": "soft",
+        "box": {
+          "x": 69,
+          "y": 69,
+          "width": 877,
+          "height": 326
+        }
+      },
+      {
+        "name": "core_subject_region",
+        "type": "hard",
+        "box": {
+          "x": 225,
+          "y": 457,
+          "width": 802,
+          "height": 459
+        }
+      },
+      {
+        "name": "focus_information_region",
+        "type": "soft",
+        "box": {
+          "x": 87,
+          "y": 978,
+          "width": 790,
+          "height": 175
+        }
+      }
+    ],
+    "protected_regions_declared": true,
+    "required_editorial_regions_present": true,
+    "missing_required_region_names": [],
+    "viability_handoff_to_publication_review": true,
+    "warnings": []
+  },
+  "usage_context": "wechat article editorial publication",
+  "deliverable_type": "editorial_publication_visual",
+  "asset_completion_mode": "complete_asset",
+  "artifact_role_requested": "publication_asset",
+  "artifact_class": "mechanism_figure_publication_asset",
+  "cross_scene_residues": [],
+  "publication_argument_support": "pass",
+  "publication_review": {
+    "result": "pass",
+    "asset_identity_result": "pass",
+    "argument_support_result": "pass",
+    "cross_scene_residue_result": "pass",
+    "artifact_role_check": "publication_asset",
+    "artifact_class": "mechanism_figure_publication_asset",
+    "required_editorial_regions_present": true,
+    "delivery_viability_result": "overlay_allowed",
+    "cross_scene_residues": [],
+    "publication_blockers": []
+  }
+}

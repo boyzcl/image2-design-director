@@ -24,6 +24,14 @@ from delivery_image_ops_lib import (
     serialize_box,
 )
 from delivery_viability_lib import evaluate_delivery_viability, load_protected_regions
+from publication_review_lib import (
+    ARTIFACT_ROLES,
+    REQUIRED_EDITORIAL_PROTECTED_REGIONS,
+    collect_editorial_residues,
+    infer_publication_argument_support,
+    is_editorial_publication_context,
+    run_publication_readiness_review,
+)
 
 
 def zone_box(name: str, width: int, height: int) -> tuple[int, int, int, int]:
@@ -231,6 +239,37 @@ def main() -> int:
     parser.add_argument("--qr-image", default=None, help="Path to the QR image asset.")
     parser.add_argument("--logo-image", default=None, help="Path to the logo image asset.")
     parser.add_argument("--font-path", default=None, help="Optional explicit font path.")
+    parser.add_argument("--usage-context", default=None, help="Optional usage context override.")
+    parser.add_argument("--deliverable-type", default=None, help="Optional deliverable type override.")
+    parser.add_argument(
+        "--asset-completion-mode",
+        default=None,
+        choices=["complete_asset", "base_visual", "delivery_refinement", "undecided"],
+        help="Optional asset completion mode override.",
+    )
+    parser.add_argument(
+        "--artifact-role",
+        default=None,
+        choices=sorted(ARTIFACT_ROLES),
+        help="Artifact role to register for the delivery-ready version.",
+    )
+    parser.add_argument(
+        "--artifact-class",
+        default="delivery_bundle_artifact",
+        help="Artifact class to record for the delivery-ready version.",
+    )
+    parser.add_argument(
+        "--publication-argument-support",
+        default="auto",
+        choices=["auto", "pass", "unclear", "fail"],
+        help="How confidently this asset supports the article's argument.",
+    )
+    parser.add_argument(
+        "--allow-fixed-element",
+        action="append",
+        default=[],
+        help="Editorial fixed element to explicitly allow, such as logo.",
+    )
     parser.add_argument(
         "--protected-region",
         action="append",
@@ -280,6 +319,26 @@ def main() -> int:
     base_image = Image.open(source_path).convert("RGBA")
     width, height = base_image.size
     base_image.close()
+    bundle_context = manifest.get("context", {})
+    source_metadata = source_record.get("extra_metadata", {})
+    usage_context = args.usage_context or source_metadata.get("usage_context") or bundle_context.get("usage_context")
+    deliverable_type = (
+        args.deliverable_type or source_metadata.get("deliverable_type") or bundle_context.get("deliverable_type")
+    )
+    asset_completion_mode = (
+        args.asset_completion_mode
+        or source_metadata.get("asset_completion_mode")
+        or bundle_context.get("asset_completion_mode")
+        or "complete_asset"
+    )
+    editorial_context = is_editorial_publication_context(
+        usage_context=usage_context,
+        deliverable_type=deliverable_type,
+        scene=bundle_context.get("scene"),
+        tags=list(manifest.get("bundle_tags", [])) + list(source_record.get("tags", [])),
+    )
+    if args.asset_completion_mode is None and editorial_context and asset_completion_mode != "complete_asset":
+        asset_completion_mode = "complete_asset"
     protected_regions = load_protected_regions(
         canvas_width=width,
         canvas_height=height,
@@ -304,6 +363,8 @@ def main() -> int:
         protected_regions=protected_regions,
         max_overlay_coverage=args.max_overlay_coverage,
         max_soft_overlap_ratio=args.max_soft_overlap_ratio,
+        required_region_names=REQUIRED_EDITORIAL_PROTECTED_REGIONS if editorial_context else [],
+        publication_review_required=editorial_context,
     )
     if viability_report["delivery_viability"] == "overlay_not_allowed_regenerate" and not args.allow_unsafe_overlay:
         print(
@@ -337,11 +398,61 @@ def main() -> int:
     )
     composed.save(overlay_image_path)
 
+    target_artifact_role = args.artifact_role
+    cross_scene_residues = []
+    publication_review = None
+
+    fixed_elements = []
+    if args.qr_image:
+        fixed_elements.append("qr_code")
+    if args.logo_image:
+        fixed_elements.append("primary_logo")
+    if args.badge_text:
+        fixed_elements.append("badge")
+
+    if editorial_context:
+        cross_scene_residues = collect_editorial_residues(
+            cta_text=args.cta_text,
+            date_text=args.date_text,
+            badge_text=args.badge_text,
+            qr_image=args.qr_image,
+            logo_image=args.logo_image,
+            allowed_fixed_elements=args.allow_fixed_element,
+        )
+        publication_argument_support = (
+            infer_publication_argument_support(
+                usage_context=usage_context,
+                deliverable_type=deliverable_type,
+                artifact_class=args.artifact_class,
+                title=args.title,
+                supporting_lines=args.supporting_line,
+                scene=bundle_context.get("scene"),
+                tags=list(manifest.get("bundle_tags", [])) + list(source_record.get("tags", [])),
+                cross_scene_residues=cross_scene_residues,
+            )
+            if args.publication_argument_support == "auto"
+            else args.publication_argument_support
+        )
+        publication_review = run_publication_readiness_review(
+            artifact_role=target_artifact_role or "review_candidate",
+            artifact_class=args.artifact_class,
+            asset_completion_mode=asset_completion_mode,
+            publication_argument_support=publication_argument_support,
+            cross_scene_residues=cross_scene_residues,
+            protected_regions=viability_report.get("protected_regions", []),
+            delivery_viability_result=viability_report["delivery_viability"],
+        )
+
     overlay_record = {
         "created_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         "source_version_id": source_record["version_id"],
         "source_asset_path": str(source_path),
         "overlay_output_path": str(overlay_image_path),
+        "usage_context": usage_context,
+        "deliverable_type": deliverable_type,
+        "asset_completion_mode": asset_completion_mode,
+        "artifact_role_requested": target_artifact_role or "review_candidate",
+        "artifact_class": args.artifact_class,
         "overlay_mode": args.overlay_mode,
         "title": args.title,
         "supporting_lines": args.supporting_line,
@@ -352,16 +463,11 @@ def main() -> int:
         "logo_image": args.logo_image,
         "summary": overlay_summary,
         "viability_report": viability_report,
+        "cross_scene_residues": cross_scene_residues,
+        "publication_argument_support": publication_argument_support if editorial_context else None,
+        "publication_review": publication_review,
     }
     overlay_record_path.write_text(json.dumps(overlay_record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-    fixed_elements = []
-    if args.qr_image:
-        fixed_elements.append("qr_code")
-    if args.logo_image:
-        fixed_elements.append("primary_logo")
-    if args.badge_text:
-        fixed_elements.append("badge")
 
     version = register_version(
         bundle=str(manifest_path),
@@ -375,13 +481,32 @@ def main() -> int:
         target_sizes=args.target_size or source_record.get("delivery_plan", {}).get("target_sizes", []),
         tags=args.tag,
         notes=args.note,
+        usage_context=usage_context,
+        deliverable_type=deliverable_type,
+        asset_completion_mode=asset_completion_mode,
+        artifact_role=target_artifact_role,
+        artifact_class=args.artifact_class,
+        publication_review_result=publication_review["result"] if publication_review else None,
+        publication_blockers=publication_review["publication_blockers"] if publication_review else None,
         extra_metadata={
+            "usage_context": usage_context,
+            "deliverable_type": deliverable_type,
+            "asset_completion_mode": asset_completion_mode,
+            "artifact_role": target_artifact_role or "review_candidate",
+            "artifact_class": args.artifact_class,
+            "publication_review_required": editorial_context,
+            "protected_regions": viability_report.get("protected_regions", []),
             "overlay_output_path": str(overlay_image_path),
             "overlay_record_path": str(overlay_record_path),
             "overlay_summary": overlay_summary,
             "delivery_viability_result": viability_report["delivery_viability"],
             "collision_risk": viability_report["collision_risk"],
             "viability_report": viability_report,
+            "cross_scene_residues": cross_scene_residues,
+            "publication_argument_support": publication_argument_support if editorial_context else None,
+            "publication_review": publication_review,
+            "publication_review_result": publication_review["result"] if publication_review else None,
+            "publication_blockers": publication_review["publication_blockers"] if publication_review else [],
         },
     )
 
@@ -393,6 +518,8 @@ def main() -> int:
         "overlay_record_path": str(overlay_record_path),
         "delivery_viability_result": viability_report["delivery_viability"],
         "collision_risk": viability_report["collision_risk"],
+        "artifact_role": version["extra_metadata"].get("artifact_role"),
+        "publication_review_result": version["extra_metadata"].get("publication_review_result"),
     }
     print(json.dumps(result, ensure_ascii=False))
     return 0

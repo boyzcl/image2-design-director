@@ -1,0 +1,75 @@
+{
+  "usage_context": "wechat article editorial publication",
+  "deliverable_type": "editorial_publication_visual",
+  "asset_completion_mode": "complete_asset",
+  "artifact_role": "publication_asset",
+  "artifact_class": "editorial_cover_publication_asset",
+  "publication_review_required": true,
+  "publication_review_result": "pass",
+  "publication_argument_support": "pass",
+  "cross_scene_residues": [],
+  "delivery_viability_result": "overlay_allowed",
+  "protected_regions": [
+    {
+      "name": "title_region",
+      "type": "soft",
+      "x": 98,
+      "y": 190,
+      "width": 846,
+      "height": 486
+    },
+    {
+      "name": "core_subject_region",
+      "type": "hard",
+      "x": 646,
+      "y": 710,
+      "width": 564,
+      "height": 660
+    },
+    {
+      "name": "focus_information_region",
+      "type": "soft",
+      "x": 112,
+      "y": 790,
+      "width": 420,
+      "height": 250
+    }
+  ],
+  "production_packet": {
+    "figure_role": "editorial_cover",
+    "asset_goal": "Open the article by making the central claim: image2-design-director exists because strong image models still need a controllable delivery system.",
+    "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+    "layout_owner": "hybrid",
+    "text_owner": "deterministic_overlay",
+    "text_budget": {
+      "headline": 1,
+      "subtitle": 1,
+      "node_labels": 3,
+      "paragraphs": 0
+    },
+    "visual_structure": "Editorial cover with a strong title field, a protocol stack focal system, and a clear publication-cover hierarchy.",
+    "required_visual_evidence": [],
+    "forbidden_drift": [
+      "internal report page",
+      "generic README hero",
+      "benchmark artifact",
+      "event poster"
+    ],
+    "candidate_policy": "multi_candidate",
+    "repair_policy": "micro_repair"
+  },
+  "production_preflight": {
+    "production_preflight_result": "pass",
+    "production_preflight_blockers": [],
+    "production_preflight_warnings": [],
+    "figure_role": "editorial_cover",
+    "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+    "layout_owner": "hybrid",
+    "text_owner": "deterministic_overlay",
+    "candidate_policy": "multi_candidate",
+    "repair_policy": "micro_repair"
+  },
+  "production_preflight_result": "pass",
+  "runtime_capture_present": false,
+  "source_generation_output": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/editorial-cover-report-v2.png"
+}

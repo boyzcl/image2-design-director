@@ -25,6 +25,8 @@
 - `protected_regions`
 - 计划进入的 overlay boxes
 - 目标尺寸或导出需求
+- `usage_context`
+- 当前目标 `artifact_role`
 
 ## Core Questions
 
@@ -33,6 +35,23 @@
 3. 与软保护区的碰撞风险有多高
 4. overlay footprint 是否超过图像容量
 5. 继续 overlay 会不会破坏资产类型或误导风险
+6. 如果是 editorial publication，是否真的具备发表级 overlay 基础
+
+## Editorial Overlay Requirements
+
+文章图一旦进入 overlay，必须声明 `protected_regions`，至少包含：
+
+- `title_region`
+- `core_subject_region`
+- `focus_information_region`
+
+这些区域分别对应：
+
+- 标题区保护
+- 核心主体区保护
+- 焦点信息区保护
+
+如果没有 `protected_regions`，只能说明做了基础 box-level coverage，不能 claim 已完成完整碰撞检测。
 
 ## Output Values
 
@@ -43,6 +62,7 @@
 - 无硬碰撞
 - overlay footprint 可接受
 - 新增信息不会破坏主次结构
+- 若为文章图，`protected_regions` 已声明且齐全
 
 ### `overlay_allowed_with_limits`
 
@@ -63,6 +83,7 @@
 - 硬保护区被侵入
 - overlay 已明显压垮版式
 - 当前图的 representation 已经不适合承载新增信息
+- 文章图进入 overlay 但缺少 required `protected_regions`
 
 默认动作：
 
@@ -78,14 +99,34 @@
 - `hard_region_hits`
 - `soft_region_hits`
 - `continue_overlay_or_regenerate`
+- `protected_regions_declared`
+- `required_editorial_regions_present`
+- `viability_handoff_to_publication_review`
 
 ## Default Threshold Hints
 
 - 硬保护区碰撞：默认 `0` 容忍
 - 软保护区碰撞：允许小范围擦边，但要记录风险
 - overlay footprint：超过图像可承载范围时应降为 `with_limits` 或 `no_go`
+- 文章图缺少 `title_region / core_subject_region / focus_information_region`：默认 `no_go`
+
+## Handoff To Publication Readiness Review
+
+`delivery_viability_gate` 通过后，如果目标是文章发表资产，必须继续进入 `publication_readiness_review`。
+
+delivery viability 只回答：
+
+- 还能不能继续做
+- 继续做会不会撞坏结构
+
+它不回答：
+
+- 当前图是否已经是正确的 publication asset
+- 当前图是否真的支持文章论点
+- 当前图是否还残留跨场景文案或 fixed elements
 
 ## Hard Rules
 
 - 不要把“能放进去”当成“还能交付”
 - dense info overlay 失败时，优先怀疑 representation mode，而不是只怀疑排版技巧
+- 文章图未通过 publication review 前，不得给用户，也不得进入正文

@@ -1,0 +1,109 @@
+{
+  "created_at": "2026-04-23T18:21:07+08:00",
+  "source_version_id": "text_safe_visual-v001",
+  "source_asset_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-c-workflow/assets/text_safe_visual/text_safe_visual-v001.png",
+  "overlay_output_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-c-workflow/overlay/applied/text_safe_visual-v001/overlay-20260423T182107180551.png",
+  "overlay_mode": "title_plus_supporting_text",
+  "title": "把单次惊艳 变成稳定交付",
+  "supporting_lines": [
+    "让 gpt-image-2 真正进入可控、可验收、可复利的工作流"
+  ],
+  "cta_text": null,
+  "date_text": null,
+  "badge_text": null,
+  "qr_image": null,
+  "logo_image": null,
+  "summary": {
+    "title_box": {
+      "x": 117,
+      "y": 65,
+      "width": 1120,
+      "height": 217
+    },
+    "footer_box": {
+      "x": 117,
+      "y": 733,
+      "width": 1053,
+      "height": 132
+    },
+    "qr_box": null,
+    "logo_box": null,
+    "badge_box": null,
+    "text_line_count": 2
+  },
+  "viability_report": {
+    "delivery_viability": "overlay_allowed",
+    "collision_risk": "low",
+    "continue_overlay_or_regenerate": "continue_overlay",
+    "overlay_coverage_ratio": 0.1545,
+    "hard_region_hits": [],
+    "soft_region_hits": [],
+    "candidate_boxes": [
+      {
+        "name": "title_panel",
+        "box": {
+          "x": 117,
+          "y": 65,
+          "width": 1120,
+          "height": 217
+        }
+      }
+    ],
+    "protected_regions": [
+      {
+        "name": "title_region",
+        "type": "soft",
+        "box": {
+          "x": 92,
+          "y": 51,
+          "width": 1170,
+          "height": 245
+        }
+      },
+      {
+        "name": "core_subject_region",
+        "type": "hard",
+        "box": {
+          "x": 300,
+          "y": 343,
+          "width": 1070,
+          "height": 343
+        }
+      },
+      {
+        "name": "focus_information_region",
+        "type": "soft",
+        "box": {
+          "x": 117,
+          "y": 733,
+          "width": 1053,
+          "height": 132
+        }
+      }
+    ],
+    "protected_regions_declared": true,
+    "required_editorial_regions_present": true,
+    "missing_required_region_names": [],
+    "viability_handoff_to_publication_review": true,
+    "warnings": []
+  },
+  "usage_context": "wechat article editorial publication",
+  "deliverable_type": "editorial_publication_visual",
+  "asset_completion_mode": "complete_asset",
+  "artifact_role_requested": "publication_asset",
+  "artifact_class": "workflow_evidence_publication_asset",
+  "cross_scene_residues": [],
+  "publication_argument_support": "pass",
+  "publication_review": {
+    "result": "pass",
+    "asset_identity_result": "pass",
+    "argument_support_result": "pass",
+    "cross_scene_residue_result": "pass",
+    "artifact_role_check": "publication_asset",
+    "artifact_class": "workflow_evidence_publication_asset",
+    "required_editorial_regions_present": true,
+    "delivery_viability_result": "overlay_allowed",
+    "cross_scene_residues": [],
+    "publication_blockers": []
+  }
+}

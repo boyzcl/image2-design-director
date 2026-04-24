@@ -1,0 +1,48 @@
+{
+  "usage_context": "wechat article editorial publication",
+  "deliverable_type": "editorial_publication_visual",
+  "asset_completion_mode": "complete_asset",
+  "artifact_role": "publication_asset",
+  "artifact_class": "editorial_publication_asset",
+  "publication_review_required": true,
+  "publication_review_result": "pass",
+  "publication_blockers": [],
+  "protected_regions": [
+    {
+      "name": "title_region",
+      "type": "soft",
+      "x": 0.08,
+      "y": 0.08,
+      "width": 0.56,
+      "height": 0.16
+    },
+    {
+      "name": "core_subject_region",
+      "type": "hard",
+      "x": 0.20,
+      "y": 0.22,
+      "width": 0.56,
+      "height": 0.48
+    },
+    {
+      "name": "focus_information_region",
+      "type": "soft",
+      "x": 0.10,
+      "y": 0.72,
+      "width": 0.46,
+      "height": 0.16
+    }
+  ],
+  "publication_review": {
+    "result": "pass",
+    "asset_identity_result": "pass",
+    "argument_support_result": "pass",
+    "cross_scene_residue_result": "pass",
+    "artifact_role_check": "publication_asset",
+    "artifact_class": "editorial_publication_asset",
+    "required_editorial_regions_present": true,
+    "delivery_viability_result": "overlay_allowed",
+    "cross_scene_residues": [],
+    "publication_blockers": []
+  }
+}

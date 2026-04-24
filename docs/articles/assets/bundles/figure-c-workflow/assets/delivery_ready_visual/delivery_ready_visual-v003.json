@@ -1,0 +1,140 @@
+{
+  "version_id": "delivery_ready_visual-v003",
+  "state": "delivery_ready_visual",
+  "state_version": 3,
+  "created_at": "2026-04-24T11:27:48+08:00",
+  "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v003.png",
+  "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v003.json",
+  "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/workflow-evidence-v2.png",
+  "source_file_name": "workflow-evidence-v2.png",
+  "parent_version_id": "delivery_ready_visual-v002",
+  "transition": "production_protocol_regeneration_v2",
+  "delivery_plan": {
+    "overlay_mode": "none",
+    "reserved_zones": [],
+    "fixed_elements": [],
+    "target_sizes": []
+  },
+  "tags": [
+    "article",
+    "workflow",
+    "publication"
+  ],
+  "notes": [
+    "v2 production packet + preflight regenerated workflow evidence asset"
+  ],
+  "extra_metadata": {
+    "usage_context": "wechat article editorial publication",
+    "deliverable_type": "editorial_publication_visual",
+    "asset_completion_mode": "complete_asset",
+    "artifact_role": "publication_asset",
+    "artifact_class": "workflow_evidence_publication_asset",
+    "publication_review_required": true,
+    "publication_review_result": "pass",
+    "publication_argument_support": "pass",
+    "cross_scene_residues": [],
+    "delivery_viability_result": "overlay_allowed",
+    "protected_regions": [
+      {
+        "name": "title_region",
+        "type": "soft",
+        "x": 88,
+        "y": 54,
+        "width": 1180,
+        "height": 182
+      },
+      {
+        "name": "core_subject_region",
+        "type": "hard",
+        "x": 84,
+        "y": 276,
+        "width": 1434,
+        "height": 580
+      },
+      {
+        "name": "focus_information_region",
+        "type": "soft",
+        "x": 1088,
+        "y": 728,
+        "width": 420,
+        "height": 120
+      }
+    ],
+    "production_packet": {
+      "figure_role": "workflow_evidence",
+      "asset_goal": "Show concrete workflow evidence that the skill records decisions, reviews outputs, and packages delivery-ready assets.",
+      "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+      "layout_owner": "hybrid",
+      "text_owner": "deterministic_overlay",
+      "text_budget": {
+        "headline": 1,
+        "subtitle": 1,
+        "node_labels": 3,
+        "paragraphs": 0
+      },
+      "visual_structure": "A concrete evidence wall: runtime capture, route trace, scorecard, delivery bundle, and accepted asset states connected left to right.",
+      "required_visual_evidence": [
+        "runtime_capture",
+        "scorecard",
+        "delivery_bundle",
+        "route_trace",
+        "accepted_asset_state"
+      ],
+      "forbidden_drift": [
+        "generic README hero",
+        "abstract radar decoration",
+        "empty device mockup cluster",
+        "benchmark artifact"
+      ],
+      "candidate_policy": "multi_candidate",
+      "repair_policy": "micro_repair"
+    },
+    "production_preflight": {
+      "production_preflight_result": "pass",
+      "production_preflight_blockers": [],
+      "production_preflight_warnings": [],
+      "figure_role": "workflow_evidence",
+      "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+      "layout_owner": "hybrid",
+      "text_owner": "deterministic_overlay",
+      "candidate_policy": "multi_candidate",
+      "repair_policy": "micro_repair"
+    },
+    "production_preflight_result": "pass",
+    "runtime_capture_present": true,
+    "source_generation_output": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/workflow-evidence-v2.png",
+    "publication_blockers": [],
+    "visual_quality_review": {
+      "result": "pass",
+      "score": 95.0,
+      "dimension_scores": {
+        "text_readability": 5.0,
+        "typographic_craft": 4.0,
+        "layout_hierarchy": 5.0,
+        "semantic_clarity": 5.0,
+        "publication_argument_support_visual": 5.0,
+        "series_consistency": 4.0,
+        "asset_distinctiveness": 5.0,
+        "polish_and_finish": 5.0
+      },
+      "visual_quality_blockers": [],
+      "hard_visual_quality_blockers": [],
+      "notes": [
+        "Workflow evidence now shows concrete capture, route, scorecard, bundle, and accepted state objects."
+      ]
+    },
+    "visual_quality_review_result": "pass",
+    "visual_quality_score": 95.0,
+    "final_release_gate": {
+      "result": "pass",
+      "final_release_blockers": [],
+      "production_preflight_result": "pass",
+      "publication_review_result": "pass",
+      "visual_quality_review_result": "pass",
+      "delivery_viability_result": "overlay_allowed",
+      "runtime_capture_present": true
+    },
+    "final_release_result": "pass",
+    "final_release_blockers": []
+  }
+}

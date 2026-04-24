@@ -1,0 +1,22 @@
+{
+  "dimension_scores": {
+    "text_readability": 4,
+    "typographic_craft": 4,
+    "layout_hierarchy": 4,
+    "semantic_clarity": 4,
+    "publication_argument_support_visual": 3,
+    "series_consistency": 4,
+    "asset_distinctiveness": 3,
+    "polish_and_finish": 3
+  },
+  "blockers": [
+    "cover_visual_energy_risk",
+    "internal_report_page_feel"
+  ],
+  "notes": [
+    "Asset identity is correct, but the cover lacks enough publication cover tension.",
+    "The deterministic redraw improved text fidelity but flattened the visual craft."
+  ],
+  "production_preflight_result": "conditional_pass",
+  "runtime_capture_present": false
+}

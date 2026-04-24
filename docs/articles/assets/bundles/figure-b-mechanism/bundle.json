@@ -1,0 +1,678 @@
+{
+  "schema_version": 1,
+  "bundle_id": "wechat-article-figure-b-mechanism",
+  "bundle_slug": "wechat-article-figure-b-mechanism",
+  "asset_name": "WeChat article mechanism figure",
+  "bundle_root": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-b-mechanism",
+  "created_at": "2026-04-23T18:20:34+08:00",
+  "updated_at": "2026-04-24T11:29:03+08:00",
+  "state_order": [
+    "raw_visual",
+    "text_safe_visual",
+    "delivery_ready_visual"
+  ],
+  "paths": {
+    "manifest": "bundle.json",
+    "assets": "assets",
+    "overlay": "overlay",
+    "size_adaptation": "size-adaptation",
+    "notes": "notes"
+  },
+  "context": {
+    "scene": "WeChat article mechanism visual",
+    "domain_direction": "systems figure for image2-design-director wechat article",
+    "matched_profile": "custom",
+    "support_tier": "standard",
+    "usage_context": "wechat article editorial publication",
+    "deliverable_type": "editorial_publication_visual",
+    "asset_completion_mode": "complete_asset"
+  },
+  "bundle_tags": [
+    "article",
+    "mechanism"
+  ],
+  "latest_versions": {
+    "raw_visual": null,
+    "text_safe_visual": "text_safe_visual-v001",
+    "delivery_ready_visual": "delivery_ready_visual-v004"
+  },
+  "versions": [
+    {
+      "version_id": "text_safe_visual-v001",
+      "state": "text_safe_visual",
+      "state_version": 1,
+      "created_at": "2026-04-23T18:20:34+08:00",
+      "asset_path": "assets/text_safe_visual/text_safe_visual-v001.png",
+      "metadata_path": "assets/text_safe_visual/text_safe_visual-v001.json",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/protocol-visual-mechanism-figure.png",
+      "source_file_name": "protocol-visual-mechanism-figure.png",
+      "parent_version_id": null,
+      "transition": "promote_text_safe_visual",
+      "delivery_plan": {
+        "overlay_mode": "text_safe_only",
+        "reserved_zones": [
+          "top_title"
+        ],
+        "fixed_elements": [],
+        "target_sizes": []
+      },
+      "tags": [
+        "article",
+        "mechanism",
+        "publication"
+      ],
+      "notes": [],
+      "extra_metadata": {
+        "usage_context": "wechat article editorial publication",
+        "deliverable_type": "editorial_publication_visual",
+        "protected_regions": [
+          {
+            "name": "title_region",
+            "type": "soft",
+            "x": 87,
+            "y": 87,
+            "width": 752,
+            "height": 225
+          },
+          {
+            "name": "core_subject_region",
+            "type": "hard",
+            "x": 225,
+            "y": 374,
+            "width": 802,
+            "height": 517
+          },
+          {
+            "name": "focus_information_region",
+            "type": "soft",
+            "x": 125,
+            "y": 953,
+            "width": 576,
+            "height": 175
+          }
+        ],
+        "asset_completion_mode": "delivery_refinement",
+        "artifact_role": "internal_candidate",
+        "artifact_class": "text_safe_intermediate",
+        "publication_review_required": false
+      }
+    },
+    {
+      "version_id": "delivery_ready_visual-v001",
+      "state": "delivery_ready_visual",
+      "state_version": 1,
+      "created_at": "2026-04-23T18:21:07+08:00",
+      "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v001.png",
+      "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v001.json",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-b-mechanism/overlay/applied/text_safe_visual-v001/overlay-20260423T182107177400.png",
+      "source_file_name": "overlay-20260423T182107177400.png",
+      "parent_version_id": "text_safe_visual-v001",
+      "transition": "fixed_element_overlay_applied",
+      "delivery_plan": {
+        "overlay_mode": "title_plus_supporting_text",
+        "reserved_zones": [
+          "top_title"
+        ],
+        "fixed_elements": [],
+        "target_sizes": []
+      },
+      "tags": [
+        "article",
+        "mechanism",
+        "publication"
+      ],
+      "notes": [],
+      "extra_metadata": {
+        "overlay_output_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-b-mechanism/overlay/applied/text_safe_visual-v001/overlay-20260423T182107177400.png",
+        "overlay_record_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-b-mechanism/overlay/applied/text_safe_visual-v001/overlay-20260423T182107177400.json",
+        "overlay_summary": {
+          "title_box": {
+            "x": 87,
+            "y": 87,
+            "width": 840,
+            "height": 289
+          },
+          "footer_box": {
+            "x": 87,
+            "y": 978,
+            "width": 790,
+            "height": 175
+          },
+          "qr_box": null,
+          "logo_box": null,
+          "badge_box": null,
+          "text_line_count": 3
+        },
+        "delivery_viability_result": "overlay_allowed",
+        "collision_risk": "low",
+        "viability_report": {
+          "delivery_viability": "overlay_allowed",
+          "collision_risk": "low",
+          "continue_overlay_or_regenerate": "continue_overlay",
+          "overlay_coverage_ratio": 0.1544,
+          "hard_region_hits": [],
+          "soft_region_hits": [],
+          "candidate_boxes": [
+            {
+              "name": "title_panel",
+              "box": {
+                "x": 87,
+                "y": 87,
+                "width": 840,
+                "height": 289
+              }
+            }
+          ],
+          "protected_regions": [
+            {
+              "name": "title_region",
+              "type": "soft",
+              "box": {
+                "x": 69,
+                "y": 69,
+                "width": 877,
+                "height": 326
+              }
+            },
+            {
+              "name": "core_subject_region",
+              "type": "hard",
+              "box": {
+                "x": 225,
+                "y": 457,
+                "width": 802,
+                "height": 459
+              }
+            },
+            {
+              "name": "focus_information_region",
+              "type": "soft",
+              "box": {
+                "x": 87,
+                "y": 978,
+                "width": 790,
+                "height": 175
+              }
+            }
+          ],
+          "protected_regions_declared": true,
+          "required_editorial_regions_present": true,
+          "missing_required_region_names": [],
+          "viability_handoff_to_publication_review": true,
+          "warnings": []
+        },
+        "usage_context": "wechat article editorial publication",
+        "deliverable_type": "editorial_publication_visual",
+        "protected_regions": [
+          {
+            "name": "title_region",
+            "type": "soft",
+            "x": 69,
+            "y": 69,
+            "width": 877,
+            "height": 326
+          },
+          {
+            "name": "core_subject_region",
+            "type": "hard",
+            "x": 225,
+            "y": 457,
+            "width": 802,
+            "height": 459
+          },
+          {
+            "name": "focus_information_region",
+            "type": "soft",
+            "x": 87,
+            "y": 978,
+            "width": 790,
+            "height": 175
+          }
+        ],
+        "asset_completion_mode": "complete_asset",
+        "artifact_role": "review_candidate",
+        "artifact_class": "editorial_review_candidate",
+        "publication_review_required": true,
+        "publication_argument_support": "pass",
+        "cross_scene_residues": [],
+        "publication_review_result": "conditional_pass",
+        "publication_blockers": [],
+        "publication_review": {
+          "result": "conditional_pass",
+          "asset_identity_result": "conditional_pass",
+          "argument_support_result": "pass",
+          "cross_scene_residue_result": "pass",
+          "artifact_role_check": "review_candidate",
+          "artifact_class": "editorial_review_candidate",
+          "required_editorial_regions_present": true,
+          "delivery_viability_result": "overlay_allowed",
+          "cross_scene_residues": [],
+          "publication_blockers": []
+        }
+      }
+    },
+    {
+      "version_id": "delivery_ready_visual-v002",
+      "state": "delivery_ready_visual",
+      "state_version": 2,
+      "created_at": "2026-04-23T18:23:31+08:00",
+      "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v002.png",
+      "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v002.json",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-b-mechanism/overlay/applied/text_safe_visual-v001/overlay-20260423T182330784840.png",
+      "source_file_name": "overlay-20260423T182330784840.png",
+      "parent_version_id": "text_safe_visual-v001",
+      "transition": "fixed_element_overlay_applied",
+      "delivery_plan": {
+        "overlay_mode": "title_plus_supporting_text",
+        "reserved_zones": [
+          "top_title"
+        ],
+        "fixed_elements": [],
+        "target_sizes": []
+      },
+      "tags": [
+        "article",
+        "mechanism",
+        "publication"
+      ],
+      "notes": [
+        "v2 copy tightening for readability"
+      ],
+      "extra_metadata": {
+        "overlay_output_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-b-mechanism/overlay/applied/text_safe_visual-v001/overlay-20260423T182330784840.png",
+        "overlay_record_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-b-mechanism/overlay/applied/text_safe_visual-v001/overlay-20260423T182330784840.json",
+        "overlay_summary": {
+          "title_box": {
+            "x": 87,
+            "y": 87,
+            "width": 840,
+            "height": 289
+          },
+          "footer_box": {
+            "x": 87,
+            "y": 978,
+            "width": 790,
+            "height": 175
+          },
+          "qr_box": null,
+          "logo_box": null,
+          "badge_box": null,
+          "text_line_count": 3
+        },
+        "delivery_viability_result": "overlay_allowed",
+        "collision_risk": "low",
+        "viability_report": {
+          "delivery_viability": "overlay_allowed",
+          "collision_risk": "low",
+          "continue_overlay_or_regenerate": "continue_overlay",
+          "overlay_coverage_ratio": 0.1544,
+          "hard_region_hits": [],
+          "soft_region_hits": [],
+          "candidate_boxes": [
+            {
+              "name": "title_panel",
+              "box": {
+                "x": 87,
+                "y": 87,
+                "width": 840,
+                "height": 289
+              }
+            }
+          ],
+          "protected_regions": [
+            {
+              "name": "title_region",
+              "type": "soft",
+              "box": {
+                "x": 69,
+                "y": 69,
+                "width": 877,
+                "height": 326
+              }
+            },
+            {
+              "name": "core_subject_region",
+              "type": "hard",
+              "box": {
+                "x": 225,
+                "y": 457,
+                "width": 802,
+                "height": 459
+              }
+            },
+            {
+              "name": "focus_information_region",
+              "type": "soft",
+              "box": {
+                "x": 87,
+                "y": 978,
+                "width": 790,
+                "height": 175
+              }
+            }
+          ],
+          "protected_regions_declared": true,
+          "required_editorial_regions_present": true,
+          "missing_required_region_names": [],
+          "viability_handoff_to_publication_review": true,
+          "warnings": []
+        },
+        "usage_context": "wechat article editorial publication",
+        "deliverable_type": "editorial_publication_visual",
+        "protected_regions": [
+          {
+            "name": "title_region",
+            "type": "soft",
+            "x": 69,
+            "y": 69,
+            "width": 877,
+            "height": 326
+          },
+          {
+            "name": "core_subject_region",
+            "type": "hard",
+            "x": 225,
+            "y": 457,
+            "width": 802,
+            "height": 459
+          },
+          {
+            "name": "focus_information_region",
+            "type": "soft",
+            "x": 87,
+            "y": 978,
+            "width": 790,
+            "height": 175
+          }
+        ],
+        "asset_completion_mode": "complete_asset",
+        "artifact_role": "publication_asset",
+        "artifact_class": "mechanism_figure_publication_asset",
+        "publication_review_required": true,
+        "publication_argument_support": "pass",
+        "cross_scene_residues": [],
+        "publication_review_result": "pass",
+        "publication_blockers": [],
+        "publication_review": {
+          "result": "pass",
+          "asset_identity_result": "pass",
+          "argument_support_result": "pass",
+          "cross_scene_residue_result": "pass",
+          "artifact_role_check": "publication_asset",
+          "artifact_class": "mechanism_figure_publication_asset",
+          "required_editorial_regions_present": true,
+          "delivery_viability_result": "overlay_allowed",
+          "cross_scene_residues": [],
+          "publication_blockers": []
+        }
+      }
+    },
+    {
+      "version_id": "delivery_ready_visual-v003",
+      "state": "delivery_ready_visual",
+      "state_version": 3,
+      "created_at": "2026-04-23T19:37:09+08:00",
+      "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v003.png",
+      "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v003.json",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/protocol-visual-mechanism-final.png",
+      "source_file_name": "protocol-visual-mechanism-final.png",
+      "parent_version_id": "delivery_ready_visual-v002",
+      "transition": "regenerate_publication_asset",
+      "delivery_plan": {
+        "overlay_mode": "none",
+        "reserved_zones": [],
+        "fixed_elements": [],
+        "target_sizes": []
+      },
+      "tags": [
+        "article",
+        "mechanism",
+        "publication"
+      ],
+      "notes": [
+        "deterministic editorial regeneration after publication protocol upgrade"
+      ],
+      "extra_metadata": {
+        "usage_context": "wechat article editorial publication",
+        "deliverable_type": "editorial_publication_visual",
+        "asset_completion_mode": "complete_asset",
+        "artifact_role": "publication_asset",
+        "artifact_class": "mechanism_figure_publication_asset",
+        "publication_review_required": true,
+        "publication_review_result": "pass",
+        "publication_argument_support": "pass",
+        "cross_scene_residues": [],
+        "delivery_viability_result": "overlay_allowed",
+        "protected_regions": [
+          {
+            "name": "title_region",
+            "type": "soft",
+            "x": 96,
+            "y": 56,
+            "width": 1404,
+            "height": 210
+          },
+          {
+            "name": "core_subject_region",
+            "type": "hard",
+            "x": 88,
+            "y": 286,
+            "width": 1428,
+            "height": 282
+          },
+          {
+            "name": "focus_information_region",
+            "type": "soft",
+            "x": 120,
+            "y": 620,
+            "width": 1320,
+            "height": 132
+          }
+        ],
+        "publication_review": {
+          "result": "pass",
+          "asset_identity_result": "pass",
+          "argument_support_result": "pass",
+          "cross_scene_residue_result": "pass",
+          "artifact_role_check": "publication_asset",
+          "artifact_class": "mechanism_figure_publication_asset",
+          "required_editorial_regions_present": true,
+          "delivery_viability_result": "overlay_allowed",
+          "cross_scene_residues": [],
+          "publication_blockers": []
+        },
+        "publication_blockers": [],
+        "visual_quality_review": {
+          "result": "fail",
+          "score": 55.0,
+          "dimension_scores": {
+            "text_readability": 2.0,
+            "typographic_craft": 2.0,
+            "layout_hierarchy": 3.0,
+            "semantic_clarity": 3.0,
+            "publication_argument_support_visual": 3.0,
+            "series_consistency": 4.0,
+            "asset_distinctiveness": 3.0,
+            "polish_and_finish": 2.0
+          },
+          "visual_quality_blockers": [
+            "broken_word",
+            "paragraph_overload"
+          ],
+          "hard_visual_quality_blockers": [
+            "broken_word",
+            "paragraph_overload"
+          ],
+          "notes": [
+            "Mechanism identity is correct, but dense card copy and broken English word wrapping make the figure unsuitable for publication.",
+            "The production route should switch to node-label-only schematic structure with explanatory text moved to the article caption."
+          ]
+        },
+        "visual_quality_review_result": "fail",
+        "visual_quality_score": 55.0,
+        "production_preflight_result": "conditional_pass",
+        "runtime_capture_present": false,
+        "final_release_gate": {
+          "result": "fail",
+          "final_release_blockers": [
+            "production_preflight_not_pass",
+            "visual_quality_review_not_pass",
+            "runtime_capture_missing"
+          ],
+          "production_preflight_result": "conditional_pass",
+          "publication_review_result": "pass",
+          "visual_quality_review_result": "fail",
+          "delivery_viability_result": "overlay_allowed",
+          "runtime_capture_present": false
+        },
+        "final_release_result": "fail",
+        "final_release_blockers": [
+          "production_preflight_not_pass",
+          "visual_quality_review_not_pass",
+          "runtime_capture_missing"
+        ]
+      }
+    },
+    {
+      "version_id": "delivery_ready_visual-v004",
+      "state": "delivery_ready_visual",
+      "state_version": 4,
+      "created_at": "2026-04-24T11:27:47+08:00",
+      "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v004.png",
+      "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v004.json",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/protocol-visual-mechanism-v2.png",
+      "source_file_name": "protocol-visual-mechanism-v2.png",
+      "parent_version_id": "delivery_ready_visual-v003",
+      "transition": "production_protocol_regeneration_v2",
+      "delivery_plan": {
+        "overlay_mode": "none",
+        "reserved_zones": [],
+        "fixed_elements": [],
+        "target_sizes": []
+      },
+      "tags": [
+        "article",
+        "mechanism",
+        "publication"
+      ],
+      "notes": [
+        "v2 production packet + preflight regenerated mechanism asset"
+      ],
+      "extra_metadata": {
+        "usage_context": "wechat article editorial publication",
+        "deliverable_type": "editorial_publication_visual",
+        "asset_completion_mode": "complete_asset",
+        "artifact_role": "publication_asset",
+        "artifact_class": "mechanism_figure_publication_asset",
+        "publication_review_required": true,
+        "publication_review_result": "pass",
+        "publication_argument_support": "pass",
+        "cross_scene_residues": [],
+        "delivery_viability_result": "overlay_allowed",
+        "protected_regions": [
+          {
+            "name": "title_region",
+            "type": "soft",
+            "x": 94,
+            "y": 58,
+            "width": 1412,
+            "height": 162
+          },
+          {
+            "name": "core_subject_region",
+            "type": "hard",
+            "x": 250,
+            "y": 250,
+            "width": 1100,
+            "height": 600
+          },
+          {
+            "name": "focus_information_region",
+            "type": "soft",
+            "x": 118,
+            "y": 884,
+            "width": 1300,
+            "height": 60
+          }
+        ],
+        "production_packet": {
+          "figure_role": "mechanism_figure",
+          "asset_goal": "Explain the delivery loop from asset contract to accumulated runtime memory without using paragraph-heavy cards.",
+          "representation_mode": "deterministic_render",
+          "layout_owner": "deterministic_renderer",
+          "text_owner": "deterministic_renderer",
+          "text_budget": {
+            "headline": 1,
+            "subtitle": 1,
+            "node_labels": 6,
+            "paragraphs": 0
+          },
+          "visual_structure": "A compact six-node closed loop with one central acceptance hub and node labels only.",
+          "required_visual_evidence": [],
+          "forbidden_drift": [
+            "paragraph-heavy cards",
+            "broken English labels",
+            "generic workflow board",
+            "benchmark artifact"
+          ],
+          "candidate_policy": "single",
+          "repair_policy": "micro_repair"
+        },
+        "production_preflight": {
+          "production_preflight_result": "pass",
+          "production_preflight_blockers": [],
+          "production_preflight_warnings": [],
+          "figure_role": "mechanism_figure",
+          "representation_mode": "deterministic_render",
+          "layout_owner": "deterministic_renderer",
+          "text_owner": "deterministic_renderer",
+          "candidate_policy": "single",
+          "repair_policy": "micro_repair"
+        },
+        "production_preflight_result": "pass",
+        "runtime_capture_present": true,
+        "source_generation_output": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/protocol-visual-mechanism-v2.png",
+        "publication_blockers": [],
+        "visual_quality_review": {
+          "result": "pass",
+          "score": 95.0,
+          "dimension_scores": {
+            "text_readability": 5.0,
+            "typographic_craft": 5.0,
+            "layout_hierarchy": 5.0,
+            "semantic_clarity": 5.0,
+            "publication_argument_support_visual": 5.0,
+            "series_consistency": 4.0,
+            "asset_distinctiveness": 4.0,
+            "polish_and_finish": 5.0
+          },
+          "visual_quality_blockers": [],
+          "hard_visual_quality_blockers": [],
+          "notes": [
+            "Mechanism figure now uses node labels only and avoids paragraph-heavy cards or broken English words."
+          ]
+        },
+        "visual_quality_review_result": "pass",
+        "visual_quality_score": 95.0,
+        "final_release_gate": {
+          "result": "pass",
+          "final_release_blockers": [],
+          "production_preflight_result": "pass",
+          "publication_review_result": "pass",
+          "visual_quality_review_result": "pass",
+          "delivery_viability_result": "overlay_allowed",
+          "runtime_capture_present": true
+        },
+        "final_release_result": "pass",
+        "final_release_blockers": []
+      }
+    }
+  ],
+  "export_runs": [],
+  "bundle_notes": [
+    {
+      "timestamp": "2026-04-23T19:11:13+08:00",
+      "text": "Migrated historical article bundle metadata to publication schema."
+    }
+  ]
+}

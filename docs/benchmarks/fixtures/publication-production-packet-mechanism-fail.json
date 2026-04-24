@@ -1,0 +1,20 @@
+{
+  "figure_role": "mechanism_figure",
+  "asset_goal": "Explain the asset contract to delivery accumulation loop for the article mechanism section.",
+  "representation_mode": "model_direct_visual",
+  "layout_owner": "model",
+  "text_owner": "model",
+  "text_budget": {
+    "headline": 1,
+    "subtitle": 2,
+    "node_labels": 12,
+    "paragraphs": 6
+  },
+  "visual_structure": "Six cards, each with explanatory paragraph copy.",
+  "required_visual_evidence": [],
+  "forbidden_drift": [
+    "benchmark artifact"
+  ],
+  "candidate_policy": "single",
+  "repair_policy": "micro_repair"
+}

@@ -1,0 +1,81 @@
+{
+  "usage_context": "wechat article editorial publication",
+  "deliverable_type": "editorial_publication_visual",
+  "asset_completion_mode": "complete_asset",
+  "artifact_role": "publication_asset",
+  "artifact_class": "workflow_evidence_publication_asset",
+  "publication_review_required": true,
+  "publication_review_result": "pass",
+  "publication_argument_support": "pass",
+  "cross_scene_residues": [],
+  "delivery_viability_result": "overlay_allowed",
+  "protected_regions": [
+    {
+      "name": "title_region",
+      "type": "soft",
+      "x": 88,
+      "y": 54,
+      "width": 1180,
+      "height": 182
+    },
+    {
+      "name": "core_subject_region",
+      "type": "hard",
+      "x": 84,
+      "y": 276,
+      "width": 1434,
+      "height": 580
+    },
+    {
+      "name": "focus_information_region",
+      "type": "soft",
+      "x": 1088,
+      "y": 728,
+      "width": 420,
+      "height": 120
+    }
+  ],
+  "production_packet": {
+    "figure_role": "workflow_evidence",
+    "asset_goal": "Show concrete workflow evidence that the skill records decisions, reviews outputs, and packages delivery-ready assets.",
+    "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+    "layout_owner": "hybrid",
+    "text_owner": "deterministic_overlay",
+    "text_budget": {
+      "headline": 1,
+      "subtitle": 1,
+      "node_labels": 3,
+      "paragraphs": 0
+    },
+    "visual_structure": "A concrete evidence wall: runtime capture, route trace, scorecard, delivery bundle, and accepted asset states connected left to right.",
+    "required_visual_evidence": [
+      "runtime_capture",
+      "scorecard",
+      "delivery_bundle",
+      "route_trace",
+      "accepted_asset_state"
+    ],
+    "forbidden_drift": [
+      "generic README hero",
+      "abstract radar decoration",
+      "empty device mockup cluster",
+      "benchmark artifact"
+    ],
+    "candidate_policy": "multi_candidate",
+    "repair_policy": "micro_repair"
+  },
+  "production_preflight": {
+    "production_preflight_result": "pass",
+    "production_preflight_blockers": [],
+    "production_preflight_warnings": [],
+    "figure_role": "workflow_evidence",
+    "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+    "layout_owner": "hybrid",
+    "text_owner": "deterministic_overlay",
+    "candidate_policy": "multi_candidate",
+    "repair_policy": "micro_repair"
+  },
+  "production_preflight_result": "pass",
+  "runtime_capture_present": false,
+  "source_generation_output": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/workflow-evidence-v2.png"
+}

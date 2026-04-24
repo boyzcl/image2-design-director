@@ -1,0 +1,42 @@
+{
+  "production_packet": {
+    "figure_role": "workflow_evidence",
+    "asset_goal": "Show concrete workflow evidence that the skill records decisions, reviews outputs, and packages delivery-ready assets.",
+    "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+    "layout_owner": "hybrid",
+    "text_owner": "deterministic_overlay",
+    "text_budget": {
+      "headline": 1,
+      "subtitle": 1,
+      "node_labels": 3,
+      "paragraphs": 0
+    },
+    "visual_structure": "A concrete evidence wall: runtime capture, route trace, scorecard, delivery bundle, and accepted asset states connected left to right.",
+    "required_visual_evidence": [
+      "runtime_capture",
+      "scorecard",
+      "delivery_bundle",
+      "route_trace",
+      "accepted_asset_state"
+    ],
+    "forbidden_drift": [
+      "generic README hero",
+      "abstract radar decoration",
+      "empty device mockup cluster",
+      "benchmark artifact"
+    ],
+    "candidate_policy": "multi_candidate",
+    "repair_policy": "micro_repair"
+  },
+  "production_preflight": {
+    "production_preflight_result": "pass",
+    "production_preflight_blockers": [],
+    "production_preflight_warnings": [],
+    "figure_role": "workflow_evidence",
+    "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+    "layout_owner": "hybrid",
+    "text_owner": "deterministic_overlay",
+    "candidate_policy": "multi_candidate",
+    "repair_policy": "micro_repair"
+  }
+}

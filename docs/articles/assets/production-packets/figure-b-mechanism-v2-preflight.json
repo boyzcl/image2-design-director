@@ -1,0 +1,36 @@
+{
+  "production_packet": {
+    "figure_role": "mechanism_figure",
+    "asset_goal": "Explain the delivery loop from asset contract to accumulated runtime memory without using paragraph-heavy cards.",
+    "representation_mode": "deterministic_render",
+    "layout_owner": "deterministic_renderer",
+    "text_owner": "deterministic_renderer",
+    "text_budget": {
+      "headline": 1,
+      "subtitle": 1,
+      "node_labels": 6,
+      "paragraphs": 0
+    },
+    "visual_structure": "A compact six-node closed loop with one central acceptance hub and node labels only.",
+    "required_visual_evidence": [],
+    "forbidden_drift": [
+      "paragraph-heavy cards",
+      "broken English labels",
+      "generic workflow board",
+      "benchmark artifact"
+    ],
+    "candidate_policy": "single",
+    "repair_policy": "micro_repair"
+  },
+  "production_preflight": {
+    "production_preflight_result": "pass",
+    "production_preflight_blockers": [],
+    "production_preflight_warnings": [],
+    "figure_role": "mechanism_figure",
+    "representation_mode": "deterministic_render",
+    "layout_owner": "deterministic_renderer",
+    "text_owner": "deterministic_renderer",
+    "candidate_policy": "single",
+    "repair_policy": "micro_repair"
+  }
+}

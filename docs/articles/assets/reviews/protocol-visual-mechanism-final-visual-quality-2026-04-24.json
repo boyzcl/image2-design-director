@@ -1,0 +1,22 @@
+{
+  "dimension_scores": {
+    "text_readability": 2,
+    "typographic_craft": 2,
+    "layout_hierarchy": 3,
+    "semantic_clarity": 3,
+    "publication_argument_support_visual": 3,
+    "series_consistency": 4,
+    "asset_distinctiveness": 3,
+    "polish_and_finish": 2
+  },
+  "blockers": [
+    "broken_word",
+    "paragraph_overload"
+  ],
+  "notes": [
+    "Mechanism identity is correct, but dense card copy and broken English word wrapping make the figure unsuitable for publication.",
+    "The production route should switch to node-label-only schematic structure with explanatory text moved to the article caption."
+  ],
+  "production_preflight_result": "conditional_pass",
+  "runtime_capture_present": false
+}

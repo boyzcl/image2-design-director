@@ -4,6 +4,7 @@ import argparse
 import json
 
 from delivery_bundle_lib import init_bundle, register_version, summarize_bundle
+from publication_review_lib import ARTIFACT_ROLES, PUBLICATION_REVIEW_RESULTS
 
 
 def add_shared_version_args(parser: argparse.ArgumentParser) -> None:
@@ -23,6 +24,33 @@ def add_shared_version_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--tag", action="append", default=[], help="Tag for filtering or grouping.")
     parser.add_argument("--note", action="append", default=[], help="Free-form note; repeat for multiple notes.")
     parser.add_argument("--metadata-file", default=None, help="Optional JSON object to merge as extra metadata.")
+    parser.add_argument("--usage-context", default=None, help="Usage context for this version.")
+    parser.add_argument("--deliverable-type", default=None, help="Deliverable type for this version.")
+    parser.add_argument(
+        "--asset-completion-mode",
+        default=None,
+        choices=["complete_asset", "base_visual", "delivery_refinement", "undecided"],
+        help="Asset completion mode for this version.",
+    )
+    parser.add_argument(
+        "--artifact-role",
+        default=None,
+        choices=sorted(ARTIFACT_ROLES),
+        help="Artifact role to record for this version.",
+    )
+    parser.add_argument("--artifact-class", default=None, help="Artifact class label for this version.")
+    parser.add_argument(
+        "--publication-review-result",
+        default=None,
+        choices=sorted(PUBLICATION_REVIEW_RESULTS),
+        help="Publication review result to record for this version.",
+    )
+    parser.add_argument(
+        "--publication-blocker",
+        action="append",
+        default=[],
+        help="Publication blocker label; repeat for multiple items.",
+    )
 
 
 def main() -> int:
@@ -35,6 +63,14 @@ def main() -> int:
     init_parser.add_argument("--asset-name", default=None, help="Human-readable asset name.")
     init_parser.add_argument("--scene", default=None, help="Scene or task description for this bundle.")
     init_parser.add_argument("--domain-direction", default=None, help="Domain direction associated with this asset.")
+    init_parser.add_argument("--bundle-usage-context", default=None, help="Usage context associated with this bundle.")
+    init_parser.add_argument("--bundle-deliverable-type", default=None, help="Deliverable type associated with this bundle.")
+    init_parser.add_argument(
+        "--bundle-asset-completion-mode",
+        default=None,
+        choices=["complete_asset", "base_visual", "delivery_refinement", "undecided"],
+        help="Default asset completion mode for this bundle.",
+    )
     init_parser.add_argument("--matched-profile", default="none", help="Matched profile if any.")
     init_parser.add_argument(
         "--support-tier",
@@ -60,6 +96,9 @@ def main() -> int:
             asset_name=args.asset_name,
             scene=args.scene,
             domain_direction=args.domain_direction,
+            usage_context=args.bundle_usage_context,
+            deliverable_type=args.bundle_deliverable_type,
+            asset_completion_mode=args.bundle_asset_completion_mode,
             matched_profile=args.matched_profile,
             support_tier=args.support_tier,
             tags=args.tag,
@@ -78,6 +117,13 @@ def main() -> int:
             tags=args.tag,
             notes=args.note,
             metadata_file=args.metadata_file,
+            usage_context=args.usage_context,
+            deliverable_type=args.deliverable_type,
+            asset_completion_mode=args.asset_completion_mode,
+            artifact_role=args.artifact_role,
+            artifact_class=args.artifact_class,
+            publication_review_result=args.publication_review_result,
+            publication_blockers=args.publication_blocker,
         )
         print(json.dumps({"manifest_path": str(manifest_path), "version_id": record["version_id"]}, ensure_ascii=False))
         return 0
@@ -96,6 +142,13 @@ def main() -> int:
             tags=args.tag,
             notes=args.note,
             metadata_file=args.metadata_file,
+            usage_context=args.usage_context,
+            deliverable_type=args.deliverable_type,
+            asset_completion_mode=args.asset_completion_mode,
+            artifact_role=args.artifact_role,
+            artifact_class=args.artifact_class,
+            publication_review_result=args.publication_review_result,
+            publication_blockers=args.publication_blocker,
         )
         print(json.dumps({"version_id": record["version_id"], "asset_path": record["asset_path"]}, ensure_ascii=False))
         return 0

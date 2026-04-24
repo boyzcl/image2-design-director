@@ -1,0 +1,154 @@
+{
+  "version_id": "delivery_ready_visual-v001",
+  "state": "delivery_ready_visual",
+  "state_version": 1,
+  "created_at": "2026-04-23T18:21:07+08:00",
+  "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v001.png",
+  "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v001.json",
+  "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-c-workflow/overlay/applied/text_safe_visual-v001/overlay-20260423T182107180551.png",
+  "source_file_name": "overlay-20260423T182107180551.png",
+  "parent_version_id": "text_safe_visual-v001",
+  "transition": "fixed_element_overlay_applied",
+  "delivery_plan": {
+    "overlay_mode": "title_plus_supporting_text",
+    "reserved_zones": [
+      "top_title"
+    ],
+    "fixed_elements": [],
+    "target_sizes": []
+  },
+  "tags": [
+    "article",
+    "workflow",
+    "publication"
+  ],
+  "notes": [],
+  "extra_metadata": {
+    "overlay_output_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-c-workflow/overlay/applied/text_safe_visual-v001/overlay-20260423T182107180551.png",
+    "overlay_record_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-c-workflow/overlay/applied/text_safe_visual-v001/overlay-20260423T182107180551.json",
+    "overlay_summary": {
+      "title_box": {
+        "x": 117,
+        "y": 65,
+        "width": 1120,
+        "height": 217
+      },
+      "footer_box": {
+        "x": 117,
+        "y": 733,
+        "width": 1053,
+        "height": 132
+      },
+      "qr_box": null,
+      "logo_box": null,
+      "badge_box": null,
+      "text_line_count": 2
+    },
+    "delivery_viability_result": "overlay_allowed",
+    "collision_risk": "low",
+    "viability_report": {
+      "delivery_viability": "overlay_allowed",
+      "collision_risk": "low",
+      "continue_overlay_or_regenerate": "continue_overlay",
+      "overlay_coverage_ratio": 0.1545,
+      "hard_region_hits": [],
+      "soft_region_hits": [],
+      "candidate_boxes": [
+        {
+          "name": "title_panel",
+          "box": {
+            "x": 117,
+            "y": 65,
+            "width": 1120,
+            "height": 217
+          }
+        }
+      ],
+      "protected_regions": [
+        {
+          "name": "title_region",
+          "type": "soft",
+          "box": {
+            "x": 92,
+            "y": 51,
+            "width": 1170,
+            "height": 245
+          }
+        },
+        {
+          "name": "core_subject_region",
+          "type": "hard",
+          "box": {
+            "x": 300,
+            "y": 343,
+            "width": 1070,
+            "height": 343
+          }
+        },
+        {
+          "name": "focus_information_region",
+          "type": "soft",
+          "box": {
+            "x": 117,
+            "y": 733,
+            "width": 1053,
+            "height": 132
+          }
+        }
+      ],
+      "protected_regions_declared": true,
+      "required_editorial_regions_present": true,
+      "missing_required_region_names": [],
+      "viability_handoff_to_publication_review": true,
+      "warnings": []
+    },
+    "usage_context": "wechat article editorial publication",
+    "deliverable_type": "editorial_publication_visual",
+    "protected_regions": [
+      {
+        "name": "title_region",
+        "type": "soft",
+        "x": 92,
+        "y": 51,
+        "width": 1170,
+        "height": 245
+      },
+      {
+        "name": "core_subject_region",
+        "type": "hard",
+        "x": 300,
+        "y": 343,
+        "width": 1070,
+        "height": 343
+      },
+      {
+        "name": "focus_information_region",
+        "type": "soft",
+        "x": 117,
+        "y": 733,
+        "width": 1053,
+        "height": 132
+      }
+    ],
+    "asset_completion_mode": "complete_asset",
+    "artifact_role": "publication_asset",
+    "artifact_class": "workflow_evidence_publication_asset",
+    "publication_review_required": true,
+    "publication_argument_support": "pass",
+    "cross_scene_residues": [],
+    "publication_review_result": "pass",
+    "publication_blockers": [],
+    "publication_review": {
+      "result": "pass",
+      "asset_identity_result": "pass",
+      "argument_support_result": "pass",
+      "cross_scene_residue_result": "pass",
+      "artifact_role_check": "publication_asset",
+      "artifact_class": "workflow_evidence_publication_asset",
+      "required_editorial_regions_present": true,
+      "delivery_viability_result": "overlay_allowed",
+      "cross_scene_residues": [],
+      "publication_blockers": []
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "version_id": "text_safe_visual-v001",
+  "state": "text_safe_visual",
+  "state_version": 1,
+  "created_at": "2026-04-23T18:20:34+08:00",
+  "asset_path": "assets/text_safe_visual/text_safe_visual-v001.png",
+  "metadata_path": "assets/text_safe_visual/text_safe_visual-v001.json",
+  "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/protocol-visual-mechanism-figure.png",
+  "source_file_name": "protocol-visual-mechanism-figure.png",
+  "parent_version_id": null,
+  "transition": "promote_text_safe_visual",
+  "delivery_plan": {
+    "overlay_mode": "text_safe_only",
+    "reserved_zones": [
+      "top_title"
+    ],
+    "fixed_elements": [],
+    "target_sizes": []
+  },
+  "tags": [
+    "article",
+    "mechanism",
+    "publication"
+  ],
+  "notes": [],
+  "extra_metadata": {
+    "usage_context": "wechat article editorial publication",
+    "deliverable_type": "editorial_publication_visual",
+    "protected_regions": [
+      {
+        "name": "title_region",
+        "type": "soft",
+        "x": 87,
+        "y": 87,
+        "width": 752,
+        "height": 225
+      },
+      {
+        "name": "core_subject_region",
+        "type": "hard",
+        "x": 225,
+        "y": 374,
+        "width": 802,
+        "height": 517
+      },
+      {
+        "name": "focus_information_region",
+        "type": "soft",
+        "x": 125,
+        "y": 953,
+        "width": 576,
+        "height": 175
+      }
+    ],
+    "asset_completion_mode": "delivery_refinement",
+    "artifact_role": "internal_candidate",
+    "artifact_class": "text_safe_intermediate",
+    "publication_review_required": false
+  }
+}

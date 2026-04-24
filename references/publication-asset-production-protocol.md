@@ -1,0 +1,170 @@
+# Publication Asset Production Protocol
+
+## Purpose
+
+这份文档定义文章配图、公众号头图、机制图和 workflow evidence 图在生成前应该如何被生产。
+
+它补的是 production side，不是 review side：
+
+> review 负责拦住坏结果；production protocol 负责让 Agent 一开始就走对路线。
+
+## Required Production Packet
+
+每个 editorial publication asset 在 prompt assembly、Image2 调用、确定性渲染或 overlay 前，必须先形成 `production_packet`。
+
+最小字段：
+
+```yaml
+figure_role: editorial_cover | mechanism_figure | workflow_evidence
+asset_goal: short statement of the article argument this asset supports
+representation_mode: model_direct_visual | model_visual_with_limited_text | visual_base_plus_post | hybrid_visual_plus_deterministic_overlay | deterministic_render
+layout_owner: model | deterministic_renderer | hybrid
+text_owner: model | deterministic_overlay | deterministic_renderer
+text_budget:
+  headline: 1
+  subtitle: 0-1
+  node_labels: 0-8
+  paragraphs: 0
+visual_structure: short structure description
+required_visual_evidence:
+  - optional evidence object names
+forbidden_drift:
+  - benchmark artifact
+  - generic README hero
+candidate_policy: single | multi_candidate
+repair_policy: micro_repair | regenerate | contract_realign
+```
+
+## Figure Role Defaults
+
+### `editorial_cover`
+
+Default production route:
+
+- `representation_mode = hybrid_visual_plus_deterministic_overlay`
+- `layout_owner = hybrid`
+- `text_owner = deterministic_overlay`
+- `candidate_policy = multi_candidate`
+
+Text budget:
+
+- one headline
+- zero or one subtitle
+- no paragraph body
+- no dense labels
+
+Production rule:
+
+> The image model should create cover-level visual energy and composition. Deterministic overlay should own exact Chinese title and supporting copy.
+
+Common no-go routes:
+
+- pure deterministic schematic cover without explicit override
+- model-rendered long Chinese title
+- report-page layout that lacks cover tension
+
+### `mechanism_figure`
+
+Default production route:
+
+- `representation_mode = deterministic_render` or `hybrid_visual_plus_deterministic_overlay`
+- `layout_owner = deterministic_renderer`
+- `text_owner = deterministic_renderer`
+- `candidate_policy = single` only after the mechanism wireframe is clear
+
+Text budget:
+
+- one headline
+- optional short subtitle
+- 4 to 8 node labels
+- no paragraphs inside cards
+
+Production rule:
+
+> The image should explain the mechanism by structure, not by packing paragraphs into small cards.
+
+Common no-go routes:
+
+- paragraph-heavy cards
+- broken English labels
+- decorative workflow board with unclear mechanism
+- using the model to render dense exact Chinese text
+
+### `workflow_evidence`
+
+Default production route:
+
+- `representation_mode = hybrid_visual_plus_deterministic_overlay`
+- `layout_owner = hybrid`
+- `text_owner = deterministic_overlay`
+- `candidate_policy = multi_candidate`
+
+Text budget:
+
+- one headline
+- zero or one subtitle
+- up to three short section labels
+- no paragraph body
+
+Required evidence objects:
+
+- `runtime_capture`
+- `scorecard`
+- `delivery_bundle`
+- `route_trace`
+- `accepted_asset_state`
+
+Production rule:
+
+> The visual must show concrete workflow evidence, not generic devices or abstract system decoration.
+
+Common no-go routes:
+
+- generic README hero
+- abstract radar target as the main proof
+- device cluster without workflow artifacts
+- publication assets shown as empty frames only
+
+## Production Preflight
+
+Before generating, run `production_preflight`.
+
+It returns:
+
+- `pass`
+- `conditional_pass`
+- `fail`
+
+### Hard Blockers
+
+- missing `figure_role`
+- missing `asset_goal`
+- unsupported `representation_mode`
+- `editorial_cover` with pure `deterministic_render` and no explicit override
+- `mechanism_figure` with paragraph budget above zero
+- `mechanism_figure` with model-owned dense text
+- `workflow_evidence` missing required evidence objects
+- missing `forbidden_drift`
+- `multi_candidate` required but not selected
+
+### Conditional Blockers
+
+- subtitle budget above one
+- node label budget too high
+- visual structure too vague
+- repair policy missing
+
+## Relationship To Review
+
+Passing production preflight does not mean the output is good. It only means the production route is valid.
+
+The output must still pass:
+
+- `delivery_viability_gate`
+- `publication_identity_review`
+- `visual_quality_review`
+- `final_release_gate`
+
+## Runtime Requirement
+
+The selected production packet must be stored in bundle metadata and runtime capture. If a production packet is missing, the final release gate cannot return `pass`.

@@ -1,0 +1,75 @@
+{
+  "usage_context": "wechat article editorial publication",
+  "deliverable_type": "editorial_publication_visual",
+  "asset_completion_mode": "complete_asset",
+  "artifact_role": "publication_asset",
+  "artifact_class": "mechanism_figure_publication_asset",
+  "publication_review_required": true,
+  "publication_review_result": "pass",
+  "publication_argument_support": "pass",
+  "cross_scene_residues": [],
+  "delivery_viability_result": "overlay_allowed",
+  "protected_regions": [
+    {
+      "name": "title_region",
+      "type": "soft",
+      "x": 94,
+      "y": 58,
+      "width": 1412,
+      "height": 162
+    },
+    {
+      "name": "core_subject_region",
+      "type": "hard",
+      "x": 250,
+      "y": 250,
+      "width": 1100,
+      "height": 600
+    },
+    {
+      "name": "focus_information_region",
+      "type": "soft",
+      "x": 118,
+      "y": 884,
+      "width": 1300,
+      "height": 60
+    }
+  ],
+  "production_packet": {
+    "figure_role": "mechanism_figure",
+    "asset_goal": "Explain the delivery loop from asset contract to accumulated runtime memory without using paragraph-heavy cards.",
+    "representation_mode": "deterministic_render",
+    "layout_owner": "deterministic_renderer",
+    "text_owner": "deterministic_renderer",
+    "text_budget": {
+      "headline": 1,
+      "subtitle": 1,
+      "node_labels": 6,
+      "paragraphs": 0
+    },
+    "visual_structure": "A compact six-node closed loop with one central acceptance hub and node labels only.",
+    "required_visual_evidence": [],
+    "forbidden_drift": [
+      "paragraph-heavy cards",
+      "broken English labels",
+      "generic workflow board",
+      "benchmark artifact"
+    ],
+    "candidate_policy": "single",
+    "repair_policy": "micro_repair"
+  },
+  "production_preflight": {
+    "production_preflight_result": "pass",
+    "production_preflight_blockers": [],
+    "production_preflight_warnings": [],
+    "figure_role": "mechanism_figure",
+    "representation_mode": "deterministic_render",
+    "layout_owner": "deterministic_renderer",
+    "text_owner": "deterministic_renderer",
+    "candidate_policy": "single",
+    "repair_policy": "micro_repair"
+  },
+  "production_preflight_result": "pass",
+  "runtime_capture_present": false,
+  "source_generation_output": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/protocol-visual-mechanism-v2.png"
+}

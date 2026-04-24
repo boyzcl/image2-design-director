@@ -1,0 +1,23 @@
+{
+  "figure_role": "editorial_cover",
+  "asset_goal": "Open the article by making the central claim: image2-design-director exists because strong image models still need a controllable delivery system.",
+  "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+  "layout_owner": "hybrid",
+  "text_owner": "deterministic_overlay",
+  "text_budget": {
+    "headline": 1,
+    "subtitle": 1,
+    "node_labels": 3,
+    "paragraphs": 0
+  },
+  "visual_structure": "Editorial cover with a strong title field, a protocol stack focal system, and a clear publication-cover hierarchy.",
+  "required_visual_evidence": [],
+  "forbidden_drift": [
+    "internal report page",
+    "generic README hero",
+    "benchmark artifact",
+    "event poster"
+  ],
+  "candidate_policy": "multi_candidate",
+  "repair_policy": "micro_repair"
+}

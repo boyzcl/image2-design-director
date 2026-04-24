@@ -1,0 +1,110 @@
+{
+  "created_at": "2026-04-23T18:21:07+08:00",
+  "source_version_id": "text_safe_visual-v001",
+  "source_asset_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-a-cover/assets/text_safe_visual/text_safe_visual-v001.png",
+  "overlay_output_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-a-cover/overlay/applied/text_safe_visual-v001/overlay-20260423T182107177965.png",
+  "overlay_mode": "title_plus_supporting_text",
+  "title": "当 gpt-image-2 已经这么强之后",
+  "supporting_lines": [
+    "我为什么还是做了 image2-design-director",
+    "问题已经不是会不会出图，而是能否稳定交付"
+  ],
+  "cta_text": null,
+  "date_text": null,
+  "badge_text": null,
+  "qr_image": null,
+  "logo_image": null,
+  "summary": {
+    "title_box": {
+      "x": 71,
+      "y": 107,
+      "width": 686,
+      "height": 353
+    },
+    "footer_box": {
+      "x": 71,
+      "y": 1198,
+      "width": 645,
+      "height": 215
+    },
+    "qr_box": null,
+    "logo_box": null,
+    "badge_box": null,
+    "text_line_count": 3
+  },
+  "viability_report": {
+    "delivery_viability": "overlay_allowed",
+    "collision_risk": "low",
+    "continue_overlay_or_regenerate": "continue_overlay",
+    "overlay_coverage_ratio": 0.154,
+    "hard_region_hits": [],
+    "soft_region_hits": [],
+    "candidate_boxes": [
+      {
+        "name": "title_panel",
+        "box": {
+          "x": 71,
+          "y": 107,
+          "width": 686,
+          "height": 353
+        }
+      }
+    ],
+    "protected_regions": [
+      {
+        "name": "title_region",
+        "type": "soft",
+        "box": {
+          "x": 56,
+          "y": 84,
+          "width": 716,
+          "height": 399
+        }
+      },
+      {
+        "name": "core_subject_region",
+        "type": "hard",
+        "box": {
+          "x": 184,
+          "y": 559,
+          "width": 655,
+          "height": 563
+        }
+      },
+      {
+        "name": "focus_information_region",
+        "type": "soft",
+        "box": {
+          "x": 71,
+          "y": 1198,
+          "width": 645,
+          "height": 215
+        }
+      }
+    ],
+    "protected_regions_declared": true,
+    "required_editorial_regions_present": true,
+    "missing_required_region_names": [],
+    "viability_handoff_to_publication_review": true,
+    "warnings": []
+  },
+  "usage_context": "wechat article editorial publication",
+  "deliverable_type": "editorial_publication_visual",
+  "asset_completion_mode": "complete_asset",
+  "artifact_role_requested": "publication_asset",
+  "artifact_class": "editorial_cover_publication_asset",
+  "cross_scene_residues": [],
+  "publication_argument_support": "pass",
+  "publication_review": {
+    "result": "pass",
+    "asset_identity_result": "pass",
+    "argument_support_result": "pass",
+    "cross_scene_residue_result": "pass",
+    "artifact_role_check": "publication_asset",
+    "artifact_class": "editorial_cover_publication_asset",
+    "required_editorial_regions_present": true,
+    "delivery_viability_result": "overlay_allowed",
+    "cross_scene_residues": [],
+    "publication_blockers": []
+  }
+}

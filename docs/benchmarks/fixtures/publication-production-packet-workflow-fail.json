@@ -1,0 +1,23 @@
+{
+  "figure_role": "workflow_evidence",
+  "asset_goal": "Show that the skill enters a real workflow instead of being only an idea.",
+  "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+  "layout_owner": "hybrid",
+  "text_owner": "deterministic_overlay",
+  "text_budget": {
+    "headline": 1,
+    "subtitle": 1,
+    "node_labels": 3,
+    "paragraphs": 0
+  },
+  "visual_structure": "Generic device cluster with abstract flow lines.",
+  "required_visual_evidence": [
+    "delivery_bundle"
+  ],
+  "forbidden_drift": [
+    "generic README hero",
+    "abstract decoration"
+  ],
+  "candidate_policy": "single",
+  "repair_policy": "regenerate"
+}

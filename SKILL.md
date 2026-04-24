@@ -1,6 +1,6 @@
 ---
 name: image2-design-director
-description: 当用户要让任意具备图像生成能力的 Agent 处理“设计可用性”要求较高的图像任务时使用。特别适用于参考图复刻或换主体重做、同系列资产延展、版式或信息密度受约束的图像任务、多尺寸多元素交付物、以及已生成结果跑偏后的修正。这个 skill 会先对齐交付物合同，再在直接生成、少量追问补 brief、失败后微修或合同重对齐之间路由，并通过结构化 prompt、设计质量门槛与本地 runtime 记忆提高命中率。
+description: 当用户要让任意具备图像生成能力的 Agent 处理“设计可用性”要求较高的图像任务时使用。这个 skill 会先对齐交付物合同，再通过 information reliability gate、representation strategy、delivery viability gate 与 outcome accountability 把结果推向真正可用的视觉交付。
 ---
 
 # image2-design-director
@@ -17,11 +17,12 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 ## 默认调用契约
 
 - 同时支持自然语言触发和显式调用 `$image2-design-director`
-- 先对齐 `asset contract`，再决定 prompt family 和 route
+- 先对齐 `asset contract`，再跑 `information reliability gate` 和 `representation strategy`
 - 如果请求简单明确，直接生成，不额外追问
-- 如果 1 到 3 个缺失字段会显著改变交付物合同，先补最关键问题
-- 如果用户是在修一张已经不理想的图，先判断这是 `micro_repair` 还是 `contract_realign`
+- 如果 1 到 3 个缺失字段会显著改变交付物合同、信息口径或交付 viability，先补最关键问题
+- 如果用户是在修一张已经不理想的图，先判断这是 `micro_repair`、`contract_realign` 还是直接 `regenerate`
 - 每次调用 Image2 生成或编辑图像后，默认都写一条本地 runtime capture
+- 如果命中文章配图 / publication asset，生成前必须先形成 `production_packet` 并通过 `production_preflight`
 
 ## Asset Contract First
 
@@ -46,6 +47,26 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 
 不要在这 6 件事没收清前，就过早进入“怎么生成”的讨论。
 
+## Four Capability Layers
+
+这个 skill 现在必须按 4 层能力工作，而不是靠零散规则补丁工作。对于 publication asset，这 4 层外还必须串起生产前与发布前两个硬门：
+
+1. `information reliability layer`
+   - 判断任务是不是事实敏感任务，哪些信息必须有证据，哪些只能做视觉隐喻
+2. `representation strategy layer`
+   - 判断信息应由模型直出、模型有限文字、后置、混合渲染还是确定性渲染承载
+3. `delivery viability layer`
+   - 判断当前结果是否还具备继续 overlay、放 fixed elements、导出多尺寸的结构能力
+4. `outcome accountability layer`
+   - 判断最终结果是否可信、可用、是否存在误导风险，以及失败属于哪一层
+
+Publication asset 的用户可见输出必须额外满足：
+
+- `production_preflight_result = pass`
+- `publication_review_result = pass`
+- `visual_quality_review_result = pass`
+- `final_release_result = pass`
+
 ## 默认行为
 
 ### 1. Finished Asset By Default
@@ -65,6 +86,23 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 - `text-safe base`
 - `hero base`
 - `visual plate`
+
+如果命中：
+
+- `wechat_article_editorial_visual_set`
+- `editorial_publication_visual`
+- 公众号文章封面 / 正文机制图 / workflow evidence 图
+
+则进一步默认：
+
+- `asset_completion_mode = complete_asset`
+- 默认交付成品图
+- 默认目标 `artifact_role = publication_asset`
+- 默认要求 `production_preflight`
+- 默认要求 `visual_quality_review`
+- 默认要求 `final_release_gate`
+
+`title-safe`、`text-safe`、`masthead-safe` 只允许作为内部中间态存在，不得默认当成交付完成。
 
 ### 2. Conversation Language By Default
 
@@ -93,39 +131,97 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 
 如果用户要的是成品，那结果就必须像成品；如果用户要的是底图，才允许底图式完成。
 
+### 5. Facts Before Visual Confidence
+
+如果图里承载：
+
+- 日期
+- 价格
+- 排行
+- 对比
+- 性能结论
+- 数据指标
+
+不要先写漂亮 prompt，先跑 `information reliability gate`。
+
+### 6. Overlay Needs A Go / No-Go Gate
+
+如果准备继续：
+
+- 叠标题
+- 放 QR、logo、badge
+- 补价格框、日期、图表
+
+不要默认继续做，先跑 `delivery viability gate`。
+
+如果是文章图进入 overlay，还必须先声明 `protected_regions`，至少包含：
+
+- `title_region`
+- `core_subject_region`
+- `focus_information_region`
+
+否则不能 claim 已完成完整碰撞检测。
+
+### 7. Internal Artifacts Are Not Publication Assets
+
+下面这些默认只能算内部工件：
+
+- `benchmark candidate`
+- `delivery bundle artifact`
+- `overlay demo`
+- `exploratory repair output`
+
+它们默认只能是：
+
+- `internal_candidate`
+- 或最多 `review_candidate`
+
+除非通过 `publication_readiness_review`，否则不能给用户，也不能进入正文。
+
+### 8. Publication Production Before Publication Review
+
+公众号文章封面、正文机制图和 workflow evidence 图不能只靠最终 review 纠偏。生成前必须先形成 `production_packet`：
+
+- `figure_role`
+- `asset_goal`
+- `representation_mode`
+- `layout_owner`
+- `text_owner`
+- `text_budget`
+- `visual_structure`
+- `forbidden_drift`
+- `candidate_policy`
+- `repair_policy`
+
+默认分流：
+
+- `editorial_cover`: hybrid visual base + deterministic title overlay + multi-candidate
+- `mechanism_figure`: deterministic / hybrid schematic + node labels only
+- `workflow_evidence`: hybrid workflow evidence visual + deterministic short labels + multi-candidate
+
+`production_preflight` 没过时，不要进入生成。
+
+### 9. Publication Review Is Not Final Release
+
+`publication_readiness_review = pass` 只说明资产身份正确，不说明图面质量可发布。
+
+文章发表资产还必须通过：
+
+- `visual_quality_review`
+- `final_release_gate`
+
+只要 `final_release_result != pass`，就不能给用户当最终图，也不能进入正文或成功样张。
+
 ## 强触发信号
 
 满足以下任一项时优先触发：
 
 - 用户明确要做产品图、社媒图、UI/UX 图、App 设计素材图，或任何需要“设计可用性判断”的深图任务
 - 用户明确说“更像设计团队会用”“不要太 AI 味”“更像真实商业产物”
-- 用户给出参考图，希望保留版式、系列感、信息层级、构图关系或整体视觉语言，只替换主体、场景、文案或局部模块
-- 用户要把一个既有视觉系统扩成同系列新资产，例如同风格续页、同系列海报、同套 README 机制图、同模板多对象版本
-- 用户任务本身带有明显的模板或版式锁定，例如教育信息图、结构图、分镜板、机制海报、带多个编号知识模块的复杂说明图
-- 用户同时给出尺寸、文案、二维码、logo、语言范围、候选数、参考图等多重约束，要求结果直接可用而不是只出一张“差不多”的图
 - 用户需要把模糊需求转成能给 Image2 的高质量请求
 - 用户已经生成过，但结果跑偏，需要归因和纠偏
-
-## 高杠杆场景家族
-
-下面这些不是彼此孤立的例子，而是这类 skill 最该吸住的高杠杆任务家族：
-
-1. `reference-locked remake`
-   - 参考图复刻、换主体重做、保留版式和气质的同款改写
-2. `series extension`
-   - 在已有视觉系统里补一页、扩一张、做同系列不同主题版本
-3. `template-bound explainer asset`
-   - 教育海报、信息图、机制图、README 视觉板、需要固定信息密度和模块结构的图
-4. `delivery-heavy finished asset`
-   - 同时受尺寸、文字、语言、二维码、logo、候选数约束的成品交付任务
-5. `repair and realign`
-   - 已有结果不够像目标资产，需要判断该微修还是重建合同
-
-这些场景的共同点不是“都在出图”，而是：
-
-- 最终要交付的资产类型不能错
-- 版式、系列感或成品度不能靠模型自由发挥
-- 输出必须可验收，而不是只要“像一张图”
+- 用户要做信息图、数据图、带价格 / 日期 / 比较结论的视觉资产
+- 用户要把一张已有图继续做后置交付、叠字、补 fixed elements
 
 ## 路由规则
 
@@ -133,14 +229,14 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 
 1. `direct`
    - 交付物合同清楚
-   - 风险低
-   - 直接生成
+   - reliability gate 已给出可执行结果
+   - representation mode 清楚
 2. `brief-first`
-   - 少量追问会显著提升合同清晰度或结果质量
+   - 少量追问会显著提升合同清晰度、信息可靠性或结果质量
 3. `repair`
-   - 已有结果不理想，但合同大体没错
+   - 已有结果不理想，但合同和主路线大体没错
 4. `contract_realign`
-   - 用户指出任务理解错了，需先重建交付物合同
+   - 用户指出任务理解错了，或 metric / representation 理解错了，需先重建合同
 
 ## Repair 分流
 
@@ -150,8 +246,8 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 
 - 资产类型对了
 - 成品度对了
-- 语言对了
-- 只是细节、工艺、结构或文字纪律没过线
+- reliability 与 representation 基本对了
+- 只是细节、工艺、结构或有限 overlay 没过线
 
 ### `contract_realign`
 
@@ -160,7 +256,8 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 - “这不是我要的资产类型”
 - “这不是成品”
 - “语言不对”
-- “品牌语义跑偏”
+- “metric 口径不对”
+- “这类任务不该让模型这样表达”
 
 这类情况先重建：
 
@@ -168,9 +265,11 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 - `asset_completion_mode`
 - `content_language`
 - `allowed_text_scope`
+- `metric_definition`
+- `representation_mode`
 - `acceptance_bar`
 
-再决定下一轮 prompt。
+再决定下一轮 prompt 或 render。
 
 ## 默认工作流
 
@@ -178,36 +277,102 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 
 - 读取 `references/intake-schema.md`
 - 读取 `references/task-packet.md`
-- 先确认交付物、成品度、语言、允许文字和验收标准
+- 先确认交付物、成品度、语言、允许文字、验收标准，以及信息合同
 
-### 2. 再做策略判断
+### 2. 再跑 Information Reliability Gate
+
+- 读取 `references/information-reliability-gate.md`
+- 判断这轮是不是事实敏感任务
+- 锁定 `claim_type`、`metric_definition`、`as_of_date`、`uncertainty_policy`
+- 输出：
+  - `verified_fact`
+  - `fact_with_disclaimer`
+  - `visual_analogy_only`
+  - `blocked_needs_brief`
+
+### 3. 再做 Representation Strategy 判断
+
+- 读取 `references/representation-modes.md`
+- 决定这轮应该走：
+  - `model_direct_visual`
+  - `model_visual_with_limited_text`
+  - `visual_base_plus_post`
+  - `hybrid_visual_plus_deterministic_overlay`
+  - `deterministic_render`
+
+### 4. 再做策略判断
 
 - 读取 `references/strategy-decision-tree.md`
-- 先决定是 `direct / brief-first / repair / contract_realign`
-- 再决定 `direct_output` 还是 `visual_base_plus_post`
+- 先决定 `direct / brief-first / repair / contract_realign`
+- 再决定是 `direct_output`、`visual_base_plus_post`、`hybrid_render` 还是 `deterministic_render`
 
-### 3. 再做 prompt 装配
+### 5. 再做 prompt / render 装配
 
 - 读取 `references/prompt-schema.md`
 - 读取 `references/prompt-assembly.md`
 - 文本层是正式设计层，不是附属约束
+- 如果 representation 不是纯模型直出，prompt 只负责图像部分，精确层交给后续 render / overlay spec
 
-### 4. 生成后先按合同验收
+### 6. 生成后先按 accountability 验收
 
 - 读取 `references/quality-bar.md`
 - 读取 `references/scorecard.md`
-- 先看资产类型、成品度、语言和合同是否过线
+- 先看资产类型、信息可靠性、representation fit、delivery integrity 和合同是否过线
 
-### 5. 如果不过线，按 repair 分流
+如果目标是文章配图、editorial collateral 或 publication figure，还要显式判断：
+
+- 当前是不是正确的 `artifact_role`
+- 当前是否仍有跨场景残留文案或 fixed elements
+- 当前是否已经是支持文章论点的成品资产
+
+### 7. 如果还要继续交付，先跑 Delivery Viability Gate
+
+- 读取 `references/delivery-viability-gate.md`
+- 读取 `references/post-processing-policy.md`
+- 读取 `references/text-overlay-policy.md`
+- 判断：
+  - `overlay_allowed`
+  - `overlay_allowed_with_limits`
+  - `overlay_not_allowed_regenerate`
+
+### 8. 发表资产必须再跑 Publication Readiness Review
+
+- 读取 `references/scorecard.md`
+- 对文章图、editorial collateral、publication figure 输出：
+  - `pass`
+  - `conditional_pass`
+  - `fail`
+- 必评估：
+  - 资产身份是否正确
+  - 是否真正支持文章论点
+  - 是否仍残留跨场景文案或 fixed elements
+  - 当前结果是不是 `publication_asset`
+
+只有 `pass` 才能给用户，`conditional_pass` 仍不得进入正文。
+
+### 9. 如果不过线，按 repair 分流
 
 - 读取 `references/repair-playbook.md`
-- 判断这轮是 `micro_repair` 还是 `contract_realign`
+- 先判断失败属于：
+  - `contract_failure`
+  - `reliability_failure`
+  - `representation_failure`
+  - `delivery_viability_failure`
+  - `publication_identity_failure`
+  - `craft_failure`
+- 再决定这轮是 `micro_repair`、`contract_realign` 还是直接 `regenerate`
 
-### 6. 为每次生图保留经验
+### 10. 为每次生图保留经验
 
 - 读取 `references/runtime-memory.md`
 - 每次生图后默认写一条 runtime capture
-- 不只记录 prompt 和结果，也记录这轮合同判断与验收结果
+- 不只记录 prompt 和结果，也记录：
+  - reliability gate 结果
+  - representation mode
+  - viability gate 结果
+  - 当前 `artifact_role`
+  - publication review 结果
+  - misleading risk 与 hard fail reason
 
 ## 质量底线
 
@@ -218,29 +383,12 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 - 语言与当前任务不一致
 - 品牌语义明显跑偏
 - 结果“好看但没法用”
+- 事实敏感信息未经可靠性 gate 支撑
+- 关键表达机制明显错位
+- overlay 已经破坏交付完整性
+- 中间稿或内部工件被误当 publication asset
+- 文章图未通过 publication review
 - 失败后没有明确下一轮该改什么
-
-## 默认输出合同
-
-如果当前宿主没有更强的原生输出协议，默认把结果收束为下面 5 块，避免只吐出一段大 prompt：
-
-1. `Asset Contract Summary`
-   - 当前采用的 `deliverable_type / asset_completion_mode / content_language / allowed_text_scope / layout_owner / acceptance_bar`
-2. `Chosen Route`
-   - 当前选择 `direct / brief-first / repair / contract_realign` 的哪一条，以及一句话理由
-3. `Image2-Ready Prompt Package`
-   - 给模型的最终提示词，必要时附上补充约束或后处理说明
-4. `Acceptance Check`
-   - 交付前要检查的 3 到 5 条关键过线项
-5. `Next Action`
-   - 如果已经过线，说明可直接交付或进入 delivery refinement
-   - 如果未过线，明确下一轮是 `micro_repair` 还是 `contract_realign`
-
-如果信息不足：
-
-- 先输出最小 `Asset Contract Summary + Chosen Route`
-- 只补问 1 到 3 个会显著改变交付物合同的问题
-- 不要在合同仍然含混时过早输出看似完整的终稿 prompt
 
 ## 需要按需读取的资源
 
@@ -248,8 +396,11 @@ description: 当用户要让任意具备图像生成能力的 Agent 处理“设
 
 - Intake 结构：`references/intake-schema.md`
 - 任务包：`references/task-packet.md`
+- 信息可靠性 gate：`references/information-reliability-gate.md`
+- 表达机制：`references/representation-modes.md`
 - 策略决策树：`references/strategy-decision-tree.md`
 - 后处理决策：`references/post-processing-policy.md`
+- 交付可行性 gate：`references/delivery-viability-gate.md`
 - Prompt 结构：`references/prompt-schema.md`
 - Prompt 装配：`references/prompt-assembly.md`
 - 设计质量门槛：`references/quality-bar.md`

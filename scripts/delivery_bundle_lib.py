@@ -7,6 +7,16 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from publication_review_lib import (
+    ARTIFACT_ROLES,
+    FINAL_RELEASE_RESULTS,
+    INTERNAL_ONLY_ARTIFACT_CLASSES,
+    PUBLICATION_REVIEW_RESULTS,
+    VISUAL_QUALITY_REVIEW_RESULTS,
+    default_artifact_role_for_state,
+    is_editorial_publication_context,
+)
+
 
 BUNDLE_SCHEMA_VERSION = 1
 DELIVERY_STATES = ["raw_visual", "text_safe_visual", "delivery_ready_visual"]
@@ -68,6 +78,9 @@ def init_bundle(
     asset_name: str | None = None,
     scene: str | None = None,
     domain_direction: str | None = None,
+    usage_context: str | None = None,
+    deliverable_type: str | None = None,
+    asset_completion_mode: str | None = None,
     matched_profile: str = "none",
     support_tier: str = "standard",
     tags: list[str] | None = None,
@@ -102,6 +115,9 @@ def init_bundle(
         "context": {
             "scene": scene,
             "domain_direction": domain_direction,
+            "usage_context": usage_context,
+            "deliverable_type": deliverable_type,
+            "asset_completion_mode": asset_completion_mode,
             "matched_profile": matched_profile,
             "support_tier": support_tier,
         },
@@ -166,6 +182,85 @@ def normalize_extra_metadata(metadata_file: str | None) -> dict[str, Any]:
     return data
 
 
+def normalize_version_metadata(
+    manifest: dict[str, Any],
+    state: str,
+    overlay_mode: str,
+    tags: list[str] | None,
+    extra_payload: dict[str, Any],
+) -> dict[str, Any]:
+    payload = dict(extra_payload)
+    context = manifest.get("context", {})
+    usage_context = payload.get("usage_context") or context.get("usage_context")
+    deliverable_type = payload.get("deliverable_type") or context.get("deliverable_type")
+    asset_completion_mode = payload.get("asset_completion_mode") or context.get("asset_completion_mode")
+    artifact_role = payload.get("artifact_role") or default_artifact_role_for_state(state)
+    artifact_class = payload.get("artifact_class")
+    if not artifact_class:
+        if state == "delivery_ready_visual" and overlay_mode != "none":
+            artifact_class = "delivery_bundle_artifact"
+        elif state == "delivery_ready_visual":
+            artifact_class = "delivery_output"
+        else:
+            artifact_class = "working_visual"
+    publication_review_result = payload.get("publication_review_result")
+    visual_quality_review_result = payload.get("visual_quality_review_result")
+    final_release_result = payload.get("final_release_result")
+    publication_blockers = payload.get("publication_blockers", [])
+
+    if artifact_role not in ARTIFACT_ROLES:
+        raise ValueError(f"unsupported artifact_role: {artifact_role}")
+    if publication_review_result and publication_review_result not in PUBLICATION_REVIEW_RESULTS:
+        raise ValueError(f"unsupported publication_review_result: {publication_review_result}")
+    if visual_quality_review_result and visual_quality_review_result not in VISUAL_QUALITY_REVIEW_RESULTS:
+        raise ValueError(f"unsupported visual_quality_review_result: {visual_quality_review_result}")
+    if final_release_result and final_release_result not in FINAL_RELEASE_RESULTS:
+        raise ValueError(f"unsupported final_release_result: {final_release_result}")
+    if not isinstance(publication_blockers, list):
+        raise ValueError("publication_blockers must be a list when provided")
+
+    editorial_context = is_editorial_publication_context(
+        usage_context=usage_context,
+        deliverable_type=deliverable_type,
+        scene=context.get("scene"),
+        tags=(tags or []) + list(manifest.get("bundle_tags", [])),
+    )
+    publication_review_required = bool(payload.get("publication_review_required", editorial_context))
+
+    if artifact_role == "publication_asset" and publication_review_result != "pass":
+        raise ValueError("publication_asset requires publication_review_result=pass")
+    if publication_review_result == "pass" and artifact_role != "publication_asset":
+        raise ValueError("publication_review_result=pass requires artifact_role=publication_asset")
+    if final_release_result == "pass" and publication_review_result != "pass":
+        raise ValueError("final_release_result=pass requires publication_review_result=pass")
+    if final_release_result == "pass" and visual_quality_review_result != "pass":
+        raise ValueError("final_release_result=pass requires visual_quality_review_result=pass")
+    if final_release_result == "pass" and payload.get("production_preflight_result") != "pass":
+        raise ValueError("final_release_result=pass requires production_preflight_result=pass")
+    if final_release_result == "pass" and not payload.get("runtime_capture_present"):
+        raise ValueError("final_release_result=pass requires runtime_capture_present=true")
+    if artifact_class in INTERNAL_ONLY_ARTIFACT_CLASSES and artifact_role == "publication_asset":
+        raise ValueError("internal-only artifact_class cannot be promoted to publication_asset")
+    if editorial_context and artifact_role == "publication_asset" and asset_completion_mode != "complete_asset":
+        raise ValueError("editorial publication_asset requires asset_completion_mode=complete_asset")
+
+    payload["usage_context"] = usage_context
+    payload["deliverable_type"] = deliverable_type
+    payload["asset_completion_mode"] = asset_completion_mode
+    payload["artifact_role"] = artifact_role
+    payload["artifact_class"] = artifact_class
+    payload["publication_review_required"] = publication_review_required
+    if publication_review_result:
+        payload["publication_review_result"] = publication_review_result
+    if visual_quality_review_result:
+        payload["visual_quality_review_result"] = visual_quality_review_result
+    if final_release_result:
+        payload["final_release_result"] = final_release_result
+    if publication_blockers:
+        payload["publication_blockers"] = publication_blockers
+    return payload
+
+
 def get_version_record(manifest: dict[str, Any], version_id: str) -> dict[str, Any]:
     for item in manifest.get("versions", []):
         if item.get("version_id") == version_id:
@@ -198,6 +293,13 @@ def register_version(
     notes: list[str] | None = None,
     metadata_file: str | None = None,
     extra_metadata: dict[str, Any] | None = None,
+    usage_context: str | None = None,
+    deliverable_type: str | None = None,
+    asset_completion_mode: str | None = None,
+    artifact_role: str | None = None,
+    artifact_class: str | None = None,
+    publication_review_result: str | None = None,
+    publication_blockers: list[str] | None = None,
 ) -> dict[str, Any]:
     validate_state(state)
     if overlay_mode not in DEFAULT_OVERLAY_MODES:
@@ -230,6 +332,27 @@ def register_version(
     extra_payload = normalize_extra_metadata(metadata_file)
     if extra_metadata:
         extra_payload.update(extra_metadata)
+    if usage_context is not None:
+        extra_payload["usage_context"] = usage_context
+    if deliverable_type is not None:
+        extra_payload["deliverable_type"] = deliverable_type
+    if asset_completion_mode is not None:
+        extra_payload["asset_completion_mode"] = asset_completion_mode
+    if artifact_role is not None:
+        extra_payload["artifact_role"] = artifact_role
+    if artifact_class is not None:
+        extra_payload["artifact_class"] = artifact_class
+    if publication_review_result is not None:
+        extra_payload["publication_review_result"] = publication_review_result
+    if publication_blockers is not None:
+        extra_payload["publication_blockers"] = publication_blockers
+    extra_payload = normalize_version_metadata(
+        manifest=manifest,
+        state=state,
+        overlay_mode=overlay_mode,
+        tags=tags,
+        extra_payload=extra_payload,
+    )
     record = {
         "version_id": version_id,
         "state": state,

@@ -1,0 +1,134 @@
+{
+  "version_id": "delivery_ready_visual-v004",
+  "state": "delivery_ready_visual",
+  "state_version": 4,
+  "created_at": "2026-04-24T11:27:47+08:00",
+  "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v004.png",
+  "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v004.json",
+  "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/protocol-visual-mechanism-v2.png",
+  "source_file_name": "protocol-visual-mechanism-v2.png",
+  "parent_version_id": "delivery_ready_visual-v003",
+  "transition": "production_protocol_regeneration_v2",
+  "delivery_plan": {
+    "overlay_mode": "none",
+    "reserved_zones": [],
+    "fixed_elements": [],
+    "target_sizes": []
+  },
+  "tags": [
+    "article",
+    "mechanism",
+    "publication"
+  ],
+  "notes": [
+    "v2 production packet + preflight regenerated mechanism asset"
+  ],
+  "extra_metadata": {
+    "usage_context": "wechat article editorial publication",
+    "deliverable_type": "editorial_publication_visual",
+    "asset_completion_mode": "complete_asset",
+    "artifact_role": "publication_asset",
+    "artifact_class": "mechanism_figure_publication_asset",
+    "publication_review_required": true,
+    "publication_review_result": "pass",
+    "publication_argument_support": "pass",
+    "cross_scene_residues": [],
+    "delivery_viability_result": "overlay_allowed",
+    "protected_regions": [
+      {
+        "name": "title_region",
+        "type": "soft",
+        "x": 94,
+        "y": 58,
+        "width": 1412,
+        "height": 162
+      },
+      {
+        "name": "core_subject_region",
+        "type": "hard",
+        "x": 250,
+        "y": 250,
+        "width": 1100,
+        "height": 600
+      },
+      {
+        "name": "focus_information_region",
+        "type": "soft",
+        "x": 118,
+        "y": 884,
+        "width": 1300,
+        "height": 60
+      }
+    ],
+    "production_packet": {
+      "figure_role": "mechanism_figure",
+      "asset_goal": "Explain the delivery loop from asset contract to accumulated runtime memory without using paragraph-heavy cards.",
+      "representation_mode": "deterministic_render",
+      "layout_owner": "deterministic_renderer",
+      "text_owner": "deterministic_renderer",
+      "text_budget": {
+        "headline": 1,
+        "subtitle": 1,
+        "node_labels": 6,
+        "paragraphs": 0
+      },
+      "visual_structure": "A compact six-node closed loop with one central acceptance hub and node labels only.",
+      "required_visual_evidence": [],
+      "forbidden_drift": [
+        "paragraph-heavy cards",
+        "broken English labels",
+        "generic workflow board",
+        "benchmark artifact"
+      ],
+      "candidate_policy": "single",
+      "repair_policy": "micro_repair"
+    },
+    "production_preflight": {
+      "production_preflight_result": "pass",
+      "production_preflight_blockers": [],
+      "production_preflight_warnings": [],
+      "figure_role": "mechanism_figure",
+      "representation_mode": "deterministic_render",
+      "layout_owner": "deterministic_renderer",
+      "text_owner": "deterministic_renderer",
+      "candidate_policy": "single",
+      "repair_policy": "micro_repair"
+    },
+    "production_preflight_result": "pass",
+    "runtime_capture_present": true,
+    "source_generation_output": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/protocol-visual-mechanism-v2.png",
+    "publication_blockers": [],
+    "visual_quality_review": {
+      "result": "pass",
+      "score": 95.0,
+      "dimension_scores": {
+        "text_readability": 5.0,
+        "typographic_craft": 5.0,
+        "layout_hierarchy": 5.0,
+        "semantic_clarity": 5.0,
+        "publication_argument_support_visual": 5.0,
+        "series_consistency": 4.0,
+        "asset_distinctiveness": 4.0,
+        "polish_and_finish": 5.0
+      },
+      "visual_quality_blockers": [],
+      "hard_visual_quality_blockers": [],
+      "notes": [
+        "Mechanism figure now uses node labels only and avoids paragraph-heavy cards or broken English words."
+      ]
+    },
+    "visual_quality_review_result": "pass",
+    "visual_quality_score": 95.0,
+    "final_release_gate": {
+      "result": "pass",
+      "final_release_blockers": [],
+      "production_preflight_result": "pass",
+      "publication_review_result": "pass",
+      "visual_quality_review_result": "pass",
+      "delivery_viability_result": "overlay_allowed",
+      "runtime_capture_present": true
+    },
+    "final_release_result": "pass",
+    "final_release_blockers": []
+  }
+}

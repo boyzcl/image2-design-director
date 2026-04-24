@@ -20,6 +20,10 @@
 - support_tier:
 - prompt_family_under_test:
 - representation_mode_under_test:
+- deliverable_type:
+- usage_context:
+- asset_completion_mode:
+- target_artifact_role:
 
 ## Input
 
@@ -37,6 +41,8 @@
 - representation_mode:
 - viability_check_required:
 - expected_viability_result:
+- publication_review_required:
+- expected_publication_review_result:
 
 ## Comparison Setup
 
@@ -64,6 +70,10 @@
 - candidate_output_ref:
 - baseline_viability_result:
 - candidate_viability_result:
+- baseline_publication_review_result:
+- candidate_publication_review_result:
+- baseline_artifact_role:
+- candidate_artifact_role:
 
 ## Runtime Memory Provenance
 
@@ -77,16 +87,18 @@
 
 | Dimension | baseline_0_5 | candidate_0_5 | weight | baseline_weighted | candidate_weighted | notes |
 |---|---:|---:|---:|---:|---:|---|
-| intent_match |  |  | 10 |  |  |  |
-| asset_type_fidelity |  |  | 12 |  |  |  |
+| intent_match |  |  | 8 |  |  |  |
+| asset_type_fidelity |  |  | 10 |  |  |  |
+| asset_identity_stability |  |  | 10 |  |  |  |
 | contract_alignment |  |  | 8 |  |  |  |
-| information_reliability |  |  | 15 |  |  |  |
-| representation_fit |  |  | 10 |  |  |  |
-| delivery_integrity |  |  | 12 |  |  |  |
-| completion_readiness |  |  | 8 |  |  |  |
-| language_alignment |  |  | 8 |  |  |  |
-| structure_and_composition |  |  | 9 |  |  |  |
-| asset_credibility_and_craft |  |  | 8 |  |  |  |
+| information_reliability |  |  | 12 |  |  |  |
+| representation_fit |  |  | 8 |  |  |  |
+| delivery_integrity |  |  | 10 |  |  |  |
+| publication_argument_support |  |  | 10 |  |  |  |
+| publication_cleanliness |  |  | 8 |  |  |  |
+| completion_readiness |  |  | 6 |  |  |  |
+| language_alignment |  |  | 5 |  |  |  |
+| asset_credibility_and_craft |  |  | 5 |  |  |  |
 
 ### Totals
 
@@ -98,6 +110,17 @@
 - misleading_risk_candidate:
 - hard_fail_reason_baseline:
 - hard_fail_reason_candidate:
+
+## Publication Review
+
+- baseline_asset_identity_result:
+- candidate_asset_identity_result:
+- baseline_argument_support_result:
+- candidate_argument_support_result:
+- baseline_cross_scene_residue_result:
+- candidate_cross_scene_residue_result:
+- baseline_publication_blockers:
+- candidate_publication_blockers:
 
 ## Result
 

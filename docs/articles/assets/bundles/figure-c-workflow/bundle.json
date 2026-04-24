@@ -1,0 +1,525 @@
+{
+  "schema_version": 1,
+  "bundle_id": "wechat-article-figure-c-workflow",
+  "bundle_slug": "wechat-article-figure-c-workflow",
+  "asset_name": "WeChat article workflow evidence visual",
+  "bundle_root": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-c-workflow",
+  "created_at": "2026-04-23T18:20:34+08:00",
+  "updated_at": "2026-04-24T11:29:03+08:00",
+  "state_order": [
+    "raw_visual",
+    "text_safe_visual",
+    "delivery_ready_visual"
+  ],
+  "paths": {
+    "manifest": "bundle.json",
+    "assets": "assets",
+    "overlay": "overlay",
+    "size_adaptation": "size-adaptation",
+    "notes": "notes"
+  },
+  "context": {
+    "scene": "WeChat article workflow evidence visual",
+    "domain_direction": "workflow evidence hero for image2-design-director wechat article",
+    "matched_profile": "custom",
+    "support_tier": "standard",
+    "usage_context": "wechat article editorial publication",
+    "deliverable_type": "editorial_publication_visual",
+    "asset_completion_mode": "complete_asset"
+  },
+  "bundle_tags": [
+    "article",
+    "workflow"
+  ],
+  "latest_versions": {
+    "raw_visual": null,
+    "text_safe_visual": "text_safe_visual-v001",
+    "delivery_ready_visual": "delivery_ready_visual-v003"
+  },
+  "versions": [
+    {
+      "version_id": "text_safe_visual-v001",
+      "state": "text_safe_visual",
+      "state_version": 1,
+      "created_at": "2026-04-23T18:20:34+08:00",
+      "asset_path": "assets/text_safe_visual/text_safe_visual-v001.png",
+      "metadata_path": "assets/text_safe_visual/text_safe_visual-v001.json",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/workflow-evidence-hero.png",
+      "source_file_name": "workflow-evidence-hero.png",
+      "parent_version_id": null,
+      "transition": "promote_text_safe_visual",
+      "delivery_plan": {
+        "overlay_mode": "text_safe_only",
+        "reserved_zones": [
+          "top_title"
+        ],
+        "fixed_elements": [],
+        "target_sizes": []
+      },
+      "tags": [
+        "article",
+        "workflow",
+        "publication"
+      ],
+      "notes": [],
+      "extra_metadata": {
+        "usage_context": "wechat article editorial publication",
+        "deliverable_type": "editorial_publication_visual",
+        "protected_regions": [
+          {
+            "name": "title_region",
+            "type": "soft",
+            "x": 117,
+            "y": 65,
+            "width": 1003,
+            "height": 169
+          },
+          {
+            "name": "core_subject_region",
+            "type": "hard",
+            "x": 300,
+            "y": 281,
+            "width": 1070,
+            "height": 387
+          },
+          {
+            "name": "focus_information_region",
+            "type": "soft",
+            "x": 167,
+            "y": 715,
+            "width": 769,
+            "height": 131
+          }
+        ],
+        "asset_completion_mode": "delivery_refinement",
+        "artifact_role": "internal_candidate",
+        "artifact_class": "text_safe_intermediate",
+        "publication_review_required": false
+      }
+    },
+    {
+      "version_id": "delivery_ready_visual-v001",
+      "state": "delivery_ready_visual",
+      "state_version": 1,
+      "created_at": "2026-04-23T18:21:07+08:00",
+      "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v001.png",
+      "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v001.json",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-c-workflow/overlay/applied/text_safe_visual-v001/overlay-20260423T182107180551.png",
+      "source_file_name": "overlay-20260423T182107180551.png",
+      "parent_version_id": "text_safe_visual-v001",
+      "transition": "fixed_element_overlay_applied",
+      "delivery_plan": {
+        "overlay_mode": "title_plus_supporting_text",
+        "reserved_zones": [
+          "top_title"
+        ],
+        "fixed_elements": [],
+        "target_sizes": []
+      },
+      "tags": [
+        "article",
+        "workflow",
+        "publication"
+      ],
+      "notes": [],
+      "extra_metadata": {
+        "overlay_output_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-c-workflow/overlay/applied/text_safe_visual-v001/overlay-20260423T182107180551.png",
+        "overlay_record_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/bundles/figure-c-workflow/overlay/applied/text_safe_visual-v001/overlay-20260423T182107180551.json",
+        "overlay_summary": {
+          "title_box": {
+            "x": 117,
+            "y": 65,
+            "width": 1120,
+            "height": 217
+          },
+          "footer_box": {
+            "x": 117,
+            "y": 733,
+            "width": 1053,
+            "height": 132
+          },
+          "qr_box": null,
+          "logo_box": null,
+          "badge_box": null,
+          "text_line_count": 2
+        },
+        "delivery_viability_result": "overlay_allowed",
+        "collision_risk": "low",
+        "viability_report": {
+          "delivery_viability": "overlay_allowed",
+          "collision_risk": "low",
+          "continue_overlay_or_regenerate": "continue_overlay",
+          "overlay_coverage_ratio": 0.1545,
+          "hard_region_hits": [],
+          "soft_region_hits": [],
+          "candidate_boxes": [
+            {
+              "name": "title_panel",
+              "box": {
+                "x": 117,
+                "y": 65,
+                "width": 1120,
+                "height": 217
+              }
+            }
+          ],
+          "protected_regions": [
+            {
+              "name": "title_region",
+              "type": "soft",
+              "box": {
+                "x": 92,
+                "y": 51,
+                "width": 1170,
+                "height": 245
+              }
+            },
+            {
+              "name": "core_subject_region",
+              "type": "hard",
+              "box": {
+                "x": 300,
+                "y": 343,
+                "width": 1070,
+                "height": 343
+              }
+            },
+            {
+              "name": "focus_information_region",
+              "type": "soft",
+              "box": {
+                "x": 117,
+                "y": 733,
+                "width": 1053,
+                "height": 132
+              }
+            }
+          ],
+          "protected_regions_declared": true,
+          "required_editorial_regions_present": true,
+          "missing_required_region_names": [],
+          "viability_handoff_to_publication_review": true,
+          "warnings": []
+        },
+        "usage_context": "wechat article editorial publication",
+        "deliverable_type": "editorial_publication_visual",
+        "protected_regions": [
+          {
+            "name": "title_region",
+            "type": "soft",
+            "x": 92,
+            "y": 51,
+            "width": 1170,
+            "height": 245
+          },
+          {
+            "name": "core_subject_region",
+            "type": "hard",
+            "x": 300,
+            "y": 343,
+            "width": 1070,
+            "height": 343
+          },
+          {
+            "name": "focus_information_region",
+            "type": "soft",
+            "x": 117,
+            "y": 733,
+            "width": 1053,
+            "height": 132
+          }
+        ],
+        "asset_completion_mode": "complete_asset",
+        "artifact_role": "publication_asset",
+        "artifact_class": "workflow_evidence_publication_asset",
+        "publication_review_required": true,
+        "publication_argument_support": "pass",
+        "cross_scene_residues": [],
+        "publication_review_result": "pass",
+        "publication_blockers": [],
+        "publication_review": {
+          "result": "pass",
+          "asset_identity_result": "pass",
+          "argument_support_result": "pass",
+          "cross_scene_residue_result": "pass",
+          "artifact_role_check": "publication_asset",
+          "artifact_class": "workflow_evidence_publication_asset",
+          "required_editorial_regions_present": true,
+          "delivery_viability_result": "overlay_allowed",
+          "cross_scene_residues": [],
+          "publication_blockers": []
+        }
+      }
+    },
+    {
+      "version_id": "delivery_ready_visual-v002",
+      "state": "delivery_ready_visual",
+      "state_version": 2,
+      "created_at": "2026-04-23T19:37:09+08:00",
+      "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v002.png",
+      "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v002.json",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/workflow-evidence-final.png",
+      "source_file_name": "workflow-evidence-final.png",
+      "parent_version_id": "delivery_ready_visual-v001",
+      "transition": "regenerate_publication_asset",
+      "delivery_plan": {
+        "overlay_mode": "none",
+        "reserved_zones": [],
+        "fixed_elements": [],
+        "target_sizes": []
+      },
+      "tags": [
+        "article",
+        "workflow",
+        "publication"
+      ],
+      "notes": [
+        "deterministic editorial regeneration after publication protocol upgrade"
+      ],
+      "extra_metadata": {
+        "usage_context": "wechat article editorial publication",
+        "deliverable_type": "editorial_publication_visual",
+        "asset_completion_mode": "complete_asset",
+        "artifact_role": "publication_asset",
+        "artifact_class": "workflow_evidence_publication_asset",
+        "publication_review_required": true,
+        "publication_review_result": "pass",
+        "publication_argument_support": "pass",
+        "cross_scene_residues": [],
+        "delivery_viability_result": "overlay_allowed",
+        "protected_regions": [
+          {
+            "name": "title_region",
+            "type": "soft",
+            "x": 90,
+            "y": 52,
+            "width": 1088,
+            "height": 194
+          },
+          {
+            "name": "core_subject_region",
+            "type": "hard",
+            "x": 514,
+            "y": 280,
+            "width": 498,
+            "height": 520
+          },
+          {
+            "name": "focus_information_region",
+            "type": "soft",
+            "x": 1088,
+            "y": 276,
+            "width": 442,
+            "height": 578
+          }
+        ],
+        "publication_review": {
+          "result": "pass",
+          "asset_identity_result": "pass",
+          "argument_support_result": "pass",
+          "cross_scene_residue_result": "pass",
+          "artifact_role_check": "publication_asset",
+          "artifact_class": "workflow_evidence_publication_asset",
+          "required_editorial_regions_present": true,
+          "delivery_viability_result": "overlay_allowed",
+          "cross_scene_residues": [],
+          "publication_blockers": []
+        },
+        "publication_blockers": [],
+        "visual_quality_review": {
+          "result": "conditional_pass",
+          "score": 72.5,
+          "dimension_scores": {
+            "text_readability": 4.0,
+            "typographic_craft": 4.0,
+            "layout_hierarchy": 4.0,
+            "semantic_clarity": 4.0,
+            "publication_argument_support_visual": 3.0,
+            "series_consistency": 4.0,
+            "asset_distinctiveness": 3.0,
+            "polish_and_finish": 3.0
+          },
+          "visual_quality_blockers": [
+            "generic_device_cluster_risk",
+            "weak_evidence_object_specificity"
+          ],
+          "hard_visual_quality_blockers": [],
+          "notes": [
+            "The workflow claim is legible, but the evidence objects are too abstract.",
+            "A regenerated workflow evidence figure should show capture, scorecard, bundle, route trace, and accepted asset states more concretely."
+          ]
+        },
+        "visual_quality_review_result": "conditional_pass",
+        "visual_quality_score": 72.5,
+        "production_preflight_result": "conditional_pass",
+        "runtime_capture_present": false,
+        "final_release_gate": {
+          "result": "conditional_pass",
+          "final_release_blockers": [
+            "production_preflight_not_pass",
+            "visual_quality_review_not_pass",
+            "runtime_capture_missing"
+          ],
+          "production_preflight_result": "conditional_pass",
+          "publication_review_result": "pass",
+          "visual_quality_review_result": "conditional_pass",
+          "delivery_viability_result": "overlay_allowed",
+          "runtime_capture_present": false
+        },
+        "final_release_result": "conditional_pass",
+        "final_release_blockers": [
+          "production_preflight_not_pass",
+          "visual_quality_review_not_pass",
+          "runtime_capture_missing"
+        ]
+      }
+    },
+    {
+      "version_id": "delivery_ready_visual-v003",
+      "state": "delivery_ready_visual",
+      "state_version": 3,
+      "created_at": "2026-04-24T11:27:48+08:00",
+      "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v003.png",
+      "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v003.json",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/workflow-evidence-v2.png",
+      "source_file_name": "workflow-evidence-v2.png",
+      "parent_version_id": "delivery_ready_visual-v002",
+      "transition": "production_protocol_regeneration_v2",
+      "delivery_plan": {
+        "overlay_mode": "none",
+        "reserved_zones": [],
+        "fixed_elements": [],
+        "target_sizes": []
+      },
+      "tags": [
+        "article",
+        "workflow",
+        "publication"
+      ],
+      "notes": [
+        "v2 production packet + preflight regenerated workflow evidence asset"
+      ],
+      "extra_metadata": {
+        "usage_context": "wechat article editorial publication",
+        "deliverable_type": "editorial_publication_visual",
+        "asset_completion_mode": "complete_asset",
+        "artifact_role": "publication_asset",
+        "artifact_class": "workflow_evidence_publication_asset",
+        "publication_review_required": true,
+        "publication_review_result": "pass",
+        "publication_argument_support": "pass",
+        "cross_scene_residues": [],
+        "delivery_viability_result": "overlay_allowed",
+        "protected_regions": [
+          {
+            "name": "title_region",
+            "type": "soft",
+            "x": 88,
+            "y": 54,
+            "width": 1180,
+            "height": 182
+          },
+          {
+            "name": "core_subject_region",
+            "type": "hard",
+            "x": 84,
+            "y": 276,
+            "width": 1434,
+            "height": 580
+          },
+          {
+            "name": "focus_information_region",
+            "type": "soft",
+            "x": 1088,
+            "y": 728,
+            "width": 420,
+            "height": 120
+          }
+        ],
+        "production_packet": {
+          "figure_role": "workflow_evidence",
+          "asset_goal": "Show concrete workflow evidence that the skill records decisions, reviews outputs, and packages delivery-ready assets.",
+          "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+          "layout_owner": "hybrid",
+          "text_owner": "deterministic_overlay",
+          "text_budget": {
+            "headline": 1,
+            "subtitle": 1,
+            "node_labels": 3,
+            "paragraphs": 0
+          },
+          "visual_structure": "A concrete evidence wall: runtime capture, route trace, scorecard, delivery bundle, and accepted asset states connected left to right.",
+          "required_visual_evidence": [
+            "runtime_capture",
+            "scorecard",
+            "delivery_bundle",
+            "route_trace",
+            "accepted_asset_state"
+          ],
+          "forbidden_drift": [
+            "generic README hero",
+            "abstract radar decoration",
+            "empty device mockup cluster",
+            "benchmark artifact"
+          ],
+          "candidate_policy": "multi_candidate",
+          "repair_policy": "micro_repair"
+        },
+        "production_preflight": {
+          "production_preflight_result": "pass",
+          "production_preflight_blockers": [],
+          "production_preflight_warnings": [],
+          "figure_role": "workflow_evidence",
+          "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+          "layout_owner": "hybrid",
+          "text_owner": "deterministic_overlay",
+          "candidate_policy": "multi_candidate",
+          "repair_policy": "micro_repair"
+        },
+        "production_preflight_result": "pass",
+        "runtime_capture_present": true,
+        "source_generation_output": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/workflow-evidence-v2.png",
+        "publication_blockers": [],
+        "visual_quality_review": {
+          "result": "pass",
+          "score": 95.0,
+          "dimension_scores": {
+            "text_readability": 5.0,
+            "typographic_craft": 4.0,
+            "layout_hierarchy": 5.0,
+            "semantic_clarity": 5.0,
+            "publication_argument_support_visual": 5.0,
+            "series_consistency": 4.0,
+            "asset_distinctiveness": 5.0,
+            "polish_and_finish": 5.0
+          },
+          "visual_quality_blockers": [],
+          "hard_visual_quality_blockers": [],
+          "notes": [
+            "Workflow evidence now shows concrete capture, route, scorecard, bundle, and accepted state objects."
+          ]
+        },
+        "visual_quality_review_result": "pass",
+        "visual_quality_score": 95.0,
+        "final_release_gate": {
+          "result": "pass",
+          "final_release_blockers": [],
+          "production_preflight_result": "pass",
+          "publication_review_result": "pass",
+          "visual_quality_review_result": "pass",
+          "delivery_viability_result": "overlay_allowed",
+          "runtime_capture_present": true
+        },
+        "final_release_result": "pass",
+        "final_release_blockers": []
+      }
+    }
+  ],
+  "export_runs": [],
+  "bundle_notes": [
+    {
+      "timestamp": "2026-04-23T19:11:13+08:00",
+      "text": "Migrated historical article bundle metadata to publication schema."
+    }
+  ]
+}

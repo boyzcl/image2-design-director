@@ -1,0 +1,123 @@
+{
+  "version_id": "delivery_ready_visual-v002",
+  "state": "delivery_ready_visual",
+  "state_version": 2,
+  "created_at": "2026-04-23T19:37:09+08:00",
+  "asset_path": "assets/delivery_ready_visual/delivery_ready_visual-v002.png",
+  "metadata_path": "assets/delivery_ready_visual/delivery_ready_visual-v002.json",
+  "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/articles/assets/workflow-evidence-final.png",
+  "source_file_name": "workflow-evidence-final.png",
+  "parent_version_id": "delivery_ready_visual-v001",
+  "transition": "regenerate_publication_asset",
+  "delivery_plan": {
+    "overlay_mode": "none",
+    "reserved_zones": [],
+    "fixed_elements": [],
+    "target_sizes": []
+  },
+  "tags": [
+    "article",
+    "workflow",
+    "publication"
+  ],
+  "notes": [
+    "deterministic editorial regeneration after publication protocol upgrade"
+  ],
+  "extra_metadata": {
+    "usage_context": "wechat article editorial publication",
+    "deliverable_type": "editorial_publication_visual",
+    "asset_completion_mode": "complete_asset",
+    "artifact_role": "publication_asset",
+    "artifact_class": "workflow_evidence_publication_asset",
+    "publication_review_required": true,
+    "publication_review_result": "pass",
+    "publication_argument_support": "pass",
+    "cross_scene_residues": [],
+    "delivery_viability_result": "overlay_allowed",
+    "protected_regions": [
+      {
+        "name": "title_region",
+        "type": "soft",
+        "x": 90,
+        "y": 52,
+        "width": 1088,
+        "height": 194
+      },
+      {
+        "name": "core_subject_region",
+        "type": "hard",
+        "x": 514,
+        "y": 280,
+        "width": 498,
+        "height": 520
+      },
+      {
+        "name": "focus_information_region",
+        "type": "soft",
+        "x": 1088,
+        "y": 276,
+        "width": 442,
+        "height": 578
+      }
+    ],
+    "publication_review": {
+      "result": "pass",
+      "asset_identity_result": "pass",
+      "argument_support_result": "pass",
+      "cross_scene_residue_result": "pass",
+      "artifact_role_check": "publication_asset",
+      "artifact_class": "workflow_evidence_publication_asset",
+      "required_editorial_regions_present": true,
+      "delivery_viability_result": "overlay_allowed",
+      "cross_scene_residues": [],
+      "publication_blockers": []
+    },
+    "publication_blockers": [],
+    "visual_quality_review": {
+      "result": "conditional_pass",
+      "score": 72.5,
+      "dimension_scores": {
+        "text_readability": 4.0,
+        "typographic_craft": 4.0,
+        "layout_hierarchy": 4.0,
+        "semantic_clarity": 4.0,
+        "publication_argument_support_visual": 3.0,
+        "series_consistency": 4.0,
+        "asset_distinctiveness": 3.0,
+        "polish_and_finish": 3.0
+      },
+      "visual_quality_blockers": [
+        "generic_device_cluster_risk",
+        "weak_evidence_object_specificity"
+      ],
+      "hard_visual_quality_blockers": [],
+      "notes": [
+        "The workflow claim is legible, but the evidence objects are too abstract.",
+        "A regenerated workflow evidence figure should show capture, scorecard, bundle, route trace, and accepted asset states more concretely."
+      ]
+    },
+    "visual_quality_review_result": "conditional_pass",
+    "visual_quality_score": 72.5,
+    "production_preflight_result": "conditional_pass",
+    "runtime_capture_present": false,
+    "final_release_gate": {
+      "result": "conditional_pass",
+      "final_release_blockers": [
+        "production_preflight_not_pass",
+        "visual_quality_review_not_pass",
+        "runtime_capture_missing"
+      ],
+      "production_preflight_result": "conditional_pass",
+      "publication_review_result": "pass",
+      "visual_quality_review_result": "conditional_pass",
+      "delivery_viability_result": "overlay_allowed",
+      "runtime_capture_present": false
+    },
+    "final_release_result": "conditional_pass",
+    "final_release_blockers": [
+      "production_preflight_not_pass",
+      "visual_quality_review_not_pass",
+      "runtime_capture_missing"
+    ]
+  }
+}
