@@ -1,0 +1,90 @@
+{
+  "benchmark": "direct-first-full-regression-2026-04-24",
+  "postprocess_policy": "surgical_patch_only",
+  "results": [
+    {
+      "scenario": "qr_replacement",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/benchmarks/direct-first-full-regression-2026-04-24/generated/qr-base.png",
+      "provided_qr_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/benchmarks/direct-first-full-regression-2026-04-24/fixtures/provided-qr.png",
+      "output_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/benchmarks/direct-first-full-regression-2026-04-24/postprocess/qr-replaced.png",
+      "provided_qr_sha256": "375b332b64b2bf6314f4e67cf933ca02f870d873200f41dadfff17aacc446145",
+      "replaced_region": {
+        "x": 808,
+        "y": 783,
+        "width": 395,
+        "height": 402
+      },
+      "pasted_qr_box": {
+        "x": 851,
+        "y": 829,
+        "width": 309,
+        "height": 309
+      },
+      "target_region_diff_ratio": 0.9933,
+      "result": "pass"
+    },
+    {
+      "scenario": "exact_text_patch",
+      "source_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/benchmarks/direct-first-full-regression-2026-04-24/generated/text-base.png",
+      "output_path": "/Users/boyzcl/Documents/image2/image2-design-director/docs/benchmarks/direct-first-full-regression-2026-04-24/postprocess/text-edited.png",
+      "patches": [
+        {
+          "text": "Stable Gate",
+          "lines": [
+            "Stable Gate"
+          ],
+          "box": {
+            "x": 158,
+            "y": 79,
+            "width": 895,
+            "height": 523
+          },
+          "font_size": 128
+        },
+        {
+          "text": "Quality Score",
+          "lines": [
+            "Quality Score"
+          ],
+          "box": {
+            "x": 1095,
+            "y": 201,
+            "width": 476,
+            "height": 189
+          },
+          "font_size": 59
+        },
+        {
+          "text": "94",
+          "lines": [
+            "94"
+          ],
+          "box": {
+            "x": 1095,
+            "y": 390,
+            "width": 476,
+            "height": 338
+          },
+          "font_size": 258
+        },
+        {
+          "text": "Release Gate: PASS",
+          "lines": [
+            "Release Gate: PASS"
+          ],
+          "box": {
+            "x": 1095,
+            "y": 747,
+            "width": 476,
+            "height": 34
+          },
+          "font_size": 24
+        }
+      ],
+      "title_region_diff_ratio": 0.9987,
+      "metric_region_diff_ratio": 0.9979,
+      "result": "pass"
+    }
+  ],
+  "overall_result": "pass"
+}
