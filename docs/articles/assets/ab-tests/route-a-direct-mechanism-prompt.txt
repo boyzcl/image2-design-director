@@ -1,0 +1,21 @@
+Create a finished mechanism figure for a Chinese WeChat article about image2-design-director.
+
+Exact main title text:
+不是 prompt skill，而是交付闭环
+
+Required mechanism nodes:
+资产合同
+策略路由
+生成边界
+验收评分
+交付出口
+经验积累
+
+Visual meaning:
+Show a closed loop from asset contract to accumulated runtime memory. The figure should explain the system through structure, not through paragraph-heavy cards.
+
+Style:
+Bright editorial systems figure, clean mechanism diagram, warm paper background, restrained slate blue, muted sand, red and green accents. Professional publication-grade layout.
+
+Constraints:
+Use node labels only. Do not place long paragraph copy inside cards. Do not break English words. No fake UI paragraphs. No QR code. No CTA. No event poster language.

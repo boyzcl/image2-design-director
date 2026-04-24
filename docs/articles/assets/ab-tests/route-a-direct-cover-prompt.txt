@@ -1,0 +1,17 @@
+Create a finished editorial cover image for a Chinese WeChat article about image2-design-director.
+
+Exact main title text:
+当 gpt-image-2 已经这么强之后
+
+Exact supporting text:
+我为什么还是做了 image2-design-director
+答案不是会不会出图，而是能否稳定交付
+
+Visual meaning:
+The article argues that powerful image models still need a controllable delivery system. Show a polished editorial cover with a protocol-like visual system: asset contract, route, review, delivery, and final release signals. Make it feel like serious publication collateral, not a generic README hero, not a benchmark board, not an event poster.
+
+Style:
+Bright editorial report cover, premium systems visual, warm paper background, restrained slate blue, muted sand, and red accents. Strong cover hierarchy, generous breathing room, high-quality typography.
+
+Constraints:
+No QR code. No CTA. No event language. No fake brand slogans. No extra body paragraphs. Do not add unrelated labels. Keep all Chinese text exact and readable.

@@ -1,0 +1,24 @@
+Create a finished workflow evidence visual for a Chinese WeChat article about image2-design-director.
+
+Exact main title text:
+把单次惊艳变成稳定交付
+
+Exact supporting text:
+从 capture、route、scorecard 到 delivery bundle 的真实工作流
+
+Required evidence objects:
+runtime capture
+route trace
+scorecard
+delivery bundle
+accepted asset state
+final gate
+
+Visual meaning:
+Show concrete workflow evidence that the skill records decisions, reviews outputs, and packages delivery-ready assets. It should feel like real workflow collateral, not abstract decoration.
+
+Style:
+Bright editorial workflow visual, concrete system artifacts connected left to right, warm paper background, restrained slate blue, muted sand, red and green accents.
+
+Constraints:
+No generic device mockup cluster. No abstract radar as the main proof. No fake dense UI text. No QR code. No CTA. No event poster language. Keep readable text limited to the title, supporting text, and required evidence object labels.
