@@ -1,0 +1,24 @@
+{
+  "figure_role": "editorial_cover",
+  "asset_goal": "Try to rebuild the full cover in post-processing after a weak base image.",
+  "representation_mode": "visual_base_plus_post",
+  "layout_owner": "hybrid",
+  "text_owner": "deterministic_overlay",
+  "text_budget": {
+    "headline": 1,
+    "subtitle": 1,
+    "node_labels": 0,
+    "paragraphs": 0
+  },
+  "visual_structure": "A weak base image that depends on post-processing to create the full layout.",
+  "required_visual_evidence": [],
+  "postprocess_scope": [
+    "full_layout_rebuild"
+  ],
+  "forbidden_drift": [
+    "benchmark artifact",
+    "generic README hero"
+  ],
+  "candidate_policy": "multi_candidate",
+  "repair_policy": "regenerate"
+}

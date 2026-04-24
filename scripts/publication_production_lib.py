@@ -3,7 +3,17 @@ from __future__ import annotations
 from typing import Any
 
 
-SUPPORTED_FIGURE_ROLES = {"editorial_cover", "mechanism_figure", "workflow_evidence"}
+SUPPORTED_FIGURE_ROLES = {
+    "editorial_cover",
+    "base_visual",
+    "mechanism_figure",
+    "workflow_evidence",
+    "advance_figure",
+    "evidence_figure",
+    "data_figure",
+    "price_figure",
+    "ranking_figure",
+}
 SUPPORTED_REPRESENTATION_MODES = {
     "model_direct_visual",
     "model_visual_with_limited_text",
@@ -15,6 +25,26 @@ SUPPORTED_LAYOUT_OWNERS = {"model", "deterministic_renderer", "hybrid"}
 SUPPORTED_TEXT_OWNERS = {"model", "deterministic_overlay", "deterministic_renderer"}
 SUPPORTED_CANDIDATE_POLICIES = {"single", "multi_candidate"}
 SUPPORTED_REPAIR_POLICIES = {"micro_repair", "regenerate", "contract_realign"}
+DIRECT_FIRST_FIGURE_ROLES = {
+    "editorial_cover",
+    "base_visual",
+    "mechanism_figure",
+    "workflow_evidence",
+    "advance_figure",
+    "evidence_figure",
+    "data_figure",
+    "price_figure",
+    "ranking_figure",
+}
+FACT_SENSITIVE_FIGURE_ROLES = {"data_figure", "price_figure", "ranking_figure"}
+SURGICAL_POSTPROCESS_SCOPES = {
+    "none",
+    "qr_code",
+    "logo",
+    "exact_copy",
+    "locked_value_replacement",
+    "export_adaptation",
+}
 
 REQUIRED_WORKFLOW_EVIDENCE = {
     "runtime_capture",
@@ -67,6 +97,8 @@ def run_production_preflight(packet: dict[str, Any]) -> dict[str, Any]:
     visual_structure = _as_text(packet.get("visual_structure"))
     forbidden_drift = _as_set(packet.get("forbidden_drift"))
     required_visual_evidence = _as_set(packet.get("required_visual_evidence"))
+    postprocess_scope = _as_set(packet.get("postprocess_scope"))
+    reliability_gate_result = _as_text(packet.get("information_reliability_gate_result"))
 
     if figure_role not in SUPPORTED_FIGURE_ROLES:
         blockers.append("unsupported_or_missing_figure_role")
@@ -88,6 +120,11 @@ def run_production_preflight(packet: dict[str, Any]) -> dict[str, Any]:
         warnings.append("missing_visual_structure")
     if not forbidden_drift:
         blockers.append("missing_forbidden_drift")
+    unsupported_postprocess_scopes = sorted(postprocess_scope - SURGICAL_POSTPROCESS_SCOPES)
+    if unsupported_postprocess_scopes:
+        blockers.extend(f"unsupported_postprocess_scope:{item}" for item in unsupported_postprocess_scopes)
+    if "full_layout_rebuild" in postprocess_scope:
+        blockers.append("postprocess_scope_full_layout_rebuild")
 
     headline_budget = _budget(packet, "headline")
     subtitle_budget = _budget(packet, "subtitle")
@@ -101,23 +138,34 @@ def run_production_preflight(packet: dict[str, Any]) -> dict[str, Any]:
     if paragraphs_budget > 0:
         warnings.append("paragraph_text_budget_present")
 
+    if figure_role in DIRECT_FIRST_FIGURE_ROLES:
+        direct_first_mode = representation_mode in {"model_direct_visual", "model_visual_with_limited_text"}
+        surgical_postprocess_mode = representation_mode in {
+            "visual_base_plus_post",
+            "hybrid_visual_plus_deterministic_overlay",
+        } and bool(postprocess_scope & (SURGICAL_POSTPROCESS_SCOPES - {"none"}))
+        explicit_deterministic = representation_mode == "deterministic_render" and _has_override(
+            packet,
+            "allow_deterministic_render",
+        )
+        if not (direct_first_mode or surgical_postprocess_mode or explicit_deterministic):
+            blockers.append("direct_first_route_not_established")
+
+    if figure_role in FACT_SENSITIVE_FIGURE_ROLES:
+        if reliability_gate_result != "verified_fact":
+            blockers.append("information_reliability_gate_not_verified")
+
     if figure_role == "editorial_cover":
         if representation_mode == "deterministic_render" and not _has_override(packet, "allow_deterministic_cover"):
             blockers.append("cover_visual_energy_risk")
-        if text_owner == "model" and (headline_budget or subtitle_budget):
-            blockers.append("model_text_ownership_risk")
         if candidate_policy != "multi_candidate":
             blockers.append("cover_requires_multi_candidate")
 
     if figure_role == "mechanism_figure":
         if paragraphs_budget > 0:
             blockers.append("mechanism_text_density_too_high")
-        if text_owner == "model" and node_labels_budget > 0:
-            blockers.append("mechanism_model_text_risk")
         if node_labels_budget > 8:
             warnings.append("mechanism_node_label_budget_high")
-        if representation_mode in {"model_direct_visual", "model_visual_with_limited_text"}:
-            blockers.append("mechanism_requires_structured_or_hybrid_route")
 
     if figure_role == "workflow_evidence":
         missing_evidence = sorted(REQUIRED_WORKFLOW_EVIDENCE - required_visual_evidence)
@@ -127,6 +175,8 @@ def run_production_preflight(packet: dict[str, Any]) -> dict[str, Any]:
             blockers.append("workflow_evidence_requires_multi_candidate")
         if representation_mode == "deterministic_render" and not _has_override(packet, "allow_deterministic_workflow"):
             blockers.append("workflow_needs_hybrid_evidence_visual")
+        if representation_mode == "deterministic_render" and _has_override(packet, "allow_deterministic_workflow"):
+            warnings.append("workflow_deterministic_override_used")
 
     if blockers:
         result = "fail"
@@ -145,4 +195,6 @@ def run_production_preflight(packet: dict[str, Any]) -> dict[str, Any]:
         "text_owner": text_owner,
         "candidate_policy": candidate_policy,
         "repair_policy": repair_policy,
+        "postprocess_scope": sorted(postprocess_scope),
+        "information_reliability_gate_result": reliability_gate_result or None,
     }

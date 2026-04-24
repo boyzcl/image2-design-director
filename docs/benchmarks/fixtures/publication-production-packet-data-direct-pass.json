@@ -1,0 +1,26 @@
+{
+  "figure_role": "data_figure",
+  "asset_goal": "Show a verified adoption trend as a finished editorial data visual.",
+  "representation_mode": "model_direct_visual",
+  "layout_owner": "model",
+  "text_owner": "model",
+  "text_budget": {
+    "headline": 1,
+    "subtitle": 1,
+    "node_labels": 6,
+    "paragraphs": 0
+  },
+  "visual_structure": "A finished editorial data figure with a clear trend, compact labels, and publication-level composition.",
+  "required_visual_evidence": [],
+  "postprocess_scope": [
+    "locked_value_replacement"
+  ],
+  "information_reliability_gate_result": "verified_fact",
+  "forbidden_drift": [
+    "unverified numbers",
+    "plain deterministic table",
+    "generic dashboard mockup"
+  ],
+  "candidate_policy": "multi_candidate",
+  "repair_policy": "micro_repair"
+}

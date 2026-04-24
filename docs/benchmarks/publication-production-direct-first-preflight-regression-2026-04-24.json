@@ -1,0 +1,100 @@
+{
+  "benchmark": "publication-production-direct-first-preflight-regression",
+  "overall_result": "pass",
+  "results": [
+    {
+      "case": "cover-direct-pass",
+      "fixture": "docs/benchmarks/fixtures/publication-production-packet-cover-direct-pass.json",
+      "expected": "pass",
+      "actual": "pass",
+      "passed": true,
+      "blockers": [],
+      "warnings": [],
+      "representation_mode": "model_direct_visual",
+      "figure_role": "editorial_cover"
+    },
+    {
+      "case": "mechanism-direct-pass",
+      "fixture": "docs/benchmarks/fixtures/publication-production-packet-mechanism-pass.json",
+      "expected": "pass",
+      "actual": "pass",
+      "passed": true,
+      "blockers": [],
+      "warnings": [],
+      "representation_mode": "model_direct_visual",
+      "figure_role": "mechanism_figure"
+    },
+    {
+      "case": "workflow-direct-pass",
+      "fixture": "docs/benchmarks/fixtures/publication-production-packet-workflow-direct-pass.json",
+      "expected": "pass",
+      "actual": "pass",
+      "passed": true,
+      "blockers": [],
+      "warnings": [],
+      "representation_mode": "model_direct_visual",
+      "figure_role": "workflow_evidence"
+    },
+    {
+      "case": "data-direct-pass",
+      "fixture": "docs/benchmarks/fixtures/publication-production-packet-data-direct-pass.json",
+      "expected": "pass",
+      "actual": "pass",
+      "passed": true,
+      "blockers": [],
+      "warnings": [],
+      "representation_mode": "model_direct_visual",
+      "figure_role": "data_figure"
+    },
+    {
+      "case": "mechanism-paragraph-fail",
+      "fixture": "docs/benchmarks/fixtures/publication-production-packet-mechanism-fail.json",
+      "expected": "fail",
+      "actual": "fail",
+      "passed": true,
+      "blockers": [
+        "mechanism_text_density_too_high"
+      ],
+      "warnings": [
+        "subtitle_budget_above_default",
+        "paragraph_text_budget_present",
+        "mechanism_node_label_budget_high"
+      ],
+      "representation_mode": "model_direct_visual",
+      "figure_role": "mechanism_figure"
+    },
+    {
+      "case": "workflow-missing-evidence-fail",
+      "fixture": "docs/benchmarks/fixtures/publication-production-packet-workflow-fail.json",
+      "expected": "fail",
+      "actual": "fail",
+      "passed": true,
+      "blockers": [
+        "direct_first_route_not_established",
+        "workflow_evidence_object_missing:accepted_asset_state",
+        "workflow_evidence_object_missing:route_trace",
+        "workflow_evidence_object_missing:runtime_capture",
+        "workflow_evidence_object_missing:scorecard",
+        "workflow_evidence_requires_multi_candidate"
+      ],
+      "warnings": [],
+      "representation_mode": "hybrid_visual_plus_deterministic_overlay",
+      "figure_role": "workflow_evidence"
+    },
+    {
+      "case": "postprocess-rebuild-fail",
+      "fixture": "docs/benchmarks/fixtures/publication-production-packet-postprocess-rebuild-fail.json",
+      "expected": "fail",
+      "actual": "fail",
+      "passed": true,
+      "blockers": [
+        "unsupported_postprocess_scope:full_layout_rebuild",
+        "postprocess_scope_full_layout_rebuild",
+        "direct_first_route_not_established"
+      ],
+      "warnings": [],
+      "representation_mode": "visual_base_plus_post",
+      "figure_role": "editorial_cover"
+    }
+  ]
+}

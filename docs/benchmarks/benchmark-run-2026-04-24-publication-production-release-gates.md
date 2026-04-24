@@ -9,24 +9,33 @@
 
 ## Verification Intent
 
-这次验证不重新生成图片。它验证两件事：
+这次验证不重新生成图片。它验证三件事：
 
-1. 制作前，错误 production route 会被 `production_preflight` 拦下。
+1. 制作前，direct-first production route 不会被旧 hybrid / deterministic 逻辑误拦。
 2. 制作后，`publication_review = pass` 但图面质量不够的资产不会再被当作最终发布资产。
+3. 后期整图重建、缺 evidence objects、paragraph-heavy 这类错误 route 仍会被拦下。
 
 ## Fixtures
 
-- pass fixture: [publication-production-packet-mechanism-pass.json](fixtures/publication-production-packet-mechanism-pass.json)
+- cover direct pass fixture: [publication-production-packet-cover-direct-pass.json](fixtures/publication-production-packet-cover-direct-pass.json)
+- mechanism direct pass fixture: [publication-production-packet-mechanism-pass.json](fixtures/publication-production-packet-mechanism-pass.json)
+- workflow direct pass fixture: [publication-production-packet-workflow-direct-pass.json](fixtures/publication-production-packet-workflow-direct-pass.json)
+- data direct pass fixture: [publication-production-packet-data-direct-pass.json](fixtures/publication-production-packet-data-direct-pass.json)
 - mechanism fail fixture: [publication-production-packet-mechanism-fail.json](fixtures/publication-production-packet-mechanism-fail.json)
 - workflow fail fixture: [publication-production-packet-workflow-fail.json](fixtures/publication-production-packet-workflow-fail.json)
+- postprocess rebuild fail fixture: [publication-production-packet-postprocess-rebuild-fail.json](fixtures/publication-production-packet-postprocess-rebuild-fail.json)
 
 ## Production Preflight Results
 
 | Case | Expected | Actual | Key Blockers |
 |---|---|---|---|
-| mechanism valid packet | `pass` | `pass` | none |
-| mechanism paragraph-heavy/model-text packet | `fail` | `fail` | `mechanism_text_density_too_high`, `mechanism_model_text_risk`, `mechanism_requires_structured_or_hybrid_route` |
+| cover direct packet | `pass` | `pass` | none |
+| mechanism direct packet | `pass` | `pass` | none |
+| workflow direct packet | `pass` | `pass` | none |
+| data direct packet with verified facts | `pass` | `pass` | none |
+| mechanism paragraph-heavy packet | `fail` | `fail` | `mechanism_text_density_too_high` |
 | workflow missing evidence objects | `fail` | `fail` | missing `runtime_capture`, `scorecard`, `route_trace`, `accepted_asset_state`; `workflow_evidence_requires_multi_candidate` |
+| postprocess full-layout rebuild | `fail` | `fail` | `unsupported_postprocess_scope:full_layout_rebuild`, `postprocess_scope_full_layout_rebuild`, `direct_first_route_not_established` |
 
 ## Final Release Gate Function Results
 
@@ -47,7 +56,8 @@
 
 ## Result
 
-- production route failures are now caught before generation.
+- direct-first production routes now pass preflight instead of being incorrectly blocked by the old hybrid / deterministic preference.
+- production route failures are still caught before generation.
 - visual quality failures are now separated from publication identity pass.
 - final release cannot pass without production preflight, visual quality pass, and runtime capture.
 - the current three article images no longer count as final release assets.

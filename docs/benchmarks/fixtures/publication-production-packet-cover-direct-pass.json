@@ -1,24 +1,24 @@
 {
-  "figure_role": "mechanism_figure",
-  "asset_goal": "Explain the asset contract to delivery accumulation loop for the article mechanism section.",
+  "figure_role": "editorial_cover",
+  "asset_goal": "Open the article with a finished cover that argues Image2 should own the visual asset.",
   "representation_mode": "model_direct_visual",
   "layout_owner": "model",
   "text_owner": "model",
   "text_budget": {
     "headline": 1,
     "subtitle": 1,
-    "node_labels": 6,
+    "node_labels": 0,
     "paragraphs": 0
   },
-  "visual_structure": "A finished direct Image2 mechanism figure with six compact node labels connected as a closed delivery loop.",
+  "visual_structure": "A complete editorial cover with strong title hierarchy and publication-level visual energy.",
   "required_visual_evidence": [],
   "postprocess_scope": [
     "none"
   ],
   "forbidden_drift": [
-    "paragraph-heavy cards",
     "benchmark artifact",
-    "generic workflow board"
+    "generic README hero",
+    "event poster"
   ],
   "candidate_policy": "multi_candidate",
   "repair_policy": "micro_repair"

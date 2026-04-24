@@ -1,0 +1,31 @@
+{
+  "figure_role": "workflow_evidence",
+  "asset_goal": "Show that the skill enters a real workflow and produces accepted publication assets.",
+  "representation_mode": "model_direct_visual",
+  "layout_owner": "model",
+  "text_owner": "model",
+  "text_budget": {
+    "headline": 1,
+    "subtitle": 1,
+    "node_labels": 5,
+    "paragraphs": 0
+  },
+  "visual_structure": "A complete workflow evidence visual with concrete capture, scorecard, bundle, route trace, and accepted asset objects.",
+  "required_visual_evidence": [
+    "runtime_capture",
+    "scorecard",
+    "delivery_bundle",
+    "route_trace",
+    "accepted_asset_state"
+  ],
+  "postprocess_scope": [
+    "none"
+  ],
+  "forbidden_drift": [
+    "generic README hero",
+    "abstract decoration",
+    "empty device mockups"
+  ],
+  "candidate_policy": "multi_candidate",
+  "repair_policy": "micro_repair"
+}
